@@ -10,6 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
+
+import view.ExampleView;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -84,12 +87,9 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    addButtonToMain(buttonPanel, "Sponsorships", () -> {
-	    	// TODO
-	    });
-	    
-	    addButtonToMain(buttonPanel, "Activities", () -> {
-	    	// TODO
+	    // FIXME Delete this method and create new ones.
+	    addButtonToMain(buttonPanel, "Run Example", () -> {
+	    	new ExampleView();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
