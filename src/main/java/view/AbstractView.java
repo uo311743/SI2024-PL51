@@ -2,9 +2,12 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -43,7 +46,7 @@ public abstract class AbstractView {
 		// On close, the frame is disposed (Other frames still running).
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		this.initializeAtrib(); // Inicializes other possible required attributes.
+		this.initializeAttrib(); // Initializes other possible required attributes.
 		
 		this.createStructureFrame(viewName); // Creates the structure for the frame.
 		
@@ -94,9 +97,9 @@ public abstract class AbstractView {
 	}
 	
 	 /**
-	  * OPTIONAL. Use to initialize class atributes before frame configuration.
+	  * OPTIONAL. Use to initialize class attributes before frame configuration.
 	  */
-	 protected void initializeAtrib() {}
+	 protected void initializeAttrib() {}
 	 
 	 /**
 	  * Configures the main panel that can be accessed with getMainPanel().
@@ -109,6 +112,33 @@ public abstract class AbstractView {
 	  * @return a panel of the class JPanel.
 	  */
 	 protected final JPanel getMainPanel() { return this.mainPanel; }
+	 
+	 /**
+	  * Creates a button in the main frame
+	  * @param text to be displayed inside the button
+	  * @param action to be performed by the button on-click
+	  */
+	 protected void addButtonToMain(String text, Runnable action) {
+		 JButton button = new JButton(text);
+		 button.addActionListener(e -> action.run());
+		 button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
+		 button.setAlignmentX(Component.CENTER_ALIGNMENT);
+		 // Wrap the button in a JPanel with FlowLayout to prevent stretching
+	     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Center the button
+	     buttonPanel.add(button);
+		 mainPanel.add(buttonPanel);
+		 //mainPanel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
+	 }
+	 
+	 /**
+	  * Reset the panel that is inserted in the center and varies from view to view.
+	  */
+	 protected void resetMainPanel()
+	 {
+		 mainPanel.removeAll();
+		 mainPanel.repaint();
+		 mainPanel.revalidate();
+	 }
 	 
 	// UNCOMMENT if access to the frame is required from outside this abstract class.
 	//protected final JFrame getFrame() { return this.frame; }
