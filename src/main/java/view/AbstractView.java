@@ -4,7 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
+import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -25,8 +30,10 @@ public abstract class AbstractView {
 	
 	// If true a field for changing todays date is displayed.
 	private boolean showChangeDate;
-	private JButton todaysDateButton;
+	private JButton btnTodaysDate;
 	
+	// Buttons for low part of the view
+	JButton btnLowLeft, btnLowMiddle, btnLowRight;
 	
 	private static final int DEFAULT_WIDTH = 800;
 	private static final int DEFAULT_HEIGHT = 600;
@@ -58,7 +65,14 @@ public abstract class AbstractView {
 	 */
 	public AbstractView(String viewName, boolean showChangeDate)
 	{
+		// Some variables require initialization
 		this.showChangeDate = showChangeDate;
+		this.btnTodaysDate = null;
+		this.btnLowLeft = null;
+		this.btnLowMiddle = null;
+		this.btnLowRight = null;
+		
+		
 		this.frame = new JFrame(viewName); // Creates the frame that will be displayed.
 		this.frame.setName(viewName); // Sets the component name.
 		
@@ -100,7 +114,6 @@ public abstract class AbstractView {
 	        
 		} else {
 			topPanel = createTitlePanel(title);
-			todaysDateButton = null;
 		}
 
         // Agregar el panel contenedor al frame en la parte superior
@@ -121,6 +134,9 @@ public abstract class AbstractView {
 	     * 
 	     * -------------------------------------------------------------------------------- */
         
+        // If any button is initialized it creates the low panel with it.
+        if(this.btnLowLeft != null || this.btnLowMiddle != null || this.btnLowRight != null)
+        	frame.add(createLowButtonsPanel(), BorderLayout.SOUTH);
         
 		return;
 	}
@@ -179,23 +195,74 @@ public abstract class AbstractView {
         dateField.setHorizontalAlignment(JTextField.CENTER);
         
         // Botón para establecer la fecha de hoy
-        this.todaysDateButton = new JButton(todaysDateButtonText);
+        this.btnTodaysDate = new JButton(todaysDateButtonText);
         
         // Agregar componentes al panel extra
         todaysDatePanel.add(dateField);
-        todaysDatePanel.add(todaysDateButton);
+        todaysDatePanel.add(btnTodaysDate);
         
         return todaysDatePanel;
 	}
 	
+	private final JPanel createLowButtonsPanel() {
+	    Color lowButtonsPanelBackground = new Color(0xD3D3D3);
+	    int lowButtonsPanelHeight = 40;
+	    int panelMargin = 5;
+
+	    // Create the panel with GridBagLayout
+	    JPanel lowButtonsPanel = new JPanel(new GridBagLayout());
+	    lowButtonsPanel.setBackground(lowButtonsPanelBackground);
+	    lowButtonsPanel.setPreferredSize(new Dimension(frame.getWidth(), lowButtonsPanelHeight));
+	    lowButtonsPanel.setBorder(BorderFactory.createEmptyBorder(panelMargin, panelMargin, panelMargin, panelMargin));
+
+	    // GridBagLayout configuration
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
+	    gbc.gridy = 0;
+	    gbc.weighty = 1.0; // Prevent buttons from collapsing vertically
+	    gbc.insets = new Insets(0, 5, 0, 5); // Spacing between buttons
+
+	    // Spacers to maintain fixed button positions
+	    gbc.weightx = 1.0;
+	    
+	    // Left button or empty space
+	    gbc.gridx = 0;
+	    if (this.btnLowLeft != null) {
+	        lowButtonsPanel.add(this.btnLowLeft, gbc);
+	    } else {
+	        lowButtonsPanel.add(Box.createHorizontalGlue(), gbc);
+	    }
+
+	    // Middle button or empty space
+	    gbc.gridx = 1;
+	    if (this.btnLowMiddle != null) {
+	        lowButtonsPanel.add(this.btnLowMiddle, gbc);
+	    } else {
+	        lowButtonsPanel.add(Box.createHorizontalGlue(), gbc);
+	    }
+
+	    // Right button or empty space
+	    gbc.gridx = 2;
+	    if (this.btnLowRight != null) {
+	        lowButtonsPanel.add(this.btnLowRight, gbc);
+	    } else {
+	        lowButtonsPanel.add(Box.createHorizontalGlue(), gbc);
+	    }
+
+	    return lowButtonsPanel;
+	}
+
+	
+	
 	/* ================================================================================
      * 
-     *     OTHER METHODS.
+     *     CONFIGURATION METHODS.
      * 
      */
 	
 	 /**
 	  * OPTIONAL. Use to initialize class atributes before frame configuration.
+	  * This includes the calls to create lowPannel buttons.
 	  */
 	 protected void initialize() {}
 	 
@@ -211,20 +278,123 @@ public abstract class AbstractView {
 	  */
 	 protected final JPanel getMainPanel() { return this.mainPanel; }
 	 
-	// UNCOMMENT if access to the frame is required from outside this abstract class.
-	//protected final JFrame getFrame() { return this.frame; }
+	 /**
+	  * Reset the panel that is inserted in the center of the frame, leaving it blank.
+	  * Used for changing its distribution.
+	  */
+	 public void resetMainPanel()
+	 {
+		 mainPanel.removeAll();
+		 mainPanel.repaint();
+		 mainPanel.revalidate();
+	 }
 	 
-	 public final boolean inViewDateChanger() { return this.showChangeDate; }
+	 // UNCOMMENT if access to the frame is required from outside this abstract class.
+	 //protected final JFrame getFrame() { return this.frame; }
 	 
+	 
+	 
+	/* ================================================================================
+     * 
+     *    LOW PANEL BUTTON METHODS.
+     * 
+     */
+	 
+	 /**
+	  * Checks if the low left button exists.
+	  * @return true if low left button exists.
+	  */
+	 protected final boolean existsButtonLowLeft() { return this.btnLowLeft != null; };
+	 
+	 /**
+	  * Checks if the low middle button exists.
+	  * @return true if low middle button exists.
+	  */
+	 protected final boolean existsButtonLowMiddle() { return this.btnLowMiddle != null; };
+	 
+	 /**
+	  * Checks if the low right button exists.
+	  * @return true if low right button exists.
+	  */
+	 protected final boolean existsButtonLowRight() { return this.btnLowRight != null; };
+	 
+	 /**
+	  * Creates low left button with given text.
+	  * @param text to be displyed inside the button.
+	  */
+	 protected final void createButtonLowLeft(String text) { this.btnLowLeft = new JButton(text); };
+	 
+	 /**
+	  * Creates low middle button with given text.
+	  * @param text to be displyed inside the button.
+	  */
+	 protected final void createButtonLowMiddle(String text) { this.btnLowMiddle = new JButton(text); };
+	 
+	 /**
+	  * Creates low right button with given text.
+	  * @param text to be displyed inside the button.
+	  */
+	 protected final void createButtonLowRight(String text) { this.btnLowRight = new JButton(text); };
+	 
+	 /**
+	  * Returns the button on the low left corner of the frame.
+	  * @return a JButton placed in the low left of the frame
+	  */
+	 public final JButton getButtonLowLeft()
+	 {
+		 if (this.btnLowLeft == null)
+			 throw new UnexpectedException("ERROR. Button lowLeft does not exist.");
+		 return this.btnLowLeft;
+	 }
+	 
+	 /**
+	  * Returns the button on the low middel of the frame.
+	  * @return a JButton placed in the low middel of the frame
+	  */
+	 public final JButton getButtonLowMiddle()
+	 {
+		 if (this.btnLowMiddle == null)
+			 throw new UnexpectedException("ERROR. Button lowMiddle does not exist.");
+		 return this.btnLowMiddle;
+	 }
+	 
+	 /**
+	  * Returns the button on the low right corner of the frame.
+	  * @return a JButton placed in the low right of the frame
+	  */
+	 public final JButton getButtonLowRight()
+	 {
+		 if (this.btnLowRight == null)
+			 throw new UnexpectedException("ERROR. Button lowRight does not exist.");
+		 return this.btnLowRight;
+	 }
+	 
+	 
+	 /* ================================================================================
+     * 
+     *    TODAYS DATE METHODS.
+     * 
+     */
+	 
+	/**
+	 * Checks if the frame offers the user the possibility to change todays date.
+	 * @return true if the user can change todays date in this frame.
+	 */
+	 public final boolean canViewChangeTodaysDate() { return this.showChangeDate; }
+	 
+	 /**
+	  * Gets the button that changes todays date.
+	  * @return a JButton used to change todays date.
+	  */
 	 public final JButton getTodaysDateButton()
 	 {
 		 if (!this.showChangeDate)
 			 throw new ApplicationException("ERROR. The view does not have an todaysDateButton. Check view's constructor parms.");
 		 
-		 if (this.todaysDateButton == null)
+		 if (this.btnTodaysDate == null)
 			 throw new UnexpectedException("ERROR. Incorrect initialization for todaysDateButton.");
 		 
-		 return this.todaysDateButton;
+		 return this.btnTodaysDate;
 	 }
 }
 
