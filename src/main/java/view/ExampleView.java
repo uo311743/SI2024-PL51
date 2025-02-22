@@ -6,9 +6,10 @@ public class ExampleView extends AbstractView {
 	
 	private JButton btnExample;
 	
-	public ExampleView() { super("Example View"); }
+	public ExampleView() { super("Example View", true); }
 	
-	protected void initializeAtrib() {
+	@Override
+	protected void initialize() {
 		btnExample = new JButton("Example");
 	}
 
