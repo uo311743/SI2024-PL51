@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 import view.ExampleView;
+import view.US125View;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -90,6 +91,10 @@ public class SwingMain {
 	    // FIXME Delete this method and create new ones.
 	    addButtonToMain(buttonPanel, "Run Example", () -> {
 	    	new ExampleView();
+	    });
+	    
+	    addButtonToMain(buttonPanel, "Run US125", () -> {
+	    	new US125View();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

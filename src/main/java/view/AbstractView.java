@@ -290,7 +290,7 @@ public abstract class AbstractView {
 	 }
 	 
 	 // UNCOMMENT if access to the frame is required from outside this abstract class.
-	 //protected final JFrame getFrame() { return this.frame; }
+	 protected final JFrame getFrame() { return this.frame; }
 	 
 	 
 	 
