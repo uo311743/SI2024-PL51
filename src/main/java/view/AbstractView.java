@@ -82,9 +82,6 @@ public abstract class AbstractView {
 		this.initialize(); // Inicializes other possible required attributes.
 		
 		this.createStructureFrame(viewName); // Creates the structure for the frame.
-		
-		this.frame.setLocationRelativeTo(null); // Centers the frame in the screen.
-		this.frame.setVisible(true); // Makes the frame visible.
 	 }
 	
 	/* ================================================================================
@@ -282,12 +279,31 @@ public abstract class AbstractView {
 	  * Reset the panel that is inserted in the center of the frame, leaving it blank.
 	  * Used for changing its distribution.
 	  */
-	 public void resetMainPanel()
+	 public final void resetMainPanel()
 	 {
 		 mainPanel.removeAll();
 		 mainPanel.repaint();
 		 mainPanel.revalidate();
 	 }
+	 
+	 /**
+	  * Makes the view visible in the center of the screen.
+	  */
+	 public final void setVisible()
+	 {
+		 this.frame.setLocationRelativeTo(null); // Centers the frame in the screen.
+		 this.frame.setVisible(true); // Makes the frame visible. 
+	 }
+	 
+	 /**
+	  * Closes this view. It does not end the application.
+	  * Override to add extra functionalities.
+	  */
+	 public void disposeView()
+	 {
+		 this.frame.dispose();
+	 }
+	 
 	 
 	 // UNCOMMENT if access to the frame is required from outside this abstract class.
 	 //protected final JFrame getFrame() { return this.frame; }
