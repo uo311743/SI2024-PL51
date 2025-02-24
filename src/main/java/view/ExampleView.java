@@ -12,7 +12,10 @@ public class ExampleView extends AbstractView {
 
 	@Override
 	protected void initialize() {
-		btnExample = new JButton("Example");
+		this.btnExample = new JButton("Example");
+		super.createButtonLowLeft("A");
+		//super.createButtonLowMiddle("B");
+		super.createButtonLowRight("C");
 	}
 
 	@Override
