@@ -8,12 +8,10 @@ public class ExampleView extends AbstractView {
 	
 	public ExampleView() { super("Example View", true); }
 	
-<<<<<<< HEAD
-	protected void initializeAttrib() {
-=======
+	protected void initializeAttrib() {};
+
 	@Override
 	protected void initialize() {
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 		btnExample = new JButton("Example");
 	}
 

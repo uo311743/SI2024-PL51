@@ -67,11 +67,9 @@ public abstract class AbstractView {
 		// On close, the frame is disposed (Other frames still running).
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-<<<<<<< HEAD
 		this.initializeAttrib(); // Initializes other possible required attributes.
-=======
-		this.initialize(); // Inicializes other possible required attributes.
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
+		
+		this.initialize(); // Initializes other possible required attributes.
 		
 		this.createStructureFrame(viewName); // Creates the structure for the frame.
 		
@@ -83,7 +81,7 @@ public abstract class AbstractView {
      * 
      *     PRIVATE METHODS.
      * 
-     *  Warning. Modification affectas all classes extending this one.
+     *  Warning. Modification affects all classes extending this one.
      * 
      */
 	
@@ -203,11 +201,9 @@ public abstract class AbstractView {
 	 /**
 	  * OPTIONAL. Use to initialize class attributes before frame configuration.
 	  */
-<<<<<<< HEAD
 	 protected void initializeAttrib() {}
-=======
+
 	 protected void initialize() {}
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 	 
 	 /**
 	  * Configures the main panel that can be accessed with getMainPanel().
@@ -256,7 +252,7 @@ public abstract class AbstractView {
 	 public final JButton getTodaysDateButton()
 	 {
 		 if (!this.showChangeDate)
-			 throw new ApplicationException("ERROR. The view does not have an todaysDateButton. Check view's constructor parms.");
+			 throw new ApplicationException("ERROR. The view does not have a todaysDateButton. Check view's constructor params.");
 		 
 		 if (this.todaysDateButton == null)
 			 throw new UnexpectedException("ERROR. Incorrect initialization for todaysDateButton.");
