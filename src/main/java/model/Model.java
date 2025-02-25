@@ -45,22 +45,22 @@ public class Model {
      */
 	
 
-    
+	
+    /*
 	public String getInvoiceRecipientCountry() {
         String sql = "SELECT country FROM Recipients WHERE id = (SELECT recipient_id FROM Invoices ORDER BY date_issue DESC LIMIT 1);";
         return db.executeQuerySingle(String.class, sql);
     }
-    
+    */
+	
 	public List<Object[]> getSponsorListArray() {
-		String sql="SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_SPONSORS + ")";
-		String d=Util.dateToIsoString(fechaInscripcion);
-		return db.executeQueryArray(sql, d, d, d, d, d);
+		String sql = "SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_SPONSORS + ")";
+		return db.executeQueryArray(sql);
 	}
     
 	public List<Object[]> getActivityListArray() {
-		String sql="SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_ACTIVITIES + ")";
-		String d=Util.dateToIsoString(fechaInscripcion);
-		return db.executeQueryArray(sql, d, d, d, d, d);
+		String sql = "SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_ACTIVITIES + ")";
+		return db.executeQueryArray(sql);
 	}
 	
     public List<InvoicesDTO> getDateIssueInvoices() {

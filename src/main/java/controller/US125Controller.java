@@ -32,12 +32,15 @@ public class US125Controller {
         view.getButtonLowRight().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	/*
                 String recipientCountry = model.getInvoiceRecipientCountry(); // Assuming model provides this
                 if (isForeignCountry(recipientCountry)) {
                     JOptionPane.showMessageDialog(null, "Sending invoices to foreign countries is restricted.", "Restriction", JOptionPane.WARNING_MESSAGE);
-                } else {
+                } 
+                else {
                     openOutlook();
                 }
+                */
             }
         });
         
