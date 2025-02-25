@@ -90,11 +90,11 @@ public class SwingMain {
 
 	    // FIXME Delete this method and create new ones.
 	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView();
+	    	new ExampleView().setVisible();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Run US125", () -> {
-	    	new US125View();
+	    	new US125View().setVisible();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

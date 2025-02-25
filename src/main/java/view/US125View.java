@@ -6,7 +6,8 @@ import net.miginfocom.swing.MigLayout;
 public class US125View extends AbstractView {
     
     private JTable invoiceTable;
-    private JTextField emailTextField;
+    private JComboBox<String> sponsorComboBox;
+    private JComboBox<String> eventComboBox;
     
     public US125View() {
         super("Invoice Management", false);
@@ -16,26 +17,30 @@ public class US125View extends AbstractView {
     @Override
     protected void initialize() {
         this.invoiceTable = new JTable();
-        this.emailTextField = new JTextField(20);
-    	super.createButtonLowLeft("Cancel");
-    	super.createButtonLowRight("Send Invoice");
+        this.sponsorComboBox = new JComboBox<>();
+        this.eventComboBox = new JComboBox<>();
+
+        super.createButtonLowLeft("Cancel");
+        super.createButtonLowRight("Send Invoice");
     }
     
     @Override
     protected void configMainPanel() {
         getMainPanel().setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
 
+        // Sponsor & Event ComboBoxes
+        JPanel sponsorPanel = new JPanel(new MigLayout("", "[center]"));
+        sponsorPanel.add(new JLabel("Sponsor: "));
+        sponsorPanel.add(sponsorComboBox);
+        sponsorPanel.add(new JLabel("Event: "));
+        sponsorPanel.add(eventComboBox);
+        getMainPanel().add(sponsorPanel, "cell 0 0, align center");
+
         // Invoice Table
         invoiceTable.setName("invoiceTable");
         invoiceTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane invoiceTablePanel = new JScrollPane(invoiceTable);
         getMainPanel().add(invoiceTablePanel, "cell 0 1, grow");
-        
-        // Email Panel
-        JPanel emailPanel = new JPanel();
-        emailPanel.add(new JLabel("Email: "));
-        emailPanel.add(emailTextField);
-        getMainPanel().add(emailPanel, "cell 0 2");
     }
     
     // Getters and setters
@@ -43,7 +48,11 @@ public class US125View extends AbstractView {
         return invoiceTable;
     }
     
-    public JTextField getEmailTextField() {
-        return emailTextField;
+    public JComboBox<String> getSponsorComboBox() {
+        return sponsorComboBox;
+    }
+    
+    public JComboBox<String> getEventComboBox() {
+        return eventComboBox;
     }
 }
