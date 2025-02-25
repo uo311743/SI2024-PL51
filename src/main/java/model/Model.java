@@ -3,7 +3,13 @@ package model;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
+import java.util.List;
 
+import DTO.ActivitiesDTO;
+import DTO.InvoicesDTO;
+import DTO.SponsorContactDTO;
+import giis.demo.util.Util;
 import util.ApplicationException;
 import util.Database;
 
@@ -11,6 +17,26 @@ public class Model {
 	
 	// Instance that allows the connection to the DB and execution of queries
 	private Database db = new Database();
+	
+	public static final String SQL_LIST_SPONSORS=
+			"SELECT id,descr,"
+			+" case when ?<inicio then ''"
+			+"   when ?<=fin then '(Abierta)'"
+			+"   when ?<fecha then '(Abierta)'"
+			+"   when ?=fecha then '(Abierta)'"
+			+"   else '' "
+			+" end as abierta"
+			+" from carreras  where fecha>=? order by id";
+	
+	public static final String SQL_LIST_ACTIVITIES=
+			"SELECT id,descr,"
+			+" case when ?<inicio then ''"
+			+"   when ?<=fin then '(Abierta)'"
+			+"   when ?<fecha then '(Abierta)'"
+			+"   when ?=fecha then '(Abierta)'"
+			+"   else '' "
+			+" end as abierta"
+			+" from carreras  where fecha>=? order by id";
     
 	/* ================================================================================
      * 
@@ -20,7 +46,32 @@ public class Model {
 	
 
     
-	//TODO
+	public String getInvoiceRecipientCountry() {
+        String sql = "SELECT country FROM Recipients WHERE id = (SELECT recipient_id FROM Invoices ORDER BY date_issue DESC LIMIT 1);";
+        return db.executeQuerySingle(String.class, sql);
+    }
+    
+	public List<Object[]> getSponsorListArray() {
+		String sql="SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_SPONSORS + ")";
+		String d=Util.dateToIsoString(fechaInscripcion);
+		return db.executeQueryArray(sql, d, d, d, d, d);
+	}
+    
+	public List<Object[]> getActivityListArray() {
+		String sql="SELECT id || '-' || descr || ' ' || abierta as item from (" + SQL_LIST_ACTIVITIES + ")";
+		String d=Util.dateToIsoString(fechaInscripcion);
+		return db.executeQueryArray(sql, d, d, d, d, d);
+	}
+	
+    public List<InvoicesDTO> getDateIssueInvoices() {
+        String sql = "SELECT dateIssueInvoices FROM Invoices;";
+        return db.executeQueryPojo(InvoicesDTO.class, sql);
+    }
+    
+    public List<InvoicesDTO> getIdInvoices() {
+        String sql = "SELECT idInvoices FROM Invoices;";
+        return db.executeQueryPojo(InvoicesDTO.class, sql);
+    }
 
 
     

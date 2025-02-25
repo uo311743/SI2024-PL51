@@ -13,6 +13,7 @@ import javax.swing.SwingConstants;
 
 import view.ExampleView;
 import view.US125View;
+import view.US129View;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -95,6 +96,10 @@ public class SwingMain {
 	    
 	    addButtonToMain(buttonPanel, "Run US125", () -> {
 	    	new US125View().setVisible();
+	    });
+	    
+	    addButtonToMain(buttonPanel, "Run US129", () -> {
+	    	new US129View().setVisible();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

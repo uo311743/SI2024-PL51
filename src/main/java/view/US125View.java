@@ -7,7 +7,7 @@ public class US125View extends AbstractView {
     
     private JTable invoiceTable;
     private JComboBox<String> sponsorComboBox;
-    private JComboBox<String> eventComboBox;
+    private JComboBox<String> activityComboBox;
     
     public US125View() {
         super("Invoice Management", false);
@@ -18,7 +18,7 @@ public class US125View extends AbstractView {
     protected void initialize() {
         this.invoiceTable = new JTable();
         this.sponsorComboBox = new JComboBox<>();
-        this.eventComboBox = new JComboBox<>();
+        this.activityComboBox = new JComboBox<>();
 
         super.createButtonLowLeft("Cancel");
         super.createButtonLowRight("Send Invoice");
@@ -28,12 +28,12 @@ public class US125View extends AbstractView {
     protected void configMainPanel() {
         getMainPanel().setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
 
-        // Sponsor & Event ComboBoxes
+        // Sponsor & Activity ComboBoxes
         JPanel sponsorPanel = new JPanel(new MigLayout("", "[center]"));
         sponsorPanel.add(new JLabel("Sponsor: "));
         sponsorPanel.add(sponsorComboBox);
-        sponsorPanel.add(new JLabel("Event: "));
-        sponsorPanel.add(eventComboBox);
+        sponsorPanel.add(new JLabel("Activity: "));
+        sponsorPanel.add(activityComboBox);
         getMainPanel().add(sponsorPanel, "cell 0 0, align center");
 
         // Invoice Table
@@ -52,7 +52,7 @@ public class US125View extends AbstractView {
         return sponsorComboBox;
     }
     
-    public JComboBox<String> getEventComboBox() {
-        return eventComboBox;
+    public JComboBox<String> getActivityComboBox() {
+        return activityComboBox;
     }
 }
