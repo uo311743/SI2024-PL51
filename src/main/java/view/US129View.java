@@ -33,6 +33,9 @@ public class US129View extends AbstractView {
     
     @Override
     protected void initialize() {
+    	startDateSpinner.setEditor(new JSpinner.DateEditor(startDateSpinner, "yyyy-MM-dd"));
+    	endDateSpinner.setEditor(new JSpinner.DateEditor(endDateSpinner, "yyyy-MM-dd"));
+
         this.reportTable = new JTable();
         this.statusComboBox = new JComboBox<>(new String[]{"All", "Planned", "Ongoing", "Completed", "Cancelled"});
         this.startDateSpinner = new JSpinner(new SpinnerDateModel());
