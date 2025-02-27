@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import DTOs.ActivitiesDTO;
+import giis.demo.util.Util;
 import model.Model;
 import view.US129View;
 
@@ -49,21 +50,8 @@ public class US129Controller {
         String endDateStr = view.getEndDateField().getText();
         String status = (String) view.getStatusComboBox().getSelectedItem();
 
-        Date startDate = null;
-        Date endDate = null;
-
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        try {
-            if (!startDateStr.isEmpty()) {
-                startDate = sdf.parse(startDateStr);
-            }
-            if (!endDateStr.isEmpty()) {
-                endDate = sdf.parse(endDateStr);
-            }
-        } 
-        catch (ParseException ex) {
-            ex.printStackTrace();
-        }
+        Date startDate = Util.isoStringToDate(startDateStr);
+        Date endDate = Util.isoStringToDate(endDateStr);
 
         List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
         updateReportTable(filteredActivities);

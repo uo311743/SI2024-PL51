@@ -13,7 +13,7 @@ public class US129View extends AbstractView {
     private JLabel totalPaidIncomeLabel;
     private JLabel totalEstimatedExpensesLabel;
     private JLabel totalPaidExpensesLabel;
-    private JButton filterButton;  // Filter button
+    private JButton filterButton;
     
     public US129View() {
         super("Activity Financial Report", false);
@@ -47,7 +47,7 @@ public class US129View extends AbstractView {
         filterPanel.add(endDateField);
         filterPanel.add(new JLabel("Status: "));
         filterPanel.add(statusComboBox);
-        filterPanel.add(filterButton);  // Adding the filter button
+        filterPanel.add(filterButton);
         getMainPanel().add(filterPanel, "cell 0 0, align center");
 
         // Report Table

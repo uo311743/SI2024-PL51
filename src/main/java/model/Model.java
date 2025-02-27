@@ -1,6 +1,6 @@
 package model;
 
-import java.sql.Date;
+import java.util.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -73,13 +73,15 @@ public class Model {
     public List<ActivitiesDTO> getFilteredActivities(Date startDate, Date endDate, String status) {
         String sql = "SELECT date, name, status, estimatedIncome, paidIncome, estimatedExpenses, paidExpenses " +
                      "FROM Activities " +
-                     "WHERE date BETWEEN ? AND ? " +
-                     (status.equals("All") ? "" : "AND status = ?");
-
-        if (status.equals("All")) {
-            return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate);
-        } else {
-            return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, status);
+                     "WHERE date BETWEEN ? AND ? ";
+        
+        if (status == null) {
+        	sql += ";";
+        	return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate);
+        }
+        else {
+        	sql += " AND status == ?;";
+        	return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, status);
         }
     }
 
