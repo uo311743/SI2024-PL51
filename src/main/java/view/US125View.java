@@ -36,7 +36,7 @@ public class US125View extends AbstractView {
         sponsorPanel.add(sponsorComboBox);
         sponsorPanel.add(new JLabel("Activity: "));
         sponsorPanel.add(activityComboBox);
-        sponsorPanel.add(filterButton); // Added Filter Button
+        sponsorPanel.add(filterButton);
         getMainPanel().add(sponsorPanel, "cell 0 0, align center");
 
         // Invoice Table
