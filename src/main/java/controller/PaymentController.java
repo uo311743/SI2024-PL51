@@ -1,24 +1,29 @@
 package controller;
 
+import model.Model;
 import model.Payment;
 import view.PaymentView;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.sql.Date;
 
 public class PaymentController {
 	// Create an Object of Payment type for the Model
 	// Create View Object
-	private Payment model;
+	private Model model;
 	private PaymentView view;
 	
-	public PaymentController(Payment model, PaymentView view) {
+	public PaymentController(Model model, PaymentView view) {
 		this.model = model;
 		this.view = view;
 	}
 
-	public Payment getModel() {
+	public Model getModel() {
 		return model;
 	}
 
-	public void setModel(Payment model) {
+	public void setModel(Model model) {
 		this.model = model;
 	}
 
@@ -34,9 +39,9 @@ public class PaymentController {
 	// Interact with the items inside the Model Class
 	// Methods to set the properties in the actual Model
 	
-	// Control View Object
+	// Control View Object to be updated any time there is a change in the Model related to Payments
 	public void updateView()
 	{
-		view.main(null);
+		
 	}
 }

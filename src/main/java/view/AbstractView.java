@@ -2,9 +2,7 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -81,9 +79,7 @@ public abstract class AbstractView {
 		// On close, the frame is disposed (Other frames still running).
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		this.initializeAttrib(); // Initializes other possible required attributes.
-		
-		this.initialize(); // Initializes other possible required attributes.
+		this.initialize(); // Inicializes other possible required attributes.
 		
 		this.createStructureFrame(viewName); // Creates the structure for the frame.
 	 }
@@ -262,15 +258,9 @@ public abstract class AbstractView {
      */
 	
 	 /**
-<<<<<<< HEAD
-	  * OPTIONAL. Use to initialize class attributes before frame configuration.
-=======
 	  * OPTIONAL. Use to initialize class atributes before frame configuration.
 	  * This includes the calls to create lowPannel buttons.
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 	  */
-	 protected void initializeAttrib() {}
-
 	 protected void initialize() {}
 	 
 	 /**
@@ -286,36 +276,6 @@ public abstract class AbstractView {
 	 protected final JPanel getMainPanel() { return this.mainPanel; }
 	 
 	 /**
-<<<<<<< HEAD
-	  * Creates a button in the main frame
-	  * @param text to be displayed inside the button
-	  * @param action to be performed by the button on-click
-	  */
-	 protected void addButtonToMain(String text, Runnable action) {
-		 JButton button = new JButton(text);
-		 button.addActionListener(e -> action.run());
-		 button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
-		 button.setAlignmentX(Component.CENTER_ALIGNMENT);
-		 // Wrap the button in a JPanel with FlowLayout to prevent stretching
-	     JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Center the button
-	     buttonPanel.add(button);
-		 mainPanel.add(buttonPanel);
-		 //mainPanel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
-	 }
-	 
-	 /**
-	  * Reset the panel that is inserted in the center and varies from view to view.
-	  */
-	 protected void resetMainPanel()
-	 {
-		 mainPanel.removeAll();
-		 mainPanel.repaint();
-		 mainPanel.revalidate();
-	 }
-	 
-	// UNCOMMENT if access to the frame is required from outside this abstract class.
-	//protected final JFrame getFrame() { return this.frame; }
-=======
 	  * Reset the panel that is inserted in the center of the frame, leaving it blank.
 	  * Used for changing its distribution.
 	  */
@@ -325,7 +285,6 @@ public abstract class AbstractView {
 		 mainPanel.repaint();
 		 mainPanel.revalidate();
 	 }
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 	 
 	 /**
 	  * Makes the view visible in the center of the screen.
@@ -446,7 +405,7 @@ public abstract class AbstractView {
 	 public final JButton getTodaysDateButton()
 	 {
 		 if (!this.showChangeDate)
-			 throw new ApplicationException("ERROR. The view does not have a todaysDateButton. Check view's constructor params.");
+			 throw new ApplicationException("ERROR. The view does not have a todaysDateButton. Check view's constructor parms.");
 		 
 		 if (this.btnTodaysDate == null)
 			 throw new UnexpectedException("ERROR. Incorrect initialization for todaysDateButton.");
@@ -454,4 +413,3 @@ public abstract class AbstractView {
 		 return this.btnTodaysDate;
 	 }
 }
-

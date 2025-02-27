@@ -11,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import controller.PaymentController;
+import model.Model;
 import view.ExampleView;
+import view.PaymentView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -48,6 +51,10 @@ public class SwingMain {
 				}
 			}
 		});
+		
+		Model model = new Model();
+        PaymentView view = new PaymentView();
+        PaymentController controller = new PaymentController(model, view);
 	}
 
 	/**
