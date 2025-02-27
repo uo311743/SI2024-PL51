@@ -60,8 +60,9 @@ CREATE TABLE SponsorshipPayments (
 CREATE TABLE Activities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    state TEXT NOT NULL,
-    date_celebration TEXT NOT NULL,
+    edition INTEGER NOT NULL,
+    state TEXT,
+    date_celebration TEXT,
     place_celebration TEXT,
     estimated_income REAL,
     estimated_expenses REAL
