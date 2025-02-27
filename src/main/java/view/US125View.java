@@ -8,6 +8,7 @@ public class US125View extends AbstractView {
     private JTable invoiceTable;
     private JComboBox<String> sponsorComboBox;
     private JComboBox<String> activityComboBox;
+    private JButton filterButton;
     
     public US125View() {
         super("Invoice Management", false);
@@ -19,6 +20,7 @@ public class US125View extends AbstractView {
         this.invoiceTable = new JTable();
         this.sponsorComboBox = new JComboBox<>();
         this.activityComboBox = new JComboBox<>();
+        this.filterButton = new JButton("Filter");
 
         super.createButtonLowLeft("Cancel");
         super.createButtonLowRight("Send Invoice");
@@ -28,12 +30,13 @@ public class US125View extends AbstractView {
     protected void configMainPanel() {
         getMainPanel().setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
 
-        // Sponsor & Activity ComboBoxes
+        // Sponsor & Activity ComboBoxes with Filter Button
         JPanel sponsorPanel = new JPanel(new MigLayout("", "[center]"));
         sponsorPanel.add(new JLabel("Sponsor: "));
         sponsorPanel.add(sponsorComboBox);
         sponsorPanel.add(new JLabel("Activity: "));
         sponsorPanel.add(activityComboBox);
+        sponsorPanel.add(filterButton); // Added Filter Button
         getMainPanel().add(sponsorPanel, "cell 0 0, align center");
 
         // Invoice Table
@@ -54,5 +57,9 @@ public class US125View extends AbstractView {
     
     public JComboBox<String> getActivityComboBox() {
         return activityComboBox;
+    }
+    
+    public JButton getFilterButton() {
+        return filterButton;
     }
 }

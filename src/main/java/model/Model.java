@@ -68,7 +68,12 @@ public class Model {
         return db.executeQueryPojo(InvoicesDTO.class, sql);
     }
 
+    public List<InvoicesDTO> getInvoicesBySponsorAndActivity(String sponsor, String activity) {
+        String sql = "SELECT * FROM invoices WHERE sponsor = ? AND activity = ?";
+        return db.executeQueryPojo(InvoicesDTO.class, sql);
+    }
 
+    
     
     /* ================================================================================
      * 

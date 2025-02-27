@@ -2,14 +2,10 @@ package controller;
 
 import model.Model;
 import view.US125View;
-import javax.swing.*;
-import javax.swing.table.TableModel;
-import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import giis.demo.util.SwingUtil;
-import giis.demo.util.Util;
-import homework.run.view.ViewAthletes;
-import homework.utils.CompetitionDTO;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -29,36 +25,18 @@ public class US125Controller {
     }
 
     public void initController() {
-        view.getButtonLowRight().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-            	/*
-                String recipientCountry = model.getInvoiceRecipientCountry(); // Assuming model provides this
-                if (isForeignCountry(recipientCountry)) {
-                    JOptionPane.showMessageDialog(null, "Sending invoices to foreign countries is restricted.", "Restriction", JOptionPane.WARNING_MESSAGE);
-                } 
-                else {
-                    openOutlook();
-                }
-                */
-            }
-        });
-        
-        view.getButtonLowLeft().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.disposeView();
-            }
-        });
+        view.getButtonLowRight().addActionListener(e -> openOutlook());
+        view.getButtonLowLeft().addActionListener(e -> view.disposeView());
+        view.getFilterButton().addActionListener(e -> updateInvoiceTable());
     }
     
     public void initView() {
         loadSponsors();
         loadActivities();
-        getInvoiceDetails();
         view.setVisible();
     }
     
+    // Pendiente de arreglo
     public void openOutlook() {
         try {
             Desktop.getDesktop().browse(new URI("https://outlook.live.com"));
@@ -67,38 +45,29 @@ public class US125Controller {
         }
     }
 
-    public boolean isForeignCountry(String countryCode) {
-        return countryCode != null && !countryCode.equalsIgnoreCase("ES");
-    }
-    
     public void loadSponsors() {
         List<Object[]> sponsorList = model.getSponsorListArray();
-		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
-		view.getSponsorComboBox().setModel(lmodel);
+        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
+        view.getSponsorComboBox().setModel(lmodel);
     }
     
     public void loadActivities() {
-    	List<Object[]> activityList = model.getActivityListArray();
-		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(activityList);
-		view.getActivityComboBox().setModel(lmodel);
+        List<Object[]> activityList = model.getActivityListArray();
+        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(activityList);
+        view.getActivityComboBox().setModel(lmodel);
     }
     
-    public void getInvoiceDetails() {
-        List<InvoicesDTO> date = model.getDateIssueInvoices();
-        List<InvoicesDTO> invoiceId = model.getIdInvoices();
+    public void updateInvoiceTable() {
+        String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
+        String selectedActivity = (String) view.getActivityComboBox().getSelectedItem();
         
-        // CONSTANTS NOT DONE
-        String recipientName = model.getRecipientName(); // Assuming this method exists in Model
-        String recipientFiscalNumber = model.getRecipientFiscalNumber(); // Assuming this method exists in Model
-        String recipientAddress = model.getRecipientAddress(); // Assuming this method exists in Model
+        List<InvoicesDTO> filteredInvoices = model.getInvoicesBySponsorAndActivity(selectedSponsor, selectedActivity);
         
-        String invoiceDetails = "Invoice Date: " + date + "\n" +
-                                "Invoice ID: " + invoiceId + "\n" +
-                                "Recipient Name: " + recipientName + "\n" +
-                                "Fiscal Number: " + recipientFiscalNumber + "\n" +
-                                "Address: " + recipientAddress;
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Amount"}, 0);
+        for (InvoicesDTO invoice : filteredInvoices) {
+            tableModel.addRow(new Object[]{invoice.getIdInvoices(), invoice.getDateIssueInvoices(), invoice.getAmount()});
+        }
         
-        // view.getInvoice().setText(invoiceDetails); // Assuming setText method exists
-        view.getInvoiceTable().setToolTipText(invoiceDetails);
+        view.getInvoiceTable().setModel(tableModel);
     }
 }
