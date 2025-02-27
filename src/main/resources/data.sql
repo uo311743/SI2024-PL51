@@ -34,11 +34,11 @@ INSERT INTO SponsorshipPayments (invoice_id, date_received, amount) VALUES
 (3, '2024-03-30', 7500.00),
 (4, '2024-04-30', 12000.00);
 
-INSERT INTO Activities (name, state, date_celebration, place_celebration, estimated_income, estimated_expenses) VALUES
-('Tech Expo', 'Planned', '2024-05-10', 'Tech Park', 20000.00, 15000.00),
-('Green Initiative', 'Ongoing', '2024-06-15', 'City Hall', 5000.00, 3000.00),
-('Education Summit', 'Completed', '2024-07-20', 'University Center', 10000.00, 7000.00),
-('Health Fair', 'Planned', '2024-08-25', 'Community Center', 8000.00, 5000.00);
+INSERT INTO Activities (name, edition, state, date_celebration, place_celebration, estimated_income, estimated_expenses) VALUES
+('Informatics Olympics', 4, 'Closed', '2024-03-10', 'Tech Park', 20000.00, 15000.00),
+('ImpulsoTIC week', 9, 'Done', '2024-11-15', 'City Hall', 5000.00, 3000.00),
+('Informatics Olympics', 4, 'Planned', '2025-03-20', 'Tech Park', 10000.00, 7000.00),
+('Hour of code', 'Registered', 4, '2025-12-03', 'Community Center', 8000.00, 5000.00);
 
 INSERT INTO Levels (name, fee) VALUES
 ('Bronze', 1000.00),
