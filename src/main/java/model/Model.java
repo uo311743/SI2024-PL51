@@ -1,9 +1,11 @@
 package model;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import util.ApplicationException;
 import util.Database;
@@ -66,6 +68,19 @@ public class Model {
     public List<InvoicesDTO> getIdInvoices() {
         String sql = "SELECT idInvoices FROM Invoices;";
         return db.executeQueryPojo(InvoicesDTO.class, sql);
+    }
+    
+    public List<ActivitiesDTO> getFilteredActivities(Date startDate, Date endDate, String status) {
+        String sql = "SELECT date, name, status, estimatedIncome, paidIncome, estimatedExpenses, paidExpenses " +
+                     "FROM Activities " +
+                     "WHERE date BETWEEN ? AND ? " +
+                     (status.equals("All") ? "" : "AND status = ?");
+
+        if (status.equals("All")) {
+            return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate);
+        } else {
+            return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, status);
+        }
     }
 
 
