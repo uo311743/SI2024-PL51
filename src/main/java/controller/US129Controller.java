@@ -2,8 +2,6 @@ package controller;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import DTOs.ActivitiesDTO;
@@ -59,33 +57,30 @@ public class US129Controller {
     }
     
     private void updateReportTable(List<ActivitiesDTO> filteredActivities) {
-        // Assuming you have a method to update the report table in the view
-        // You can use a TableModel to update the data in the JTable
-        ReportTableModel tableModel = new ReportTableModel(filteredActivities); // Assuming this model exists
-        view.getReportTable().setModel(tableModel);
+    	// Pendiente apuntes Ángel
+        // view.getReportTable().setModel(tmodel);
     }
 
     private void updateTotals(List<ActivitiesDTO> filteredActivities) {
-        double totalEstimatedIncome = 0;
-        double totalPaidIncome = 0;
-        double totalEstimatedExpenses = 0;
-        double totalPaidExpenses = 0;
+        int totalEstimatedIncome = 0;
+        int totalEstimatedExpenses = 0;
 
         for (ActivitiesDTO activity : filteredActivities) {
             try {
-                totalEstimatedIncome += Double.parseDouble(activity.getEstimatedIncomeActivities());
-                totalPaidIncome += Double.parseDouble(activity.getPaidIncome());
-                totalEstimatedExpenses += Double.parseDouble(activity.getEstimatedExpensesActivities());
-                totalPaidExpenses += Double.parseDouble(activity.getPaidExpenses());
+                totalEstimatedIncome += Integer.parseInt(activity.getEstimatedIncomeActivities());
+                totalEstimatedExpenses += Integer.parseInt(activity.getEstimatedExpensesActivities());
             } 
             catch (NumberFormatException e) {
                 System.err.println("Error: " + e.getMessage());
             }
         }
 
+        int profit = model.getAmountIncome() - model.getAmountExpense();
+        
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncome);
-        view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncome);
+        view.getTotalPaidIncomeLabel().setText("Paid Income: " + model.getAmountIncome());
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
-        view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
+        view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + model.getAmountExpense());
+        view.getProfitLabel().setText("Profit: " + profit);
     }
 }

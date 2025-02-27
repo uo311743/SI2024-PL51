@@ -13,6 +13,7 @@ public class US129View extends AbstractView {
     private JLabel totalPaidIncomeLabel;
     private JLabel totalEstimatedExpensesLabel;
     private JLabel totalPaidExpensesLabel;
+    private JLabel profitLabel;
     private JButton filterButton;
     
     public US129View() {
@@ -30,6 +31,7 @@ public class US129View extends AbstractView {
         this.totalPaidIncomeLabel = new JLabel("Paid Income: 0");
         this.totalEstimatedExpensesLabel = new JLabel("Estimated Expenses: 0");
         this.totalPaidExpensesLabel = new JLabel("Paid Expenses: 0");
+        this.profitLabel = new JLabel("Profit: 0");
         this.filterButton = new JButton("Filter");
 
         super.createButtonLowLeft("Cancel");
@@ -62,6 +64,7 @@ public class US129View extends AbstractView {
         totalsPanel.add(totalPaidIncomeLabel);
         totalsPanel.add(totalEstimatedExpensesLabel);
         totalsPanel.add(totalPaidExpensesLabel);
+        totalsPanel.add(profitLabel);
         getMainPanel().add(totalsPanel, "cell 0 2, align center");
     }
     
@@ -96,6 +99,10 @@ public class US129View extends AbstractView {
     
     public JLabel getTotalPaidExpensesLabel() {
         return totalPaidExpensesLabel;
+    }
+    
+    public JLabel getProfitLabel() {
+        return profitLabel;
     }
     
     public JButton getFilterButton() {

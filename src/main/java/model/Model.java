@@ -34,6 +34,9 @@ public class Model {
 			+"   else '' "
 			+" end as abierta"
 			+" from carreras  where fecha>=? order by id";
+	
+	public static final String SQL_SUM_INCOMES = "SELECT COALESCE(SUM(amount), 0) FROM IncomesExpenses WHERE amount >= 0;";
+	public static final String SQL_SUM_EXPENSES = "SELECT COALESCE(SUM(amount), 0) FROM IncomesExpenses WHERE amount < 0;";
     
 	/* ================================================================================
      * 
@@ -84,6 +87,16 @@ public class Model {
         	return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, status);
         }
     }
+    
+    public int getAmountIncome() {
+        List<Integer> income = db.executeQueryPojo(Integer.class, SQL_SUM_INCOMES);
+        return income.get(0);
+    }
+    
+    public int getAmountExpense() {
+    	List<Integer> expense = db.executeQueryPojo(Integer.class, SQL_SUM_EXPENSES);
+		return expense.get(0);
+	}
 
 
     
