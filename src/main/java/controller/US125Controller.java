@@ -1,6 +1,6 @@
 package controller;
 
-import model.Model;
+import model.US125Model;
 import view.US125View;
 import DTOs.InvoicesDTO;
 import giis.demo.util.SwingUtil;
@@ -14,10 +14,10 @@ import java.util.List;
 
 public class US125Controller {
     
-    protected Model model;
+    protected US125Model model;
     protected US125View view; 
     
-    public US125Controller(Model m, US125View v) { 
+    public US125Controller(US125Model m, US125View v) { 
         this.model = m;
         this.view = v;
         this.initView();
