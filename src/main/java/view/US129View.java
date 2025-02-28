@@ -6,7 +6,7 @@ import net.miginfocom.swing.MigLayout;
 public class US129View extends AbstractView {
     
     private JTable reportTable;
-    private JComboBox<String> statusComboBox;
+    private JComboBox<Object> statusComboBox;
     private JTextField startDateField;
     private JTextField endDateField;
     private JLabel totalEstimatedIncomeLabel;
@@ -73,7 +73,7 @@ public class US129View extends AbstractView {
         return reportTable;
     }
     
-    public JComboBox<String> getStatusComboBox() {
+    public JComboBox<Object> getStatusComboBox() {
         return statusComboBox;
     }
     

@@ -19,10 +19,13 @@ public class US129Model {
      * 
      */
 	
+	public List<Object[]> getStatusListArray() {
+		String sql = "SELECT Name FROM SponsorOrganizations;";
+		return db.executeQueryArray(sql);
+	}
+	
 	public List<ActivitiesDTO> getFilteredActivities(Date startDate, Date endDate, String status) {
-        String sql = "SELECT date, name, status, estimatedIncome, paidIncome, estimatedExpenses, paidExpenses " +
-                     "FROM Activities " +
-                     "WHERE date BETWEEN ? AND ? ";
+        String sql = "SELECT date, name, status, estimatedIncome, paidIncome, estimatedExpenses, paidExpenses FROM Activities WHERE date BETWEEN ? AND ? ";
         
         if (status == null) {
         	sql += ";";

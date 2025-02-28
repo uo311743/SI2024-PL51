@@ -4,7 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.List;
+
+import javax.swing.ComboBoxModel;
+
 import DTOs.ActivitiesDTO;
+import giis.demo.util.SwingUtil;
 import giis.demo.util.Util;
 import model.Model;
 import view.US129View;
@@ -40,7 +44,14 @@ public class US129Controller {
     }
     
     public void initView() {
+    	loadStatus();
         view.setVisible();
+    }
+    
+    public void loadStatus() {
+        List<Object[]> sponsorList = model.getSponsorListArray();
+        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
+        view.getStatusComboBox().setModel(lmodel);
     }
     
     private void applyFilters() {
