@@ -1,13 +1,8 @@
 package model;
 
 import java.util.Date;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.List;
 import DTOs.ActivitiesDTO;
-import DTOs.InvoicesDTO;
-import util.ApplicationException;
 import util.Database;
 
 public class US129Model {
