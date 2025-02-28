@@ -10,7 +10,7 @@ public class ActivitiesDTO {
 	private String estimatedExpensesActivities;
 
 	public String getIdActivities() { return idActivities; }
-    public String getnameActivities() { return nameActivities; }
+    public String getNameActivities() { return nameActivities; }
     public String getstateActivities() { return stateActivities; }
     public String getDateActivities() { return dateActivities; }  
     public String getPlaceActivities() { return placeActivities; }

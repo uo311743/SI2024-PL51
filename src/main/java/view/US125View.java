@@ -6,8 +6,8 @@ import net.miginfocom.swing.MigLayout;
 public class US125View extends AbstractView {
     
     private JTable invoiceTable;
-    private JComboBox<String> sponsorComboBox;
-    private JComboBox<String> activityComboBox;
+    private JComboBox<Object> sponsorComboBox;
+    private JComboBox<Object> activityComboBox;
     private JButton filterButton;
     
     public US125View() {
@@ -51,11 +51,11 @@ public class US125View extends AbstractView {
         return invoiceTable;
     }
     
-    public JComboBox<String> getSponsorComboBox() {
+    public JComboBox<Object> getSponsorComboBox() {
         return sponsorComboBox;
     }
     
-    public JComboBox<String> getActivityComboBox() {
+    public JComboBox<Object> getActivityComboBox() {
         return activityComboBox;
     }
     
