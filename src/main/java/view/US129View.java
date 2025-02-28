@@ -24,7 +24,7 @@ public class US129View extends AbstractView {
     @Override
     protected void initialize() {
         this.reportTable = new JTable();
-        this.statusComboBox = new JComboBox<>(new String[]{"All", "Planned", "Ongoing", "Completed", "Cancelled"});
+        this.statusComboBox = new JComboBox<>();
         this.startDateField = new JTextField(10); 
         this.endDateField = new JTextField(10);  
         this.totalEstimatedIncomeLabel = new JLabel("Estimated Income: 0");
