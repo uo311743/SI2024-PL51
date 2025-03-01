@@ -10,11 +10,11 @@ DROP TABLE ActivityLevel;
 DROP TABLE Levels;
 
 CREATE TABLE SponsorOrganizations (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    /*id INTEGER PRIMARY KEY AUTOINCREMENT,*/
     name TEXT NOT NULL,
     type TEXT CHECK(type IN ('Private corp.', 'Public administration')) NOT NULL,
     invoice_address TEXT,
-    nif_vat TEXT UNIQUE NOT NULL
+    nif_vat TEXT PRIMARY KEY/*UNIQUE NOT NULL*/
 );
 
 CREATE TABLE GBMembers (
@@ -33,12 +33,13 @@ CREATE TABLE SponsorContact (
 );
 
 CREATE TABLE SponsorshipAgreements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sponsor_org_id INTEGER NOT NULL,
+    sponsor_org_id TEXT NOT NULL,
+    activity TEXT NOT NULL,
     amount REAL NOT NULL,
     date_agreement TEXT NOT NULL,
-    status TEXT CHECK(status IN ('estimated', 'paid', 'cancelled')) NOT NULL,
+    PRIMARY KEY (sponsor_org_id, activity),
     FOREIGN KEY (sponsor_org_id) REFERENCES SponsorOrganizations(id) ON DELETE CASCADE
+    FOREIGN KEY (activity) REFERENCES Activities(name) ON DELETE CASCADE
 );
 
 CREATE TABLE Invoices (
@@ -58,14 +59,14 @@ CREATE TABLE SponsorshipPayments (
 );
 
 CREATE TABLE Activities (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     edition INTEGER NOT NULL,
-    state TEXT,
+    state TEXT CHECK (state IN ('planning', 'opened', 'closed')),
     date_celebration TEXT,
     place_celebration TEXT,
     estimated_income REAL,
-    estimated_expenses REAL
+    estimated_expenses REAL,
+    PRIMARY KEY (name, edition)
 );
 
 CREATE TABLE ActivityLevel (
