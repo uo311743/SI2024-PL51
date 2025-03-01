@@ -37,7 +37,7 @@ CREATE TABLE Activities (
     idActivity INTEGER PRIMARY KEY AUTOINCREMENT,
     nameActivity TEXT UNIQUE NOT NULL,
     editionActivity TEXT NOT NULL,
-    statusActivity TEXT CHECK(statusActivity IN ('planned', 'opened', 'closed')) NOT NULL,
+    statusActivity TEXT CHECK(statusActivity IN ('registered', 'planned', 'done', 'cancelled', 'done')) NOT NULL,
     dateStartActivity TEXT,
     dateEndActivity TEXT,
     placeActivity TEXT
@@ -75,7 +75,7 @@ CREATE TABLE SponsorshipAgreements (
     idGBMembers INTEGER NOT NULL,
     amountSponsorshipAgreement REAL NOT NULL,
     dateSponsorshipAgreement TEXT NOT NULL,
-    statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('closed', 'modified', 'cancelled')),
+    statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(idSponsorContact),
     FOREIGN KEY (idGBMembers) REFERENCES GBMembers(idGBMembers)
 );
@@ -88,7 +88,7 @@ CREATE TABLE Invoices (
     dateExpirationInvoice TEXT,
     totalAmountInvoice REAL NOT NULL,
     taxRateInvoice REAL NOT NULL, -- To calculate the net and tax amounts from total
-    statusInvoice TEXT NOT NULL,
+    statusInvoice TEXT NOT NULL CHECK (statusInvoice IN ('Draft', 'Issued', 'Paid', 'Rectified', 'Cancelled'))),
     FOREIGN KEY (idSponsorshipAgreement) REFERENCES SponsorshipAgreements(idSponsorshipAgreement)
 );
 

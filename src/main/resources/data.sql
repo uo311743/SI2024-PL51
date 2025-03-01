@@ -36,16 +36,14 @@ VALUES
 -- Insert sample Levels
 INSERT INTO Levels (nameLevel, feeLevel)
 VALUES 
-  ('Beginner', 50.00),
-  ('Intermediate', 75.00),
-  ('Advanced', 100.00);
+  ('Beginner', 50.00);
 
 -- Insert sample ActivityLevel relationships
 INSERT INTO ActivityLevel (idActivity, idLevel)
 VALUES 
   (1, 1),  -- Olimpics 2023 with Beginner level
-  (2, 2),  -- ImpulsoTIC Week 2023 with Intermediate level
-  (3, 3);  -- Hour of Code 2023 with Advanced level
+  (2, 1),  -- ImpulsoTIC Week 2023 with Beginner level
+  (3, 1);  -- Hour of Code 2023 with Beginner level
 
 -- Insert sample Sponsorship Agreements
 INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMembers, amountSponsorshipAgreement, dateSponsorshipAgreement, statusSponsorshipAgreement)
