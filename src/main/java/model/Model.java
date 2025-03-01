@@ -3,10 +3,13 @@ package model;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.sql.*;
 
 import util.ApplicationException;
 import util.Database;
+
+import DTOs.*;
 
 public class Model {
 	
@@ -29,64 +32,94 @@ public class Model {
     }
     
 	// Registration of Payments
-	public boolean validateNIF(String nif, String activity) {
-        String query = "SELECT * FROM Companies WHERE NIF = ? AND Activity = ?";
+	public Integer getSponsorshipAgreementId(String nifOrVat, String activityName) throws SQLException {
+	    String sql = "SELECT sa.idSponsorshipAgreement " +
+	                 "FROM SponsorshipAgreements sa " +
+	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.idSponsorContact " +
+	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.idSponsorOrganization " +
+	                 "JOIN Activities a ON a.nameActivity = ? " +
+	                 "WHERE (so.nifSponsorOrganization = ? OR so.vatSponsorOrganization = ?)";
+
+	    try {
+	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
+	        List<SponsorshipAgreementDTO> results = db.executeQueryPojo(SponsorshipAgreementDTO.class, sql, activityName, nifOrVat, nifOrVat);
+
+	        if (results != null && !results.isEmpty()) {
+	            return results.get(0).getIdSponsorshipAgreement();
+	        } else {
+	            System.err.println("No SponsorshipAgreement found for sponsor with NIF/VAT: " + nifOrVat + " and activity: " + activityName);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
+	    }
+
+	    return null;
+	}
+	
+	public Integer getInvoiceId(Integer idSponsorshipAgreement) {
+		String sql = "SELECT i.idInvoice FROM Invoices WHERE i.idSponsorshipAgreement = ?";
+		
+		try {
+	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
+	        List<InvoicesDTO> results = db.executeQueryPojo(InvoicesDTO.class, sql, idSponsorshipAgreement);
+
+	        if (results != null && !results.isEmpty()) {
+	            return results.get(0).getIdInvoice();
+	        } else {
+	            System.err.println("No Invoice found for Agreement: " + idSponsorshipAgreement);
+	        }
+	    } catch (Exception e) {
+	        System.err.println("Unexpected error while retrieving Invoice ID: " + e.getMessage());
+	    }
+
+	    return null;
+	}
+	
+	/**
+	 * Semantic Validation of Date a Payment was received according to business logic
+	 * RULE: Never before Invoice generation
+	 * @param date the payment was made
+	 * @param invoiceId invoice the payment belongs to
+	 * @return whether the payment was previous to invoice
+	 */
+	public boolean validateDate(String date, Integer invoiceId) {
+        String query = "SELECT sa.dateSponsorshipAgreement FROM SponsorshipAgreements sa JOIN Invoices i ON i.idSponsorshipAgreement == sa.idSponsorshipAgreement WHERE i.idInvoice = ?";;
+        
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, nif);
-            pstmt.setString(2, activity);
-            ResultSet rs = pstmt.executeQuery();
-            return rs.next();
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-	public boolean validateDate(String date, String nif, String activity) {
-        String query = "SELECT AgreementDate FROM Agreements WHERE NIF = ? AND Activity = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, nif);
-            pstmt.setString(2, activity);
+            pstmt.setInt(1, invoiceId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Date agreementDate = rs.getDate("AgreementDate");
-                Date paymentDate = Date.valueOf(date); // Assuming date is in YYYY-MM-DD format
+                Date agreementDate = rs.getDate("dateSponsorshipAgreement");
+                Date paymentDate = Date.valueOf(date); 
                 return !paymentDate.before(agreementDate);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        
         return false;
     }
     
-	public String getInvoiceId(String nif, String activity) {
-        String query = "SELECT InvoiceID FROM Invoices WHERE NIF = ? AND Activity = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, nif);
-            pstmt.setString(2, activity);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rs.getString("InvoiceID");
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
     // Register Payment
-    public void registerPayment(String activity, double amount, String nif, String isbn, String date, String invoiceId) {
-        String query = "INSERT INTO Payments (Activity, Amount, NIF, ISBN, Date, InvoiceID) VALUES (?, ?, ?, ?, ?, ?)";
+    public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
+        String query = "INSERT INTO dateSponsorshipAgreement (idInvoice, dateSponsorshipPayment, amountSponsorshipPayments) VALUES (?, ?, ?)";
+        
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setString(1, activity);
-            pstmt.setDouble(2, amount);
-            pstmt.setString(3, nif);
-            pstmt.setString(4, isbn);
-            pstmt.setString(5, date);
-            pstmt.setString(6, invoiceId);
+            pstmt.setInt(1, idInvoice);
+            pstmt.setString(2, dateSponsorshipPayment);
+            pstmt.setDouble(3, amountSponsorshipPayments);
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+    
+    public String[] getListActivities() {
+    	String query = "SELECT a.name FROM Activities";
+    	
+    	List<String> activities = db.executeQueryPojo(String.class, query);
+    	
+    	return activities.toArray(new String[0]);
     }
 
     

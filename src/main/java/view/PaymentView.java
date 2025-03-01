@@ -9,8 +9,6 @@ public class PaymentView extends AbstractView {
     private JTextField amountField;
     private JTextField nifField;
     private JTextField isbnField;
-    //private JComboBox<String> transferTypeComboBox;
-    //private JTextField transferDetailsField;
     private JTextField dateField;
     private JTextField invoiceIdField;
     
@@ -23,12 +21,10 @@ public class PaymentView extends AbstractView {
     
     protected void initializeAttrib()
     {
-    	activityComboBox = new JComboBox<>(new String[]{"Olimpics", "ImpulsoTIC Week", "Hour of Code"});
+    	activityComboBox = new JComboBox<>(new String[]{""});
     	amountField = new JTextField();
     	nifField = new JTextField();
     	isbnField = new JTextField();
-    	//transferTypeComboBox = new JComboBox<>(new String[]{"SWIFT", "BIC", "Bank Office Address"});
-    	//transferDetailsField = new JTextField();
     	dateField = new JTextField();
     	invoiceIdField = new JTextField();
     }

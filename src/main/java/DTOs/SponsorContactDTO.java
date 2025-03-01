@@ -1,18 +1,76 @@
 package DTOs;
 
 public class SponsorContactDTO {
-	private String idSponsor;
-	private String nameSponsor;
-	private String emailSponsor;
-	private String phoneSponsor;
+    private Integer idSponsorContact;
+    private Integer idSponsorOrganization;
+    private String nameSponsorContact;
+    private String emailSponsorContact;
+    private String phoneSponsorContact;
 
-	public String getIdSponsor() { return idSponsor; }
-    public String getNameSponsor() { return nameSponsor; }
-    public String getEmailSponsor() { return emailSponsor; }
-    public String getPhoneSponsor() { return phoneSponsor; }   
+    // Default constructor
+    public SponsorContactDTO() {
+    }
 
-    public void setIdSponsor(String idSponsor) { this.idSponsor = idSponsor; }
-    public void setNameSponsor(String nameSponsor) { this.nameSponsor = nameSponsor; }
-    public void setEmailSponsor(String emailSponsor) { this.emailSponsor = emailSponsor; }
-    public void setPhoneSponsor(String phoneSponsor) { this.phoneSponsor = phoneSponsor; }
+    // Parameterized constructor
+    public SponsorContactDTO(Integer idSponsorContact, Integer idSponsorOrganization, 
+                                 String nameSponsorContact, String emailSponsorContact, 
+                                 String phoneSponsorContact) {
+        this.idSponsorContact = idSponsorContact;
+        this.idSponsorOrganization = idSponsorOrganization;
+        this.nameSponsorContact = nameSponsorContact;
+        this.emailSponsorContact = emailSponsorContact;
+        this.phoneSponsorContact = phoneSponsorContact;
+    }
+
+    // Getters and Setters
+    public Integer getIdSponsorContact() {
+        return idSponsorContact;
+    }
+
+    public void setIdSponsorContact(Integer idSponsorContact) {
+        this.idSponsorContact = idSponsorContact;
+    }
+
+    public Integer getIdSponsorOrganization() {
+        return idSponsorOrganization;
+    }
+
+    public void setIdSponsorOrganization(Integer idSponsorOrganization) {
+        this.idSponsorOrganization = idSponsorOrganization;
+    }
+
+    public String getNameSponsorContact() {
+        return nameSponsorContact;
+    }
+
+    public void setNameSponsorContact(String nameSponsorContact) {
+        this.nameSponsorContact = nameSponsorContact;
+    }
+
+    public String getEmailSponsorContact() {
+        return emailSponsorContact;
+    }
+
+    public void setEmailSponsorContact(String emailSponsorContact) {
+        this.emailSponsorContact = emailSponsorContact;
+    }
+
+    public String getPhoneSponsorContact() {
+        return phoneSponsorContact;
+    }
+
+    public void setPhoneSponsorContact(String phoneSponsorContact) {
+        this.phoneSponsorContact = phoneSponsorContact;
+    }
+
+    @Override
+    public String toString() {
+        return "SponsorshipContactDTO{" +
+                "idSponsorContact=" + idSponsorContact +
+                ", idSponsorOrganization=" + idSponsorOrganization +
+                ", nameSponsorContact='" + nameSponsorContact + '\'' +
+                ", emailSponsorContact='" + emailSponsorContact + '\'' +
+                ", phoneSponsorContact='" + phoneSponsorContact + '\'' +
+                '}';
+    }
 }

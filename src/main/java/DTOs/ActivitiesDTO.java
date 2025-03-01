@@ -1,30 +1,98 @@
 package DTOs;
 
 public class ActivitiesDTO {
-	private String idActivities;
-	private String nameActivities;
-	private String editionActivities;
-	private String stateActivities;
-	private String dateActivities;
-	private String placeActivities;
-	private String estimatedIncomeActivities;
-	private String estimatedExpensesActivities;
+    private Integer idActivity;
+    private String nameActivity;
+    private String editionActivity;
+    private String statusActivity;
+    private String dateStartActivity;
+    private String dateEndActivity;
+    private String placeActivity;
 
-	public String getIdActivities() { return idActivities; }
-    public String getNameActivities() { return nameActivities; }
-    public String getEditionActivities() { return editionActivities; }
-    public String getStateActivities() { return stateActivities; }
-    public String getDateActivities() { return dateActivities; }  
-    public String getPlaceActivities() { return placeActivities; }
-    public String getEstimatedIncomeActivities() { return estimatedIncomeActivities; }
-    public String getEstimatedExpensesActivities() { return estimatedExpensesActivities; } 
+    // Default constructor
+    public ActivitiesDTO() {
+    }
 
-    public void setIdActivities(String idActivities) { this.idActivities = idActivities; }
-    public void setEditionActivities(String editionActivities) { this.editionActivities = editionActivities; }
-    public void setNameActivities(String nameActivities) { this.nameActivities = nameActivities; }
-    public void setStateActivities(String stateActivities) { this.stateActivities = stateActivities; }
-    public void setDateActivities(String dateActivities) { this.dateActivities = dateActivities; }
-    public void setPlaceActivities(String placeActivities) { this.placeActivities = placeActivities; }
-    public void setEstimatedIncomeActivities(String estimatedIncomeActivities) { this.estimatedIncomeActivities = estimatedIncomeActivities; }
-    public void setEstimatedExpensesActivities(String estimatedExpensesActivities) { this.estimatedExpensesActivities = estimatedExpensesActivities; }
+    // Parameterized constructor
+    public ActivitiesDTO(Integer idActivity, String nameActivity, String editionActivity, 
+                         String statusActivity, String dateStartActivity, String dateEndActivity, 
+                         String placeActivity) {
+        this.idActivity = idActivity;
+        this.nameActivity = nameActivity;
+        this.editionActivity = editionActivity;
+        this.statusActivity = statusActivity;
+        this.dateStartActivity = dateStartActivity;
+        this.dateEndActivity = dateEndActivity;
+        this.placeActivity = placeActivity;
+    }
+
+    // Getters and Setters
+    public Integer getIdActivity() {
+        return idActivity;
+    }
+
+    public void setIdActivity(Integer idActivity) {
+        this.idActivity = idActivity;
+    }
+
+    public String getNameActivity() {
+        return nameActivity;
+    }
+
+    public void setNameActivity(String nameActivity) {
+        this.nameActivity = nameActivity;
+    }
+
+    public String getEditionActivity() {
+        return editionActivity;
+    }
+
+    public void setEditionActivity(String editionActivity) {
+        this.editionActivity = editionActivity;
+    }
+
+    public String getStatusActivity() {
+        return statusActivity;
+    }
+
+    public void setStatusActivity(String statusActivity) {
+        this.statusActivity = statusActivity;
+    }
+
+    public String getDateStartActivity() {
+        return dateStartActivity;
+    }
+
+    public void setDateStartActivity(String dateStartActivity) {
+        this.dateStartActivity = dateStartActivity;
+    }
+
+    public String getDateEndActivity() {
+        return dateEndActivity;
+    }
+
+    public void setDateEndActivity(String dateEndActivity) {
+        this.dateEndActivity = dateEndActivity;
+    }
+
+    public String getPlaceActivity() {
+        return placeActivity;
+    }
+
+    public void setPlaceActivity(String placeActivity) {
+        this.placeActivity = placeActivity;
+    }
+
+    @Override
+    public String toString() {
+        return "ActivitiesDTO{" +
+                "idActivity=" + idActivity +
+                ", nameActivity='" + nameActivity + '\'' +
+                ", editionActivity='" + editionActivity + '\'' +
+                ", statusActivity='" + statusActivity + '\'' +
+                ", dateStartActivity='" + dateStartActivity + '\'' +
+                ", dateEndActivity='" + dateEndActivity + '\'' +
+                ", placeActivity='" + placeActivity + '\'' +
+                '}';
+    }
 }

@@ -10,13 +10,6 @@ DROP TABLE ActivityLevel;
 DROP TABLE Levels;
 
 CREATE TABLE SponsorOrganizations (
-<<<<<<< HEAD
-    /*id INTEGER PRIMARY KEY AUTOINCREMENT,*/
-    name TEXT NOT NULL,
-    type TEXT CHECK(type IN ('Private corp.', 'Public administration')) NOT NULL,
-    invoice_address TEXT,
-    nif_vat TEXT PRIMARY KEY/*UNIQUE NOT NULL*/
-=======
     idSponsorOrganization INTEGER PRIMARY KEY AUTOINCREMENT,
     nameSponsorOrganization TEXT NOT NULL,
     typeSponsorOrganization TEXT NOT NULL,
@@ -32,67 +25,15 @@ CREATE TABLE SponsorContacts (
     emailSponsorContact TEXT UNIQUE NOT NULL,
     phoneSponsorContact TEXT,
     FOREIGN KEY (idSponsorOrganization) REFERENCES SponsorOrganizations(idSponsorOrganization)
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 );
 
 CREATE TABLE GBMembers (
-<<<<<<< HEAD
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     role TEXT NOT NULL
 );
 
-CREATE TABLE SponsorContact (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sponsor_org_id INTEGER NOT NULL,
-    name TEXT NOT NULL,
-    email TEXT UNIQUE NOT NULL,
-    phone TEXT,
-    FOREIGN KEY (sponsor_org_id) REFERENCES SponsorOrganizations(id) ON DELETE CASCADE
-);
-
-CREATE TABLE SponsorshipAgreements (
-    sponsor_org_id TEXT NOT NULL,
-    activity TEXT NOT NULL,
-    amount REAL NOT NULL,
-    date_agreement TEXT NOT NULL,
-    PRIMARY KEY (sponsor_org_id, activity),
-    FOREIGN KEY (sponsor_org_id) REFERENCES SponsorOrganizations(id) ON DELETE CASCADE
-    FOREIGN KEY (activity) REFERENCES Activities(name) ON DELETE CASCADE
-);
-
-CREATE TABLE Invoices (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    sponsorship_agreement_id INTEGER NOT NULL,
-    date_issue TEXT NOT NULL,
-    date_send TEXT,
-    FOREIGN KEY (sponsorship_agreement_id) REFERENCES SponsorshipAgreements(id) ON DELETE CASCADE
-);
-
-CREATE TABLE SponsorshipPayments (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    invoice_id INTEGER NOT NULL,
-    date_received TEXT NOT NULL,
-    amount REAL NOT NULL,
-    FOREIGN KEY (invoice_id) REFERENCES Invoices(id) ON DELETE CASCADE
-=======
-    idGBMember INTEGER PRIMARY KEY AUTOINCREMENT,
-    nameGBMember TEXT NOT NULL,
-    roleGBMember TEXT NOT NULL
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
-);
-
 CREATE TABLE Activities (
-<<<<<<< HEAD
-    name TEXT NOT NULL,
-    edition INTEGER NOT NULL,
-    state TEXT CHECK (state IN ('planning', 'opened', 'closed')),
-    date_celebration TEXT,
-    place_celebration TEXT,
-    estimated_income REAL,
-    estimated_expenses REAL,
-    PRIMARY KEY (name, edition)
-=======
     idActivity INTEGER PRIMARY KEY AUTOINCREMENT,
     nameActivity TEXT UNIQUE NOT NULL,
     editionActivity TEXT NOT NULL,
@@ -100,7 +41,6 @@ CREATE TABLE Activities (
     dateStartActivity TEXT,
     dateEndActivity TEXT,
     placeActivity TEXT
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 );
 
 CREATE TABLE Movements (
