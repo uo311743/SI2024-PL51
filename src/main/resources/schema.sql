@@ -13,7 +13,7 @@ CREATE TABLE SponsorOrganizations (
     idSponsorOrganization INTEGER PRIMARY KEY AUTOINCREMENT,
     nameSponsorOrganization TEXT NOT NULL,
     typeSponsorOrganization TEXT NOT NULL,
-    AddressSponsorOrganization TEXT, -- Can be skipped at first as it is only needed for the invice
+    AddressSponsorOrganization TEXT, -- Can be skipped at first as it is only needed for the invoice
     nifSponsorOrganization TEXT UNIQUE,
     vatSponsorOrganization TEXT UNIQUE
 );
@@ -35,9 +35,9 @@ CREATE TABLE GBMembers (
 
 CREATE TABLE Activities (
     idActivity INTEGER PRIMARY KEY AUTOINCREMENT,
-    nameActivity TEXT NOT NULL,
+    nameActivity TEXT UNIQUE NOT NULL,
     editionActivity TEXT NOT NULL,
-    statusActivity TEXT,
+    statusActivity TEXT CHECK(statusActivity IN ('planned', 'opened', 'closed')) NOT NULL,
     dateStartActivity TEXT,
     dateEndActivity TEXT,
     placeActivity TEXT
@@ -50,6 +50,7 @@ CREATE TABLE Movements (
     conceptMovement TEXT NOT NULL,
     amountMovement REAL NOT NULL,
     dateMovement TEXT,
+    ReceiptNumber TEXT,
     statusMovement TEXT CHECK(statusMovement IN ('estimated', 'cancelled', 'paid')) NOT NULL,
     FOREIGN KEY (idActivity) REFERENCES Activities(idActivity)
 );
@@ -74,7 +75,7 @@ CREATE TABLE SponsorshipAgreements (
     idGBMembers INTEGER NOT NULL,
     amountSponsorshipAgreement REAL NOT NULL,
     dateSponsorshipAgreement TEXT NOT NULL,
-    statusSponsorshipAgreement TEXT NOT NULL,
+    statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(idSponsorContact),
     FOREIGN KEY (idGBMembers) REFERENCES GBMembers(idGBMembers)
 );
