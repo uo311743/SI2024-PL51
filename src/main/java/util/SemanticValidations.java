@@ -6,7 +6,10 @@ import java.util.Date;
  * Contains validations pertaining to the business logic of the data. Used in the model.
  */
 public class SemanticValidations {
-
+	private SemanticValidations() {
+		throw new IllegalStateException("Utility class");
+	}
+	
     /**
      * Validates if a number is within a specified range.
      *

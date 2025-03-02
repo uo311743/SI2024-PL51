@@ -8,7 +8,10 @@ import java.time.format.DateTimeParseException;
  * Contains validations pertaining to the nature of the data. Used in controller.
  */
 public class SyntacticValidations {
-
+	private SyntacticValidations() {
+		throw new IllegalStateException("Utility class");
+	}
+	
     /**
      * Validates if the given object is an integer.
      *
