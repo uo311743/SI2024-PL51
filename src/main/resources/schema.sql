@@ -12,13 +12,13 @@ DROP TABLE IF EXISTS SponsorshipPayments;
 CREATE TABLE SponsorOrganizations (
     idSponsorOrganization INTEGER PRIMARY KEY AUTOINCREMENT,
     nameSponsorOrganization TEXT NOT NULL,
-    typeSponsorOrganization TEXT NOT NULL,
+    typeSponsorOrganization TEXT NOT NULL, -- Add CHECK in ('public', 'private') ?
     addressSponsorOrganization TEXT, -- Can be skipped at first as it is only needed for the invoice
-    nifSponsorOrganization TEXT UNIQUE,
+    nifSponsorOrganization TEXT UNIQUE, -- Either one of the last two must be entered
     vatSponsorOrganization TEXT UNIQUE
 );
 
-CREATE TABLE SponsorContacts (
+CREATE TABLE SponsorContacts ( -- Is it not required a NIF to identify the contact person inside the Organization ?
     idSponsorContact INTEGER PRIMARY KEY AUTOINCREMENT,
     idSponsorOrganization INTEGER NOT NULL,
     nameSponsorContact TEXT NOT NULL,
@@ -28,15 +28,14 @@ CREATE TABLE SponsorContacts (
 );
 
 CREATE TABLE GBMembers (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    role TEXT NOT NULL
+    idGBMember INTEGER PRIMARY KEY AUTOINCREMENT,
+    nameGBMember TEXT NOT NULL,
+    roleGBMember TEXT NOT NULL
 );
 
 CREATE TABLE Activities (
     idActivity INTEGER PRIMARY KEY AUTOINCREMENT,
     nameActivity TEXT UNIQUE NOT NULL,
-    editionActivity TEXT NOT NULL,
     statusActivity TEXT CHECK(statusActivity IN ('registered', 'planned', 'cancelled', 'done')) NOT NULL,
     dateStartActivity TEXT,
     dateEndActivity TEXT,
@@ -50,7 +49,7 @@ CREATE TABLE Movements (
     conceptMovement TEXT NOT NULL,
     amountMovement REAL NOT NULL,
     dateMovement TEXT,
-    ReceiptNumber TEXT,
+    receiptNumber TEXT,
     statusMovement TEXT CHECK(statusMovement IN ('estimated', 'cancelled', 'paid')) NOT NULL,
     FOREIGN KEY (idActivity) REFERENCES Activities(idActivity)
 );
@@ -77,7 +76,7 @@ CREATE TABLE SponsorshipAgreements (
     dateSponsorshipAgreement TEXT NOT NULL,
     statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(idSponsorContact),
-    FOREIGN KEY (idGBMember) REFERENCES GBMembers(id)
+    FOREIGN KEY (idGBMember) REFERENCES GBMembers(idGBMember)
 );
 
 CREATE TABLE Invoices (
@@ -88,7 +87,7 @@ CREATE TABLE Invoices (
     dateExpirationInvoice TEXT,
     totalAmountInvoice REAL NOT NULL,
     taxRateInvoice REAL NOT NULL, -- To calculate the net and tax amounts from total
-    statusInvoice TEXT NOT NULL CHECK (statusInvoice IN ('Draft', 'Issued', 'Paid', 'Rectified', 'Cancelled')),
+    statusInvoice TEXT NOT NULL CHECK (statusInvoice IN ('draft', 'issued', 'paid', 'rectified', 'cancelled')),
     FOREIGN KEY (idSponsorshipAgreement) REFERENCES SponsorshipAgreements(idSponsorshipAgreement)
 );
 
