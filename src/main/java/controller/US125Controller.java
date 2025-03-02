@@ -6,6 +6,8 @@ import DTOs.InvoicesDTO;
 import giis.demo.util.SwingUtil;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class US125Controller {
@@ -21,8 +23,14 @@ public class US125Controller {
     }
 
     public void initController() {
-        view.getButtonLowLeft().addActionListener(e -> view.disposeView());
         view.getFilterButton().addActionListener(e -> updateInvoiceTable());
+        
+        this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseReleased(MouseEvent e) {
+        		SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
+        	}
+        });
     }
     
     public void initView() {
