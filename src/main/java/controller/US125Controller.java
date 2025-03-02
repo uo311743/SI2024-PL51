@@ -6,8 +6,6 @@ import DTOs.InvoicesDTO;
 import giis.demo.util.SwingUtil;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.Desktop;
-import java.net.URI;
 import java.util.List;
 
 public class US125Controller {
@@ -23,7 +21,6 @@ public class US125Controller {
     }
 
     public void initController() {
-        view.getButtonLowRight().addActionListener(e -> openOutlook());
         view.getButtonLowLeft().addActionListener(e -> view.disposeView());
         view.getFilterButton().addActionListener(e -> updateInvoiceTable());
     }
@@ -34,15 +31,6 @@ public class US125Controller {
         view.setVisible();
     }
     
-    // Pendiente de arreglo
-    public void openOutlook() {
-        try {
-            Desktop.getDesktop().browse(new URI("https://outlook.live.com"));
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Failed to open Outlook: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-    }
-
     public void loadSponsors() {
         List<Object[]> sponsorList = model.getSponsorListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
