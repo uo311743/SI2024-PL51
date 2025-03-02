@@ -46,7 +46,7 @@ VALUES
   (3, 1);  -- Hour of Code 2023 with Beginner level
 
 -- Insert sample Sponsorship Agreements
-INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMembers, amountSponsorshipAgreement, dateSponsorshipAgreement, statusSponsorshipAgreement)
+INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, amountSponsorshipAgreement, dateSponsorshipAgreement, statusSponsorshipAgreement)
 VALUES 
   (1, 1, 10000.00, '2023-05-20', 'closed'),
   (2, 2, 8000.00, '2023-08-15', 'modified'),
@@ -60,7 +60,7 @@ VALUES
   (3, '2023-10-15', '2023-10-16', '2023-11-15', 12000.00, 21.0, 'issued');
 
 -- Insert sample Sponsorship Payments
-INSERT INTO SponsorshipPayments (idInvoice, dateSponsorshipPayment, amountSponsorshipPayments)
+INSERT INTO SponsorshipPayments (idInvoice, dateSponsorshipPayment, amountSponsorshipPayment)
 VALUES 
   (1, '2023-06-01', 10000.00),
   (2, '2023-09-01', 4000.00),

@@ -11,7 +11,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import controller.RegisterSponshorshipController;
+import model.RegisterSponshorshipModel;
 import view.ExampleView;
+import view.RegisterSponshorshipView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -87,9 +90,12 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView();
+
+	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
+	    	new RegisterSponshorshipController(
+	    			new RegisterSponshorshipModel(),
+	    			new RegisterSponshorshipView()
+	    	);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

@@ -1,13 +1,13 @@
-DROP TABLE SponsorOrganizations;
-DROP TABLE GBMembers;
-DROP TABLE IncomesExpenses;
-DROP TABLE SponsorContact;
-DROP TABLE SponsorshipAgreements;
-DROP TABLE Activities;
-DROP TABLE SponsorshipPayments;
-DROP TABLE Invoices;
-DROP TABLE ActivityLevel;
-DROP TABLE Levels;
+DROP TABLE IF EXISTS SponsorOrganizations;
+DROP TABLE IF EXISTS SponsorContacts;
+DROP TABLE IF EXISTS GBMembers;
+DROP TABLE IF EXISTS Activities;
+DROP TABLE IF EXISTS Movements;
+DROP TABLE IF EXISTS Levels;
+DROP TABLE IF EXISTS ActivityLevel;
+DROP TABLE IF EXISTS SponsorshipAgreements;
+DROP TABLE IF EXISTS Invoices;
+DROP TABLE IF EXISTS SponsorshipPayments;
 
 CREATE TABLE SponsorOrganizations (
     idSponsorOrganization INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -72,12 +72,12 @@ CREATE TABLE ActivityLevel ( -- Intermediate table
 CREATE TABLE SponsorshipAgreements (
     idSponsorshipAgreement INTEGER PRIMARY KEY AUTOINCREMENT,
     idSponsorContact INTEGER NOT NULL,
-    idGBMembers INTEGER NOT NULL,
+    idGBMember INTEGER NOT NULL,
     amountSponsorshipAgreement REAL NOT NULL,
     dateSponsorshipAgreement TEXT NOT NULL,
     statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(idSponsorContact),
-    FOREIGN KEY (idGBMembers) REFERENCES GBMembers(idGBMembers)
+    FOREIGN KEY (idGBMember) REFERENCES GBMembers(idGBMember)
 );
 
 CREATE TABLE Invoices (
@@ -96,6 +96,6 @@ CREATE TABLE SponsorshipPayments (
     idSponsorshipPayment INTEGER PRIMARY KEY AUTOINCREMENT,
     idInvoice INTEGER NOT NULL,
     dateSponsorshipPayment TEXT NOT NULL,
-    amountSponsorshipPayments REAL NOT NULL,
+    amountSponsorshipPayment REAL NOT NULL,
     FOREIGN KEY (idInvoice) REFERENCES Invoices(idInvoice)
 );
