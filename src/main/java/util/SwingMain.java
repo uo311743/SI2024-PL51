@@ -4,11 +4,17 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Date;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.PaymentController;
@@ -26,6 +32,8 @@ import javax.swing.JButton;
  * and DB inicialization.
  */
 public class SwingMain {
+	
+	private static Date today;
 
 	private JFrame frame;
 	
@@ -57,6 +65,7 @@ public class SwingMain {
 	 * Create the application.
 	 */
 	public SwingMain() {
+		SwingMain.today = new Date();
 		initialize();
 	}
 	
@@ -78,10 +87,37 @@ public class SwingMain {
 	    mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20)); // Add margins
 	    frame.getContentPane().add(mainPanel);
 
-	    // Title at the top
-	    JLabel titleLabel = new JLabel(APP_NAME, SwingConstants.CENTER);
-	    titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
-	    mainPanel.add(titleLabel, BorderLayout.NORTH);
+	    // Pannel at the top with title and change date field
+	    JPanel topPanel = new JPanel(new BorderLayout());
+	    
+	    // Creates the title
+        JLabel titleLabel = new JLabel(APP_NAME, SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        topPanel.add(titleLabel, BorderLayout.NORTH);
+        
+        // Creates the field for changing the date
+        JPanel inputPanel = new JPanel(new FlowLayout());
+        inputPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+        JTextField textField = new JTextField(Util.dateToIsoString(SwingMain.today), 15);
+        JButton button = new JButton("Change date of today");
+        button.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                	SyntacticValidations.validateDate(textField.getText(), "");
+                	Date newDate = Util.isoStringToDate(textField.getText());
+                    SwingMain.today = newDate;
+                    JOptionPane.showMessageDialog(null, "Date updated to: " + Util.dateToIsoString(newDate));
+                } catch (ApplicationException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        inputPanel.add(textField);
+        inputPanel.add(button);
+        
+        topPanel.add(inputPanel, BorderLayout.CENTER);
+        mainPanel.add(topPanel, BorderLayout.NORTH);
 
 	    // Button panel with vertical BoxLayout
 	    JPanel buttonPanel = new JPanel();
@@ -94,7 +130,7 @@ public class SwingMain {
 
 	    // FIXME Delete this method and create new ones.
 	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView();
+	    	new ExampleView().setVisible();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
@@ -156,5 +192,7 @@ public class SwingMain {
 
 
 	public JFrame getFrame() { return this.frame; }
+	
+	public static Date getTodayDate() {  return SwingMain.today; }
 	
 }
