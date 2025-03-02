@@ -25,7 +25,7 @@ public class Model {
 	
 	public Model() {
         try {
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/yourdatabase");
+            connection = DriverManager.getConnection(db.getUrl());
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -85,6 +85,8 @@ public class Model {
 	public boolean validateDate(String date, Integer invoiceId) {
         String query = "SELECT sa.dateSponsorshipAgreement FROM SponsorshipAgreements sa JOIN Invoices i ON i.idSponsorshipAgreement == sa.idSponsorshipAgreement WHERE i.idInvoice = ?";;
         
+        this.validateDate(date, "Payment Date format: YYY-MM-DD");
+        
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, invoiceId);
             ResultSet rs = pstmt.executeQuery();
@@ -115,7 +117,7 @@ public class Model {
     }
     
     public String[] getListActivities() {
-    	String query = "SELECT a.name FROM Activities";
+    	String query = "SELECT a.nameActivity FROM Activities";
     	
     	List<String> activities = db.executeQueryPojo(String.class, query);
     	

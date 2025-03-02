@@ -13,11 +13,8 @@ import javax.swing.SwingConstants;
 
 import controller.PaymentController;
 import model.Model;
-import controller.RegisterSponshorshipController;
-import model.RegisterSponshorshipModel;
 import view.ExampleView;
 import view.PaymentView;
-import view.RegisterSponshorshipView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -54,10 +51,6 @@ public class SwingMain {
 				}
 			}
 		});
-		
-		Model model = new Model();
-        PaymentView view = new PaymentView();
-        PaymentController controller = new PaymentController(model, view);
 	}
 
 	/**
@@ -72,6 +65,8 @@ public class SwingMain {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		//Database db=new Database();
+		
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
 	    frame.setBounds(0, 0, 300, 300);
@@ -97,16 +92,13 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-
-	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponshorshipController(
-	    			new RegisterSponshorshipModel(),
-	    			new RegisterSponshorshipView()
-	    	);
+	    // FIXME Delete this method and create new ones.
+	    addButtonToMain(buttonPanel, "Run Example", () -> {
+	    	new ExampleView();
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	        Database db = new Database();
+	    	Database db=new Database();
 	        db.createDatabase(false);
 	    });
 	    
@@ -114,6 +106,17 @@ public class SwingMain {
 	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
+	    });
+	    
+	    // Add a button to open the PaymentsView
+        addButtonToMain(buttonPanel, "Open Payments", () -> {
+        	// Create instances of Model, View, and Controller
+    		Model model = new Model();
+            PaymentView view = new PaymentView();
+            PaymentController controller = new PaymentController(model, view);
+
+            // Load and display registrations
+            controller.updateView();
 	    });
 	    
 	    /* 
@@ -150,7 +153,6 @@ public class SwingMain {
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
 	}
-
 
 
 	public JFrame getFrame() { return this.frame; }

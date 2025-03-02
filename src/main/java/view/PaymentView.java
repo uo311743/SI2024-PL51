@@ -1,113 +1,150 @@
 package view;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+
+import net.miginfocom.swing.MigLayout;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 public class PaymentView extends AbstractView {
     private JComboBox<String> activityComboBox;
     private JTextField amountField;
     private JTextField nifField;
-    private JTextField isbnField;
     private JTextField dateField;
     private JTextField invoiceIdField;
     
+    private String currentActivities[];
+    
+    private JPanel formPanel;
+    private JPanel summaryPanel;
+    
     private JTextArea summaryTextArea;
+    
+    private Boolean summaryConcealed;
+    
+    private JButton testBtn;
     
     public PaymentView()
     {
     	super("Register Payment");
+    	initialize();
+    	//configMainPanel();
     }
     
-    protected void initializeAttrib()
+    @Override
+    protected void initialize()
     {
-    	activityComboBox = new JComboBox<>(new String[]{""});
-    	amountField = new JTextField();
-    	nifField = new JTextField();
-    	isbnField = new JTextField();
-    	dateField = new JTextField();
-    	invoiceIdField = new JTextField();
+    	currentActivities = new String[] {""};
+    	activityComboBox = new JComboBox<>(currentActivities);
+    	amountField = new JTextField("", 1);
+    	nifField = new JTextField("", 1);
+    	dateField = new JTextField("", 1);
+    	invoiceIdField = new JTextField("", 1);
+    	formPanel = new JPanel();
+    	summaryPanel = new JPanel();
+    	summaryTextArea = new JTextArea();
+    	summaryConcealed = true;
+    	testBtn = new JButton("Test Button");
     }
     
     @Override
     protected void configMainPanel()
     {
-    	// Set layout for the main panel
-        super.getMainPanel().setLayout(new GridLayout(0, 2)); // 0 rows means "as many as needed", 2 columns
-
-        // Add components to the main panel
-        super.getMainPanel().add(new JLabel("Activity:"));
-        super.getMainPanel().add(activityComboBox);
-
-        super.getMainPanel().add(new JLabel("Amount(EUR):"));
-        super.getMainPanel().add(amountField);
-
-        super.getMainPanel().add(new JLabel("NIF:"));
-        super.getMainPanel().add(nifField);
-
-        super.getMainPanel().add(new JLabel("ISBN:"));
-        super.getMainPanel().add(isbnField);
-
-        //super.getMainPanel().add(new JLabel("International Transfer:"));
-        //super.getMainPanel().add(transferTypeComboBox);
-
-        //super.getMainPanel().add(new JLabel("Transfer Details:"));
-        //super.getMainPanel().add(transferDetailsField);
-
-        super.getMainPanel().add(new JLabel("Date:"));
-        super.getMainPanel().add(dateField);
-
-        super.getMainPanel().add(new JLabel("Invoice ID:"));
-        super.getMainPanel().add(invoiceIdField);
-        
+    	configureFormPanel();
+    	
         super.createButtonLowLeft("Cancel");
         super.createButtonLowRight("Register");
+        
+        super.getButtonLowLeft().addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent e)
+        	{
+        		clearFields();
+        	}
+        });
+        
+        super.getMainPanel().add(testBtn);
+    }
+    
+    public JButton getButton() {return this.testBtn; }
+    
+    public void initializeActivities(String[] activities) {
+    	currentActivities = activities;
+    	activityComboBox.removeAllItems();
+    	
+    	for (String a : activities)
+    	{
+    		activityComboBox.addItem(a);
+    	}
+    	
+    	resetMainPanel();
+    	configMainPanel();
     }
 
-    private void showSummary() {
-        String summary = "Payment Registration Summary:\n" +
-                "Activity: " + activityComboBox.getSelectedItem() + "\n" +
-                "Amount(EUR): " + amountField.getText() + "\n" +
-                "Company NIF: " + nifField.getText() + "\n" +
-                "Bank ISBN: " + isbnField.getText() + "\n" +
-                "Payment Date: " + dateField.getText() + "\n" +
-                "Invoice ID: " + invoiceIdField.getText();
-        
-        super.resetMainPanel();
-        
-        // Set layout for the main panel
-        super.getMainPanel().setLayout(new GridLayout(0, 1)); // 0 rows means "as many as needed", 1 column
+    private void configureFormPanel()
+    {
+    	// Set layout for the form panel
+    	formPanel.setLayout(new GridLayout(0, 2)); // 0 rows means "as many as needed", 2 columns
+               
+        // Add components to the main panel
+    	formPanel.add(new JLabel("Activity:"));
+    	formPanel.add(activityComboBox);
 
-        summaryTextArea = new JTextArea(summary);
-        summaryTextArea.setEditable(false);
-        getMainPanel().add(summaryTextArea);
+    	formPanel.add(new JLabel("Amount:"));
+    	formPanel.add(amountField);
+
+    	formPanel.add(new JLabel("NIF:"));
+    	formPanel.add(nifField);
+
+    	formPanel.add(new JLabel("Date:"));
+    	formPanel.add(dateField);
+
+    	formPanel.add(new JLabel("Invoice ID:"));
+    	formPanel.add(invoiceIdField);
+    	
+    	super.getMainPanel().add(formPanel);
+    }
+    
+    public void configureSummaryPanel()
+    {
+    	String summary = "Activity: " + getActivity() + 
+    			"\nAmount: " + getAmount() + "\nNIF: " +
+    			getNIF() + "\nDate: " + getDate() + "\nInvoice ID: " + getInvoiceId();
+    	summaryTextArea.insert(summary, 0);
+    	summaryTextArea.setEditable(false);
+    	summaryTextArea.setOpaque(false);
+    	
+    	summaryPanel.add(summaryTextArea, BorderLayout.CENTER);
+    	summaryPanel.setBorder(new EmptyBorder(10, 10, 10, 12));
+    	super.getMainPanel().add(summaryPanel);
+    	super.getMainPanel().revalidate();
+    	super.getMainPanel().repaint();
+    	System.out.println("hi");
     }
 
-    private void clearFields() {
+    public void clearFields() {
         activityComboBox.setSelectedIndex(0);
         amountField.setText("");
         nifField.setText("");
-        isbnField.setText("");
-        //transferTypeComboBox.setSelectedIndex(0);
-        //transferDetailsField.setText("");
         dateField.setText("");
         invoiceIdField.setText("");
+        summaryConcealed = true;
+        super.getMainPanel().remove(summaryPanel);
     }
     
     public String getActivity() {
         return (String) activityComboBox.getSelectedItem();
     }
 
-    public double getAmount() {
-        return Double.parseDouble(amountField.getText());
+    public String getAmount() {
+        return amountField.getText(); //Double.parseDouble(amountField.getText());
     }
 
     public String getNIF() {
         return nifField.getText();
-    }
-
-    public String getISBN() {
-        return isbnField.getText();
     }
 
     public String getDate() {
@@ -121,16 +158,17 @@ public class PaymentView extends AbstractView {
     public void setInvoiceId(String id) {
         invoiceIdField.setText(id);
     }
-
-    public void addRegisterListener(ActionListener listener) {
-        super.getButtonLowRight().addActionListener(listener);
+    
+    public void setSummaryConcealed() {
+    	summaryConcealed = !summaryConcealed;
     }
-
-    public void showError(String message) {
-        
+    
+    public Boolean summaryConcealed() {
+    	return summaryConcealed;
     }
-
-    public void showSuccess(String message) {
-        
+    
+    public void display()
+    {
+    	super.setVisible();
     }
 }

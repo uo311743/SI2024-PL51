@@ -13,7 +13,7 @@ CREATE TABLE SponsorOrganizations (
     idSponsorOrganization INTEGER PRIMARY KEY AUTOINCREMENT,
     nameSponsorOrganization TEXT NOT NULL,
     typeSponsorOrganization TEXT NOT NULL,
-    AddressSponsorOrganization TEXT, -- Can be skipped at first as it is only needed for the invoice
+    addressSponsorOrganization TEXT, -- Can be skipped at first as it is only needed for the invoice
     nifSponsorOrganization TEXT UNIQUE,
     vatSponsorOrganization TEXT UNIQUE
 );
@@ -37,7 +37,7 @@ CREATE TABLE Activities (
     idActivity INTEGER PRIMARY KEY AUTOINCREMENT,
     nameActivity TEXT UNIQUE NOT NULL,
     editionActivity TEXT NOT NULL,
-    statusActivity TEXT CHECK(statusActivity IN ('registered', 'planned', 'done', 'cancelled', 'done')) NOT NULL,
+    statusActivity TEXT CHECK(statusActivity IN ('registered', 'planned', 'cancelled', 'done')) NOT NULL,
     dateStartActivity TEXT,
     dateEndActivity TEXT,
     placeActivity TEXT
@@ -77,7 +77,7 @@ CREATE TABLE SponsorshipAgreements (
     dateSponsorshipAgreement TEXT NOT NULL,
     statusSponsorshipAgreement TEXT NOT NULL CHECK (statusSponsorshipAgreement IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(idSponsorContact),
-    FOREIGN KEY (idGBMember) REFERENCES GBMembers(idGBMember)
+    FOREIGN KEY (idGBMember) REFERENCES GBMembers(id)
 );
 
 CREATE TABLE Invoices (
@@ -88,7 +88,7 @@ CREATE TABLE Invoices (
     dateExpirationInvoice TEXT,
     totalAmountInvoice REAL NOT NULL,
     taxRateInvoice REAL NOT NULL, -- To calculate the net and tax amounts from total
-    statusInvoice TEXT NOT NULL CHECK (statusInvoice IN ('Draft', 'Issued', 'Paid', 'Rectified', 'Cancelled'))),
+    statusInvoice TEXT NOT NULL CHECK (statusInvoice IN ('Draft', 'Issued', 'Paid', 'Rectified', 'Cancelled')),
     FOREIGN KEY (idSponsorshipAgreement) REFERENCES SponsorshipAgreements(idSponsorshipAgreement)
 );
 
