@@ -17,10 +17,10 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import controller.PaymentController;
+import controller.RegisterPaymentController;
 import model.Model;
 import view.ExampleView;
-import view.PaymentView;
+import view.RegisterPaymentView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -145,14 +145,18 @@ public class SwingMain {
 	    });
 	    
 	    // Add a button to open the PaymentsView
-        addButtonToMain(buttonPanel, "Open Payments", () -> {
+        addButtonToMain(buttonPanel, "Register Payment", () -> {
         	// Create instances of Model, View, and Controller
+        	RegisterPaymentController controller = new RegisterPaymentController(new Model(), new RegisterPaymentView());
+        	controller.updateView();
+        	/*
     		Model model = new Model();
-            PaymentView view = new PaymentView();
-            PaymentController controller = new PaymentController(model, view);
+            RegisterPaymentView view = new RegisterPaymentView();
+            RegisterPaymentController controller = new RegisterPaymentController(model, view);
 
             // Load and display registrations
             controller.updateView();
+            */
 	    });
 	    
 	    /* 

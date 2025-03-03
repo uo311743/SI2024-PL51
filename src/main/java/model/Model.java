@@ -3,6 +3,7 @@ package model;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 import java.sql.*;
 
@@ -33,43 +34,45 @@ public class Model {
     
 	// Registration of Payments
 	public Integer getSponsorshipAgreementId(String nifOrVat, String activityName) throws SQLException {
-	    String sql = "SELECT sa.idSponsorshipAgreement " +
+	    String sql = "SELECT sa.id " +
 	                 "FROM SponsorshipAgreements sa " +
-	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.idSponsorContact " +
-	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.idSponsorOrganization " +
-	                 "JOIN Activities a ON a.nameActivity = ? " +
-	                 "WHERE (so.nifSponsorOrganization = ? OR so.vatSponsorOrganization = ?)";
+	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id " +
+	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id " +
+	                 "JOIN Activities a ON a.name = ? " +
+	                 "WHERE (so.nif = ? OR so.vat = ?)";
 
-	    try {
+	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
-	        List<SponsorshipAgreementDTO> results = db.executeQueryPojo(SponsorshipAgreementDTO.class, sql, activityName, nifOrVat, nifOrVat);
+	    	pstmt.setString(1, activityName);
+	    	pstmt.setString(2, nifOrVat);
+	    	pstmt.setString(3, nifOrVat);
+	        ResultSet results = pstmt.executeQuery();
 
-	        if (results != null && !results.isEmpty()) {
-	            return results.get(0).getIdSponsorshipAgreement();
-	        } else {
-	            System.err.println("No SponsorshipAgreement found for sponsor with NIF/VAT: " + nifOrVat + " and activity: " + activityName);
+	        if (results.next()) {
+	            Integer id = results.getInt("id");
+	            validateNotNull(id, "No SponsorshipAgreement found");
 	        }
 	    } catch (Exception e) {
-	        System.err.println("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
+	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
 	    }
 
 	    return null;
 	}
 	
 	public Integer getInvoiceId(Integer idSponsorshipAgreement) {
-		String sql = "SELECT i.idInvoice FROM Invoices WHERE i.idSponsorshipAgreement = ?";
+		String sql = "SELECT i.id FROM Invoices WHERE i.idSponsorshipAgreement = ?";
 		
-		try {
+		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
-	        List<InvoicesDTO> results = db.executeQueryPojo(InvoicesDTO.class, sql, idSponsorshipAgreement);
+	        pstmt.setInt(1, idSponsorshipAgreement);
+	        ResultSet results = pstmt.executeQuery();
 
-	        if (results != null && !results.isEmpty()) {
-	            return results.get(0).getIdInvoice();
-	        } else {
-	            System.err.println("No Invoice found for Agreement: " + idSponsorshipAgreement);
+	        if (results.next()) {
+	        	Integer id = results.getInt("id");
+	            validateNotNull(id, "No Invoice found");
 	        }
 	    } catch (Exception e) {
-	        System.err.println("Unexpected error while retrieving Invoice ID: " + e.getMessage());
+	    	throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
 	    }
 
 	    return null;
@@ -83,16 +86,16 @@ public class Model {
 	 * @return whether the payment was previous to invoice
 	 */
 	public boolean validateDate(String date, Integer invoiceId) {
-        String query = "SELECT sa.dateSponsorshipAgreement FROM SponsorshipAgreements sa JOIN Invoices i ON i.idSponsorshipAgreement == sa.idSponsorshipAgreement WHERE i.idInvoice = ?";;
+        String query = "SELECT sa.date FROM SponsorshipAgreements sa JOIN Invoices i ON i.idSponsorshipAgreement == sa.id WHERE i.id = ?";;
         
-        this.validateDate(date, "Payment Date format: YYY-MM-DD");
+        this.validateDate(date, "Payment Date not valid");
         
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, invoiceId);
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
-                Date agreementDate = rs.getDate("dateSponsorshipAgreement");
-                Date paymentDate = Date.valueOf(date); 
+                Date agreementDate = Date.valueOf(rs.getString("date"));
+                Date paymentDate = Date.valueOf(date);
                 return !paymentDate.before(agreementDate);
             }
         } catch (SQLException e) {
@@ -104,7 +107,7 @@ public class Model {
     
     // Register Payment
     public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
-        String query = "INSERT INTO dateSponsorshipAgreement (idInvoice, dateSponsorshipPayment, amountSponsorshipPayments) VALUES (?, ?, ?)";
+        String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?)";
         
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, idInvoice);
@@ -117,11 +120,17 @@ public class Model {
     }
     
     public String[] getListActivities() {
-    	String query = "SELECT a.nameActivity FROM Activities";
+    	String query = "SELECT * FROM Activities";
     	
-    	List<String> activities = db.executeQueryPojo(String.class, query);
+    	List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, query);
+    	List<String> names = new ArrayList<>();
     	
-    	return activities.toArray(new String[0]);
+    	for (ActivitiesDTO a : activities) {
+    		if (a.getStatus() != "cancelled" || a.getStatus() != "closed")
+    		names.add(a.getName());
+    	}
+    	
+    	return names.toArray(new String[0]);
     }
 
     

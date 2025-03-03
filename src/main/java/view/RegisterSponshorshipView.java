@@ -26,7 +26,7 @@ public class RegisterSponshorshipView extends AbstractView {
 	private JTextField amountTextField;
 	private JTextField agreementDateTextField;
 	
-	public RegisterSponshorshipView() { super("Register Sponshorship", false); }
+	public RegisterSponshorshipView() { super("Register Sponshorship"); }
 	
 	@Override
 	protected void initialize()

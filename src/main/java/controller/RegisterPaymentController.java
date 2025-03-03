@@ -1,24 +1,31 @@
 package controller;
 
 import model.Model;
-import view.PaymentView;
+import util.ApplicationException;
+import util.SwingMain;
+import util.SwingUtil;
+import util.SyntacticValidations;
+import util.Util;
+import view.RegisterPaymentView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.SQLException;
+import java.util.Date;
 
-public class PaymentController {
+import javax.swing.JOptionPane;
+
+public class RegisterPaymentController {
 	// Create an Object of Payment type for the Model
 	// Create View Object
 	private Model model;
-	private PaymentView view;
+	private RegisterPaymentView view;
 	
-	public PaymentController(Model model, PaymentView view) {
+	public RegisterPaymentController(Model model, RegisterPaymentView view) {
 		this.model = model;
 		this.view = view;
 		
 		this.view.initializeActivities(model.getListActivities());
-		//addListener();
+		addRegisterListener();
 	}
 
 	public Model getModel() {
@@ -29,19 +36,27 @@ public class PaymentController {
 		this.model = model;
 	}
 
-	public PaymentView getView() {
+	public RegisterPaymentView getView() {
 		return this.view;
 	}
 
-	public void setView(PaymentView view) {
+	public void setView(RegisterPaymentView view) {
 		this.view = view;
 	}
 	
 	public void addRegisterListener()
 	{
-		this.view.getButton().addActionListener(new ActionListener() {
+		view.getButtonLowRight().addActionListener(new ActionListener() {
 			@Override
 	        public void actionPerformed(ActionEvent e) {
+				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
+	        	/*
+	        	 * try {
+                	SyntacticValidations.validateDate(view.getDate().getText(), "");
+                } catch (ApplicationException ex) {
+                    JOptionPane.showMessageDialog(null, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+                
 	        	if (getView().summaryConcealed())
 	        	{
 	        		getView().setSummaryConcealed();
@@ -57,7 +72,6 @@ public class PaymentController {
 					try {
 						idSponsorshipAgreement = model.getSponsorshipAgreementId(nif, activity);
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 		
@@ -67,7 +81,7 @@ public class PaymentController {
 		            
 		            model.validateDate(date, Integer.parseInt(invoiceId));
 		            model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
-	        	}
+	        	}*/
 	        }
 		});
 	}
