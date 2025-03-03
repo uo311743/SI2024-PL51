@@ -17,10 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import controller.RegisterSponshorshipController;
-import model.RegisterSponshorshipModel;
-import view.ExampleView;
-import view.RegisterSponshorshipView;
+import controller.RegisterSponsorshipController;
+import model.RegisterSponsorshipModel;
+import view.RegisterSponsorshipView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -127,9 +126,9 @@ public class SwingMain {
 	     */
 
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponshorshipController(
-	    			new RegisterSponshorshipModel(),
-	    			new RegisterSponshorshipView()
+	    	new RegisterSponsorshipController(
+	    			new RegisterSponsorshipModel(),
+	    			new RegisterSponsorshipView()
 	    	);
 	    });
 	    
