@@ -1,7 +1,7 @@
 package controller;
 
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.Date;
 import java.util.List;
 import javax.swing.ComboBoxModel;
@@ -24,18 +24,13 @@ public class US129Controller {
     }
 
     public void initController() {
-        view.getFilterButton().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                applyFilters();
-            }
-        });
+    	view.getFilterButton().addActionListener(e -> applyFilters());
         
-        view.getButtonLowLeft().addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                view.disposeView();
-            }
+        this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+        	@Override
+        	public void mouseReleased(MouseEvent e) {
+        		SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
+        	}
         });
     }
     
@@ -69,6 +64,8 @@ public class US129Controller {
     }
 
     private void updateTotals(List<ActivitiesDTO> filteredActivities) {
+    	// Pendiente apuntes Ángel
+    	/*
         int totalEstimatedIncome = 0;
         int totalEstimatedExpenses = 0;
 
@@ -88,6 +85,6 @@ public class US129Controller {
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + model.getAmountIncome());
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + model.getAmountExpense());
-        view.getProfitLabel().setText("Profit: " + profit);
+        view.getProfitLabel().setText("Profit: " + profit);*/
     }
 }
