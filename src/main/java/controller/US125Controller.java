@@ -59,7 +59,7 @@ public class US125Controller {
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Amount"}, 0);
         for (InvoicesDTO invoice : filteredInvoices) {
-            tableModel.addRow(new Object[]{invoice.getIdInvoices(), invoice.getDateIssueInvoices(), model.getAmountByIdInvoices(invoice.getIdInvoices())});
+            tableModel.addRow(new Object[]{invoice.getId(), invoice.getDateIssued(), model.getAmountByIdInvoices(String.valueOf(invoice.getId()))});
         }
         
         view.getInvoiceTable().setModel(tableModel);

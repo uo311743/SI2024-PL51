@@ -42,17 +42,7 @@ INSERT INTO ActivityLevels (idActivity, idLevel) VALUES
 (1, 1),
 (2, 1);
 
-<<<<<<< HEAD
--- Insert sample Sponsorship Payments
-INSERT INTO SponsorshipPayments (idInvoice, dateSponsorshipPayment, amountSponsorshipPayment)
-VALUES 
-  (1, '2023-06-01', 10000.00),
-  (2, '2023-09-01', 4000.00),
-  (2, '2023-09-15', 4000.00),
-  (3, '2023-11-01', 12000.00);
-=======
 -- Insert Movements
 INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) VALUES
 (1, 'income', 'Sponsorship Payment', 5000.00, '2024-01-25', 'INV-001', 'paid'),
 (2, 'expense', 'Cleanup Supplies', 500.00, '2024-02-10', 'EXP-001', 'paid');
->>>>>>> refs/heads/develop

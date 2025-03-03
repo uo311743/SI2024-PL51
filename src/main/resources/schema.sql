@@ -62,12 +62,6 @@ CREATE TABLE Invoices (
 CREATE TABLE SponsorshipPayments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     idInvoice INTEGER NOT NULL,
-<<<<<<< HEAD
-    dateSponsorshipPayment TEXT NOT NULL,
-    amountSponsorshipPayment REAL NOT NULL,
-    FOREIGN KEY (idInvoice) REFERENCES Invoices(idInvoice)
-);
-=======
     date TEXT NOT NULL,
     amount REAL NOT NULL,
     FOREIGN KEY (idInvoice) REFERENCES Invoices(id) ON DELETE CASCADE
@@ -107,4 +101,3 @@ CREATE TABLE Movements (
     status TEXT NOT NULL CHECK(lower(status) IN ('estimated', 'cancelled', 'paid')),
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
 );
->>>>>>> refs/heads/develop

@@ -18,22 +18,22 @@ public class US125Model {
      */
 	
 	public List<Object[]> getSponsorListArray() {
-		String sql = "SELECT nameSponsorOrganization FROM SponsorOrganizations;";
+		String sql = "SELECT name FROM SponsorOrganizations;";
 		return db.executeQueryArray(sql);
 	}
     
 	public List<Object[]> getActivityListArray() {
-		String sql = "SELECT nameActivities FROM Activities;";
+		String sql = "SELECT name FROM Activities;";
 		return db.executeQueryArray(sql);
 	}
 	
     public List<InvoicesDTO> getDateIssueInvoices() {
-        String sql = "SELECT dateIssueInvoice FROM Invoices;";
+        String sql = "SELECT dateIssued FROM Invoices;";
         return db.executeQueryPojo(InvoicesDTO.class, sql);
     }
     
     public List<InvoicesDTO> getIdInvoices() {
-        String sql = "SELECT idInvoice FROM Invoices;";
+        String sql = "SELECT id FROM Invoices;";
         return db.executeQueryPojo(InvoicesDTO.class, sql);
     }
 
@@ -42,7 +42,7 @@ public class US125Model {
     }
     
     public InvoicesDTO getAmountByIdInvoices(String invoiceId) {
-    	String sql = "SELECT amountSponsorshipPayment FROM SponsorshipPayments WHERE idInvoice = ?";
+    	String sql = "SELECT amount FROM SponsorshipPayments WHERE idInvoice = ?";
         List<InvoicesDTO> invoices = db.executeQueryPojo(InvoicesDTO.class, sql, invoiceId);
         return invoices.get(0);
     }
