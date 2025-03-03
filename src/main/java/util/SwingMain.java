@@ -17,10 +17,16 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+<<<<<<< HEAD
 import controller.RegisterPaymentController;
 import model.Model;
+=======
+>>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 import view.ExampleView;
+<<<<<<< HEAD
 import view.RegisterPaymentView;
+=======
+>>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
