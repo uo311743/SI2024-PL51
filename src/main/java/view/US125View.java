@@ -12,7 +12,6 @@ public class US125View extends AbstractView {
     
     public US125View() {
         super("Invoice Management");
-        initialize();
     }
     
     @Override
