@@ -86,33 +86,4 @@ public class SemanticValidations {
         for (String validValue : validValues) if (validValue.equals(value)) return;
         throw new ApplicationException(message);
     }
-    
-    /**
-     * Validates the given email address using a regular expression pattern.
-     * The email is considered valid if it matches the pattern:
-     * a sequence of alphanumeric characters, followed by an "@" symbol, then a domain, and a valid top-level domain (e.g., .com, .org).
-     * 
-     * @param email the email address to be validated
-     * @throws ApplicationException if the email does not match the expected pattern
-     */
-    public static void validateEmail(String email, String message)
-    {
-        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        SyntacticValidations.validateMatchesPattern(email, emailRegex, message);
-    }
-
-    /**
-     * Validates the given phone number using a regular expression pattern.
-     * The phone number is considered valid if it matches the international phone number format,
-     * optionally starting with a "+" followed by 1 to 15 digits.
-     * 
-     * @param phoneNumber the phone number to be validated
-     * @throws ApplicationException if the phone number does not match the expected pattern
-     */
-    public static void validatePhoneNumber(String phoneNumber, String message)
-    {
-        String phoneRegex = "^\\+?[1-9]\\d{1,14}$";
-        SyntacticValidations.validateMatchesPattern(phoneNumber, phoneRegex, message);
-    }
-
 }
