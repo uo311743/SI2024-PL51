@@ -8,89 +8,81 @@ import java.time.format.DateTimeParseException;
  * Contains validations pertaining to the nature of the data. Used in controller.
  */
 public class SyntacticValidations {
-	
-	public static final String PATTERN_EMAIL =
-			"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
-	
-	public static final String PATTERN_PHONE = "^\\\\+\\\\d{11}$";
+    
+    public static final String PATTERN_EMAIL =
+            "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
 
-	
-	private SyntacticValidations() {
-		throw new IllegalStateException("Utility class");
-	}
-	
+    public static final String PATTERN_PHONE = "^\\+?[1-9][0-9]{8,14}$";
+
     /**
      * Validates if the given object is an integer.
      *
      * @param number  the object to validate
-     * @param message the exception message if validation fails
+     * @return true if the object is an integer, false otherwise
      */
-    public static void validateNumber(Object number, String message)
+    public static boolean isNumber(Object number)
     {
-        try { Integer.parseInt(number.toString()); }
-        catch (NumberFormatException e) { throw new ApplicationException(message); }
+        try {
+            Integer.parseInt(number.toString());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
      * Validates if the given object is a decimal number.
      *
      * @param number  the object to validate
-     * @param message the exception message if validation fails
+     * @return true if the object is a decimal number, false otherwise
      */
-    public static void validateDecimal(Object number, String message)
+    public static boolean isDecimal(Object number)
     {
-        try { Double.parseDouble(number.toString()); }
-        catch (NumberFormatException e) { throw new ApplicationException(message); }
+        try {
+            Double.parseDouble(number.toString());
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
      * Validates if the given string follows the 'yyyy-MM-dd' date format.
      *
      * @param date    the date string to validate
-     * @param message the exception message if validation fails
+     * @return true if the string follows the date format, false otherwise
      */
-    public static void validateDate(String date, String message)
+    public static boolean isDate(String date)
     {
-        try
-        {
+        try {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             LocalDate.parse(date, formatter);
+            return true;
+        } catch (DateTimeParseException e) {
+            return false;
         }
-        catch (DateTimeParseException e) { throw new ApplicationException(message); }
     }
 
     /**
      * Validates that an object is not null.
      *
      * @param obj     the object to validate
-     * @param message the exception message if validation fails
+     * @return true if the object is not null, false otherwise
      */
-    public static void validateNotNull(Object obj, String message)
+    public static boolean isNotNull(Object obj)
     {
-        if (obj == null) throw new ApplicationException(message);
+        return obj != null;
     }
 
     /**
      * Validates that a string is not empty or null.
      *
      * @param value   the string to validate
-     * @param message the exception message if validation fails
+     * @return true if the string is not empty or null, false otherwise
      */
-    public static void validateNotEmpty(String value, String message)
+    public static boolean isNotEmpty(String value)
     {
-        if (value == null || value.trim().isEmpty())
-            throw new ApplicationException(message);
-    }
-
-    /**
-     * Validates a condition and throws an exception if the condition is false.
-     *
-     * @param condition the boolean condition to validate
-     * @param message   the exception message if validation fails
-     */
-    public static void validateCondition(boolean condition, String message)
-    {
-        if (!condition) throw new ApplicationException(message);
+        return value != null && !value.trim().isEmpty();
     }
 
     /**
@@ -98,12 +90,10 @@ public class SyntacticValidations {
      *
      * @param value   the string to validate
      * @param regex   the regex pattern to match
-     * @param message the exception message if validation fails
+     * @return true if the string matches the pattern, false otherwise
      */
-    public static void validateMatchesPattern(String value, String regex, String message)
+    public static boolean matchesPattern(String value, String regex)
     {
-        if (value == null || !value.matches(regex))
-            throw new ApplicationException(message);
+        return value != null && value.matches(regex);
     }
 }
-

@@ -6,10 +6,7 @@ import java.util.Date;
  * Contains validations pertaining to the business logic of the data. Used in the model.
  */
 public class SemanticValidations {
-	private SemanticValidations() {
-		throw new IllegalStateException("Utility class");
-	}
-	
+
     /**
      * Validates if a number is within a specified range.
      *
@@ -20,7 +17,8 @@ public class SemanticValidations {
      */
     public static void validateNumberInRange(int number, int min, int max, String message)
     {
-    	SyntacticValidations.validateCondition(number >= min && number <= max, message);
+    	if (number < min || number > max)
+    		throw new ApplicationException(message);
     }
 
     /**
@@ -34,10 +32,11 @@ public class SemanticValidations {
     public static void validateDateInPast(Date date, Date today, boolean includeToday, String message)
     {
     	if(includeToday)
-    		SyntacticValidations.validateCondition(date.before(today) || date.equals(today), message);
-    	else
-    		SyntacticValidations.validateCondition(date.before(today), message);
-    }
+    		if (date.after(today))
+        		throw new ApplicationException(message);
+    	else if (date.after(today) || date.equals(today))
+        		throw new ApplicationException(message);
+    	}
 
     /**
      * Validates if a date is in the future.
@@ -50,9 +49,10 @@ public class SemanticValidations {
     public static void validateDateInFuture(Date date, Date today, boolean includeToday, String message)
     {
     	if(includeToday)
-    		SyntacticValidations.validateCondition(date.after(today) || date.equals(today), message);
-    	else
-    		SyntacticValidations.validateCondition(date.after(today), message);
+    		if (date.before(today))
+        		throw new ApplicationException(message);
+    	else if (date.before(today) || date.equals(today))
+        		throw new ApplicationException(message);
     }
 
     /**
@@ -63,7 +63,8 @@ public class SemanticValidations {
      */
     public static void validatePositiveNumber(double number, String message)
     {
-    	SyntacticValidations.validateCondition(number > 0, message);
+    	if (number <= 0)
+    		throw new ApplicationException(message);
     }
     
     /**
@@ -74,8 +75,8 @@ public class SemanticValidations {
      */
     public static void validatePositiveNumberOrZero(double number, String message)
     {
-    	SyntacticValidations.validateCondition(number >= 0, message);
-    }
+    	if (number < 0)
+    		throw new ApplicationException(message);    }
 
     /**
      * Validates that a string is one of the allowed values.
