@@ -1,6 +1,7 @@
 package controller;
 
 import model.US125Model;
+import util.Params;
 import view.US125View;
 import DTOs.InvoicesDTO;
 import giis.demo.util.SwingUtil;
@@ -36,6 +37,7 @@ public class US125Controller {
     public void initView() {
         loadSponsors();
         loadActivities();
+        showData();
         view.setVisible();
     }
     
@@ -51,15 +53,46 @@ public class US125Controller {
         view.getActivityComboBox().setModel(lmodel);
     }
     
+    public void showData() {
+        List<InvoicesDTO> data = model.getInvoices();
+        
+        Params params = new Params();
+        
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
+        
+        for (InvoicesDTO invoice : data) {
+            tableModel.addRow(new Object[]{
+                invoice.getId(), 
+                invoice.getDateIssued(), 
+                params.getTaxName(),      
+                params.getTaxNif(),     
+                params.getTaxAddress(), 
+                invoice.getTotalAmount()    
+            });
+        }
+        
+        view.getInvoiceTable().setModel(tableModel);
+    }
+    
     public void updateInvoiceTable() {
-        String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
-        String selectedActivity = (String) view.getActivityComboBox().getSelectedItem();
+    	String selectedSponsor = model.getSponsorIdByName(String.valueOf(view.getSponsorComboBox().getSelectedItem()));
+        String selectedActivity = model.getActivityIdByName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
         
-        List<InvoicesDTO> filteredInvoices = model.getInvoicesBySponsorAndActivity(selectedSponsor, selectedActivity);
+    	List<InvoicesDTO> data = model.getInvoicesBySponsorAndActivity(selectedSponsor, selectedActivity);
         
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Amount"}, 0);
-        for (InvoicesDTO invoice : filteredInvoices) {
-            tableModel.addRow(new Object[]{invoice.getId(), invoice.getDateIssued(), model.getAmountByIdInvoices(String.valueOf(invoice.getId()))});
+        Params params = new Params();
+        
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
+        
+        for (InvoicesDTO invoice : data) {
+            tableModel.addRow(new Object[]{
+                invoice.getId(), 
+                invoice.getDateIssued(), 
+                params.getTaxName(),      
+                params.getTaxNif(),     
+                params.getTaxAddress(), 
+                invoice.getTotalAmount()    
+            });
         }
         
         view.getInvoiceTable().setModel(tableModel);
