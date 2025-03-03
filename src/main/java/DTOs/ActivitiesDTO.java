@@ -1,30 +1,47 @@
 package DTOs;
 
 public class ActivitiesDTO {
-	private String idActivities;
-	private String nameActivities;
-	private String editionActivities;
-	private String stateActivities;
-	private String dateActivities;
-	private String placeActivities;
-	private String estimatedIncomeActivities;
-	private String estimatedExpensesActivities;
-
-	public String getIdActivities() { return idActivities; }
-    public String getNameActivities() { return nameActivities; }
-    public String getEditionActivities() { return editionActivities; }
-    public String getStateActivities() { return stateActivities; }
-    public String getDateActivities() { return dateActivities; }  
-    public String getPlaceActivities() { return placeActivities; }
-    public String getEstimatedIncomeActivities() { return estimatedIncomeActivities; }
-    public String getEstimatedExpensesActivities() { return estimatedExpensesActivities; } 
-
-    public void setIdActivities(String idActivities) { this.idActivities = idActivities; }
-    public void setEditionActivities(String editionActivities) { this.editionActivities = editionActivities; }
-    public void setNameActivities(String nameActivities) { this.nameActivities = nameActivities; }
-    public void setStateActivities(String stateActivities) { this.stateActivities = stateActivities; }
-    public void setDateActivities(String dateActivities) { this.dateActivities = dateActivities; }
-    public void setPlaceActivities(String placeActivities) { this.placeActivities = placeActivities; }
-    public void setEstimatedIncomeActivities(String estimatedIncomeActivities) { this.estimatedIncomeActivities = estimatedIncomeActivities; }
-    public void setEstimatedExpensesActivities(String estimatedExpensesActivities) { this.estimatedExpensesActivities = estimatedExpensesActivities; }
+    private int id;
+    private String name;
+    private String status;
+    private String dateStart;
+    private String dateEnd;
+    private String place;
+    
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getDateStart() {
+		return dateStart;
+	}
+	public void setDateStart(String dateStart) {
+		this.dateStart = dateStart;
+	}
+	public String getDateEnd() {
+		return dateEnd;
+	}
+	public void setDateEnd(String dateEnd) {
+		this.dateEnd = dateEnd;
+	}
+	public String getPlace() {
+		return place;
+	}
+	public void setPlace(String place) {
+		this.place = place;
+	}
 }

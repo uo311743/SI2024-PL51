@@ -14,10 +14,8 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import util.ApplicationException;
 import util.UnexpectedException;
 
 /**
@@ -27,10 +25,6 @@ public abstract class AbstractView {
 	
 	private JFrame frame; // Frame displayed in the view
 	private JPanel mainPanel; // Panel with the contents for each view
-	
-	// If true a field for changing todays date is displayed.
-	private boolean showChangeDate;
-	private JButton btnTodaysDate;
 	
 	// Buttons for low part of the view
 	JButton btnLowLeft, btnLowMiddle, btnLowRight;
@@ -51,23 +45,15 @@ public abstract class AbstractView {
 	 *  ability to change todays date.
 	 */
 	public AbstractView() { this(DEFAULT_TITLE); }
-	
-	/**
-	 *  Creates and displays a view with the provided name and no
-	 *  ability to change todays date.
-	 */
-	public AbstractView(String viewName) { this(viewName, false); }
 
 	/**
 	 * Creates and displays a view.
 	 * @param viewName is the text displayed at the frame and window title.
 	 * @param showChangeDate indicates if the changeDate option should be displayed.
 	 */
-	public AbstractView(String viewName, boolean showChangeDate)
+	public AbstractView(String viewName)
 	{
 		// Some variables require initialization
-		this.showChangeDate = showChangeDate;
-		this.btnTodaysDate = null;
 		this.btnLowLeft = null;
 		this.btnLowMiddle = null;
 		this.btnLowRight = null;
@@ -101,17 +87,7 @@ public abstract class AbstractView {
 		this.frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT); // Sets the frame dimensions.
 		this.frame.setLayout(new BorderLayout(10 ,10)); // Defines the layout for the frame.
 		
-		JPanel topPanel; // Panel displayed always at the top.
-		if (this.showChangeDate)
-		{
-			topPanel = new JPanel();
-	        topPanel.setLayout(new BorderLayout());
-	        topPanel.add(createTitlePanel(title), BorderLayout.NORTH);
-	        topPanel.add(createTodaysDatePanel(), BorderLayout.CENTER);
-	        
-		} else {
-			topPanel = createTitlePanel(title);
-		}
+		JPanel topPanel = createTitlePanel(title);
 
         // Agregar el panel contenedor al frame en la parte superior
         frame.add(topPanel, BorderLayout.NORTH);
@@ -167,38 +143,6 @@ public abstract class AbstractView {
         titlePanel.add(titleLabel);
         
         return titlePanel;
-	}
-	
-	/**
-	 * Creates a panel with a date input and a button to change todays date.
-	 * @return a JPanel with the ability to change todays date.
-	 */
-	private final JPanel createTodaysDatePanel()
-	{
-		// Variables to configure the panel
-		Color todaysDatePanelBackground = new Color(0x4A90E2);
-		int todaysDatePanelHeight = 40;
-		
-		// Variables to configure the button
-		String todaysDateButtonText = "Set today's date";
-		
-		// Panel for the date input and the button.
-        JPanel todaysDatePanel = new JPanel();
-        todaysDatePanel.setBackground(todaysDatePanelBackground);
-        todaysDatePanel.setPreferredSize(new Dimension(frame.getWidth(), todaysDatePanelHeight));
-        
-        // Campo de texto para la fecha
-        JTextField dateField = new JTextField(10);
-        dateField.setHorizontalAlignment(JTextField.CENTER);
-        
-        // Botón para establecer la fecha de hoy
-        this.btnTodaysDate = new JButton(todaysDateButtonText);
-        
-        // Agregar componentes al panel extra
-        todaysDatePanel.add(dateField);
-        todaysDatePanel.add(btnTodaysDate);
-        
-        return todaysDatePanel;
 	}
 	
 	private final JPanel createLowButtonsPanel() {
@@ -383,34 +327,6 @@ public abstract class AbstractView {
 		 if (this.btnLowRight == null)
 			 throw new UnexpectedException("ERROR. Button lowRight does not exist.");
 		 return this.btnLowRight;
-	 }
-	 
-	 
-	 /* ================================================================================
-     * 
-     *    TODAYS DATE METHODS.
-     * 
-     */
-	 
-	/**
-	 * Checks if the frame offers the user the possibility to change todays date.
-	 * @return true if the user can change todays date in this frame.
-	 */
-	 public final boolean canViewChangeTodaysDate() { return this.showChangeDate; }
-	 
-	 /**
-	  * Gets the button that changes todays date.
-	  * @return a JButton used to change todays date.
-	  */
-	 public final JButton getTodaysDateButton()
-	 {
-		 if (!this.showChangeDate)
-			 throw new ApplicationException("ERROR. The view does not have an todaysDateButton. Check view's constructor parms.");
-		 
-		 if (this.btnTodaysDate == null)
-			 throw new UnexpectedException("ERROR. Incorrect initialization for todaysDateButton.");
-		 
-		 return this.btnTodaysDate;
 	 }
 }
 
