@@ -11,7 +11,7 @@ public class US125View extends AbstractView {
     private JButton filterButton;
     
     public US125View() {
-        super("Invoice Management", false);
+        super("Invoice Management");
         initialize();
     }
     
