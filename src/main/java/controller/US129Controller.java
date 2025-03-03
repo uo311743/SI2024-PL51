@@ -24,7 +24,6 @@ public class US129Controller {
     }
 
     public void initController() {
-        // Filter button
         view.getFilterButton().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -32,7 +31,6 @@ public class US129Controller {
             }
         });
         
-        // Cancel button
         view.getButtonLowLeft().addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

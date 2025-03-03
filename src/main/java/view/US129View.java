@@ -18,7 +18,6 @@ public class US129View extends AbstractView {
     
     public US129View() {
         super("Activity Financial Report");
-        initialize();
     }
     
     @Override
