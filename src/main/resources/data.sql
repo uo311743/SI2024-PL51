@@ -1,64 +1,48 @@
--- Insert sample Sponsor Organizations
-INSERT INTO SponsorOrganizations (nameSponsorOrganization, typeSponsorOrganization, AddressSponsorOrganization, nifSponsorOrganization, vatSponsorOrganization)
-VALUES 
-  ('TechCorp', 'IT', '123 Main St', '12345678A', 'VAT12345678'),
-  ('EduPartners', 'Education', '456 College Ave', '87654321B', 'VAT87654321'),
-  ('GreenFuture', 'Environmental', '789 Green Blvd', '11223344C', 'VAT11223344');
+-- Insert SponsorOrganizations
+INSERT INTO SponsorOrganizations (name, type, address, nif, vat) VALUES
+('Tech Corp', 'private corp.', '123 Tech Street', 'A12345678', 'VAT123'),
+('City Council', 'public administration', '456 Main Square', 'B87654321', 'VAT456');
 
--- Insert sample Sponsor Contacts
-INSERT INTO SponsorContacts (idSponsorOrganization, nameSponsorContact, emailSponsorContact, phoneSponsorContact)
-VALUES 
-  (1, 'Alice Johnson', 'alice@techcorp.com', '555-0101'),
-  (2, 'Bob Smith', 'bob@edupartners.com', '555-0202'),
-  (3, 'Carol Lee', 'carol@greenfuture.com', '555-0303');
+-- Insert GBMembers
+INSERT INTO GBMembers (name, role) VALUES
+('Alice Johnson', 'President'),
+('Bob Smith', 'Treasurer');
 
--- Insert sample GB Members
-INSERT INTO GBMembers (nameGBMember, roleGBMember)
-VALUES 
-  ('David Miller', 'Chair'),
-  ('Emma Davis', 'Treasurer'),
-  ('Frank Wilson', 'Secretary');
+-- Insert SponsorContacts
+INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
+(1, 'John Doe', 'john@techcorp.com', '555-1234'),
+(2, 'Mary White', 'mary@citycouncil.gov', '555-5678');
 
--- Insert sample Activities (names follow the rule: one of the 3 options + year)
-INSERT INTO Activities (nameActivity, editionActivity, statusActivity, dateStartActivity, dateEndActivity, placeActivity)
-VALUES 
-  ('Olimpics 2023', '1st Edition', 'planned', '2023-07-01', '2023-07-07', 'Stadium A'),
-  ('ImpulsoTIC Week 2023', '3rd Edition', 'opened', '2023-09-10', '2023-09-16', 'Convention Center'),
-  ('Hour of Code 2023', '5th Edition', 'closed', '2023-11-01', '2023-11-01', 'Online');
+-- Insert SponsorshipAgreements
+INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, activity, amount, date, status) VALUES
+(1, 1, 'Tech Innovation Summit', 5000.00, '2024-01-15', 'signed'),
+(2, 2, 'Community Cleanup', 2000.00, '2024-02-01', 'closed');
 
--- Insert sample Movements for each activity
-INSERT INTO Movements (idActivity, typeMovement, conceptMovement, amountMovement, dateMovement, ReceiptNumber, statusMovement)
-VALUES 
-  (1, 'income', 'Ticket Sales', 5000.00, '2023-06-15', 'RCPT1001', 'paid'),
-  (2, 'expense', 'Venue Rental', 2000.00, '2023-09-05', 'RCPT2001', 'estimated'),
-  (3, 'income', 'Sponsorship Fee', 3000.00, '2023-10-25', 'RCPT3001', 'paid');
+-- Insert Invoices
+INSERT INTO Invoices (idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES
+(1, '2024-01-20', '2024-01-22', '2024-02-20', 5500.00, 10, 'issued'),
+(2, '2024-02-05', NULL, '2024-03-05', 2200.00, 10, 'draft');
 
--- Insert sample Levels
-INSERT INTO Levels (nameLevel, feeLevel)
-VALUES 
-  ('Beginner', 50.00);
+-- Insert SponsorshipPayments
+INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES
+(1, '2024-01-25', 5000.00),
+(2, '2024-02-10', 2000.00);
 
--- Insert sample ActivityLevel relationships
-INSERT INTO ActivityLevel (idActivity, idLevel)
-VALUES 
-  (1, 1),  -- Olimpics 2023 with Beginner level
-  (2, 1),  -- ImpulsoTIC Week 2023 with Beginner level
-  (3, 1);  -- Hour of Code 2023 with Beginner level
+-- Insert Activities
+INSERT INTO Activities (name, status, dateStart, dateEnd, place) VALUES
+('Olimpics 2024', 'planned', '2024-03-10', '2024-03-12', 'Convention Center'),
+('ImpulsoTIC Week 2024', 'done', '2024-02-15', '2024-02-15', 'Central Park');
 
--- Insert sample Sponsorship Agreements
-INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, amountSponsorshipAgreement, dateSponsorshipAgreement, statusSponsorshipAgreement)
-VALUES 
-  (1, 1, 10000.00, '2023-05-20', 'closed'),
-  (2, 2, 8000.00, '2023-08-15', 'modified'),
-  (3, 3, 12000.00, '2023-10-10', 'closed');
+-- Insert Levels
+INSERT INTO Levels (name, fee) VALUES
+('Basic', 50.00);
 
--- Insert sample Invoices
-INSERT INTO Invoices (idSponsorshipAgreement, dateIssueInvoice, dateSentInvoice, dateExpirationInvoice, totalAmountInvoice, taxRateInvoice, statusInvoice)
-VALUES 
-  (1, '2023-05-25', '2023-05-26', '2023-06-25', 10000.00, 21.0, 'issued'),
-  (2, '2023-08-20', '2023-08-21', '2023-09-20', 8000.00, 21.0, 'issued'),
-  (3, '2023-10-15', '2023-10-16', '2023-11-15', 12000.00, 21.0, 'issued');
+-- Insert ActivityLevels
+INSERT INTO ActivityLevels (idActivity, idLevel) VALUES
+(1, 1),
+(2, 1);
 
+<<<<<<< HEAD
 -- Insert sample Sponsorship Payments
 INSERT INTO SponsorshipPayments (idInvoice, dateSponsorshipPayment, amountSponsorshipPayment)
 VALUES 
@@ -66,3 +50,9 @@ VALUES
   (2, '2023-09-01', 4000.00),
   (2, '2023-09-15', 4000.00),
   (3, '2023-11-01', 12000.00);
+=======
+-- Insert Movements
+INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) VALUES
+(1, 'income', 'Sponsorship Payment', 5000.00, '2024-01-25', 'INV-001', 'paid'),
+(2, 'expense', 'Cleanup Supplies', 500.00, '2024-02-10', 'EXP-001', 'paid');
+>>>>>>> refs/heads/develop
