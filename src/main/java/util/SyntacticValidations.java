@@ -8,6 +8,13 @@ import java.time.format.DateTimeParseException;
  * Contains validations pertaining to the nature of the data. Used in controller.
  */
 public class SyntacticValidations {
+	
+	public static final String PATTERN_EMAIL =
+			"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+	
+	public static final String PATTERN_EMAIL =
+			"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+	
 	private SyntacticValidations() {
 		throw new IllegalStateException("Utility class");
 	}
