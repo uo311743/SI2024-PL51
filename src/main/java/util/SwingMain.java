@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import controller.US129Controller;
+import model.US129Model;
 import view.ExampleView;
 import view.US129View;
 
@@ -127,13 +129,10 @@ public class SwingMain {
 	    // FIXME Delete this method and create new ones.
 	    addButtonToMain(buttonPanel, "Run Example", () -> {
 	    	new ExampleView().setVisible();
-<<<<<<< HEAD
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Run US129", () -> {
-	    	new US129View().setVisible();
-=======
->>>>>>> refs/heads/develop
+	    	new US129Controller(new US129Model(), new US129View());
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

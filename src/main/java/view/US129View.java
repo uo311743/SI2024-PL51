@@ -17,7 +17,7 @@ public class US129View extends AbstractView {
     private JButton filterButton;
     
     public US129View() {
-        super("Activity Financial Report", false);
+        super("Activity Financial Report");
         initialize();
     }
     

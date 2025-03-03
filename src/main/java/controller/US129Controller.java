@@ -4,21 +4,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
 import java.util.List;
-
 import javax.swing.ComboBoxModel;
-
 import DTOs.ActivitiesDTO;
 import giis.demo.util.SwingUtil;
 import giis.demo.util.Util;
-import model.Model;
+import model.US129Model;
 import view.US129View;
 
 public class US129Controller {
     
-    protected Model model;
+    protected US129Model model;
     protected US129View view; 
     
-    public US129Controller(Model m, US129View v) { 
+    public US129Controller(US129Model m, US129View v) { 
         this.model = m;
         this.view = v;
         this.initView();
@@ -49,7 +47,7 @@ public class US129Controller {
     }
     
     public void loadStatus() {
-        List<Object[]> sponsorList = model.getSponsorListArray();
+        List<Object[]> sponsorList = model.getStatusListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
         view.getStatusComboBox().setModel(lmodel);
     }
