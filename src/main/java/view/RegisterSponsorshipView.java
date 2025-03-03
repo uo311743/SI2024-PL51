@@ -17,21 +17,21 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
-public class RegisterSponshorshipView extends AbstractView {
+public class RegisterSponsorshipView extends AbstractView {
 	
-	private JTable sponshorsTable;
+	private JTable activityTable;
 	private JComboBox<Object> sponsorComboBox;
 	private JComboBox<Object> contactComboBox;
 	private JComboBox<Object> gbMemberComboBox;
 	private JTextField amountTextField;
 	private JTextField agreementDateTextField;
 	
-	public RegisterSponshorshipView() { super("Register Sponshorship", false); }
+	public RegisterSponsorshipView() { super("Register Sponshorship"); }
 	
 	@Override
 	protected void initialize()
 	{
-		this.sponshorsTable = new JTable();
+		this.activityTable = new JTable();
 		this.sponsorComboBox = new JComboBox<>();
         this.contactComboBox = new JComboBox<>();
         this.gbMemberComboBox = new JComboBox<>();
@@ -57,10 +57,10 @@ public class RegisterSponshorshipView extends AbstractView {
 	{
 		JLabel activityTableLabel = new JLabel("Please select an Activity:");
 
-		sponshorsTable.setName("activityTable");
-		sponshorsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		sponshorsTable.setDefaultEditor(Object.class, null);
-		JScrollPane activityTable = new JScrollPane(sponshorsTable);
+		activityTable.setName("activityTable");
+		activityTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		activityTable.setDefaultEditor(Object.class, null);
+		JScrollPane activityTableScroll = new JScrollPane(activityTable);
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new BorderLayout());
@@ -70,8 +70,8 @@ public class RegisterSponshorshipView extends AbstractView {
 		topPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
 
 		panel.add(topPanel, BorderLayout.NORTH);
-		panel.add(activityTable, BorderLayout.CENTER);
-		
+		panel.add(activityTableScroll, BorderLayout.CENTER);
+	
 		return panel;
 	}
 	
@@ -123,8 +123,8 @@ public class RegisterSponshorshipView extends AbstractView {
 	
 	
 	
-	public JTable sponshorsTable() {
-	    return sponshorsTable;
+	public JTable getActivityTable() {
+	    return activityTable;
 	}
 	
 	public JComboBox<Object> getSponsorComboBox() {
