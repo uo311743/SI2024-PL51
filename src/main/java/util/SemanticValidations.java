@@ -20,7 +20,6 @@ public class SemanticValidations
 		if(result.get(0)[0] == "0")
 			throw new ApplicationException("The provided idSponsorContact does not exist in table SponsorContacts");
 	}
-	
 	public static void validateIdGBMember(String idGBMember)
 	{
 		String sql = "SELECT EXISTS(SELECT 1 FROM GBMembers WHERE id = ?);";
@@ -35,6 +34,23 @@ public class SemanticValidations
 		if(result.get(0)[0] == "0")
 			throw new ApplicationException("The provided idActivity does not exist in table Activities");
 	}
+	public static void validateIdSponsorOrganization(String idSponsorOrganization)
+	{
+		String sql = "SELECT EXISTS(SELECT 1 FROM SponsorOrganizations WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, idSponsorOrganization);
+		if(result.get(0)[0] == "0")
+			throw new ApplicationException("The provided idSponsorOrganization does not exist in table SponsorOrganizations");
+	}
+	public static void validateName(String name) 
+	{
+	    if (name == null || name.trim().isEmpty()) {
+	        throw new IllegalArgumentException("Name cannot be null or empty");
+	    }
+	    if (name.matches("-")) {
+	        throw new IllegalArgumentException("No dash allowed");
+	    }
+	}
+
 	
 	
 	// ============================================================

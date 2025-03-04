@@ -1,11 +1,11 @@
 package model;
 
 import java.util.List;
-
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import DTOs.SponsorOrganizationsDTO;
 import util.Database;
+import util.SemanticValidations;
 
 public class InvoiceManagementModel {
 	
@@ -38,18 +38,22 @@ public class InvoiceManagementModel {
 	}
 
 	public SponsorOrganizationsDTO getSponsorByName(String nameSponsor) {
+		SemanticValidations.validateName(nameSponsor);
 		String sql = "SELECT id FROM SponsorOrganizations WHERE name == ?;";
 		List<SponsorOrganizationsDTO> sponsors = db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nameSponsor);
 		return sponsors.get(0);
 	}
 	
 	public ActivitiesDTO getActivityByName(String nameActivity) {
+		SemanticValidations.validateName(nameActivity);
 		String sql = "SELECT id FROM Activities WHERE name == ?;";
 		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}
 	
 	public List<InvoicesDTO> getInvoicesBySponsorAndActivity(String sponsorId, String activityId) {
+		SemanticValidations.validateIdSponsorOrganization(sponsorId);
+		SemanticValidations.validateIdActivity(activityId);
         return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES, sponsorId, activityId);
     }
 }

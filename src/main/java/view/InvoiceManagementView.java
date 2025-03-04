@@ -29,7 +29,7 @@ public class InvoiceManagementView extends AbstractView {
     protected void configMainPanel() {
         getMainPanel().setLayout(new MigLayout("", "[grow]", "[][][grow][]"));
 
-        // Sponsor & Activity ComboBoxes with Filter Button
+        // ComboBoxes
         JPanel sponsorPanel = new JPanel(new MigLayout("", "[center]"));
         sponsorPanel.add(new JLabel("Sponsor: "));
         sponsorPanel.add(sponsorComboBox);
