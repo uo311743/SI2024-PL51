@@ -15,8 +15,6 @@ import java.util.List;
 import javax.swing.ComboBoxModel;
 
 public class RegisterPaymentController {
-	// Create an Object of Payment type for the Model
-	// Create View Object
 	private Model model;
 	private RegisterPaymentView view;
 	
@@ -51,17 +49,9 @@ public class RegisterPaymentController {
 	            String invoiceId = view.getInvoiceId();
 	            
 	            if (validateFields(amount, nif, date, invoiceId) == false) {
-	            	view.showError("All fields must be filled");
+	            	return;
 	            } else {
-	            	// Syntactic validation of date entered by the user
-	        		try {
-	                	SyntacticValidations.validateDate(view.getDate(), "");
-	                } catch (ApplicationException ex) {
-	                	view.showError("Invalid date format. Please use yyyy-MM-dd.");
-	                	throw new ApplicationException(ex.getMessage());
-	                }
-	        		
-	            	// Track Company to Agreement
+	            	// Track Sponsorship to Agreement
 		            Integer idSponsorshipAgreement = -1;
 					try {
 						idSponsorshipAgreement = model.getSponsorshipAgreementId(nif, activity);
@@ -71,18 +61,24 @@ public class RegisterPaymentController {
 						return;
 					}
 		            
-		            // Check if Invoice entered in the Payment is a correct ID attribute
-		            // Fetch in DB if there is an Invoice generated for the Agreement identified by id
-					// Retrieve Invoice ID in case it was not enter or check if Invoice ID entered was the correct one
-	            	try {
-	            		model.getInvoiceId(Integer.parseInt(invoiceId), idSponsorshipAgreement);
+					// Retrieve Invoice ID
+					String invoiceRetrieved = "";
+					try {
+						invoiceRetrieved = model.getInvoiceId(idSponsorshipAgreement);
 	            	} catch (Exception e) {
 	            		view.showError("No Invoice Found");
 	            		e.printStackTrace();
 	            		return;
 	            	}
+					
+					// Check if Invoice entered is correct
+					if (SyntacticValidations.isNotEmpty(invoiceId) && !invoiceId.equals(invoiceRetrieved)) {
+						view.showError("Incorrect Invoice");
+						return;
+					}
 	            	
-		            if (model.validateDate(date, Integer.parseInt(invoiceId))) {
+		            try {
+		            	model.validatePaymentDate(date, Integer.parseInt(invoiceId));
 		            	try {
 			            	model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
 			            } catch (Exception e) {
@@ -91,8 +87,9 @@ public class RegisterPaymentController {
 			            	return;
 			            } 
 		            	view.configureSummaryPanel();
-		            } else {
+		            } catch (Exception e) {
 		            	view.showError("Payment received before Invoice generation");
+		            	throw new ApplicationException(e.getMessage());
 		            }
 	            }
 	        }
@@ -112,16 +109,23 @@ public class RegisterPaymentController {
 	}
 	
 	public Boolean validateFields(String amount, String nif, String date, String invoiceId) {
-		if (amount.isEmpty() || nif.isEmpty() || date.isEmpty() || invoiceId.isEmpty()) {
+		if (!SyntacticValidations.isNotEmpty(amount) || !SyntacticValidations.isNotEmpty(nif) || !SyntacticValidations.isNotEmpty(date)) {
+			view.showError("All fields must be filled except Invoice ID (Optional)");
+			return false;
+		}
+		if (!SyntacticValidations.isDate(date)) {
+			view.showError("Please enter date in format: yyyy-MM-dd");
+			return false;
+		}
+		if (!SyntacticValidations.isNumber(amount)) {
+			view.showError("Please enter a valid number for the amount");
+			return false;
+		}
+		if (SyntacticValidations.isNotEmpty(invoiceId) && !SyntacticValidations.isNumber(invoiceId)) {
+			view.showError("Please enter a valid number to identify the invoice");
 			return false;
 		}
 		
 		return true;
 	}
-	
-	// Control Model Object
-	// Interact with the items inside the Model Class
-	// Methods to set the properties in the actual Model
-	
-	// Control View Object to be updated any time there is a change in the Model related to Payments
 }

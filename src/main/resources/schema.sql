@@ -39,22 +39,13 @@ CREATE TABLE SponsorshipAgreements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     idSponsorContact INTEGER NOT NULL,
     idGBMember INTEGER NOT NULL,
-<<<<<<< HEAD
-    idActivity INTEGER NOT NULL,
-=======
     idActivity TEXT NOT NULL,
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
     amount REAL NOT NULL,
     date TEXT NOT NULL,
     status TEXT NOT NULL CHECK (lower(status) IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(id) ON DELETE CASCADE,
-<<<<<<< HEAD
-    FOREIGN KEY (idGBMember) REFERENCES GBMembers(id) ON DELETE CASCADE,
-    FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
-=======
     FOREIGN KEY (idGBMember) REFERENCES GBMembers(id) ON DELETE CASCADE
     FOREIGN KEY (idActivity) REFERENCES Activity(id) ON DELETE CASCADE
->>>>>>> branch 'develop' of https://github.com/uo311743/coiipa.git
 );
 
 CREATE TABLE Invoices (

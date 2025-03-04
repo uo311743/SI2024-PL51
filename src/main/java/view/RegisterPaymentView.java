@@ -125,22 +125,24 @@ public class RegisterPaymentView extends AbstractView {
     
     public void configureSummaryPanel()
     {
-    	JLabel headerLabel = new JLabel("<html><h2>Summary of Payment Registered</h2></html>", SwingConstants.CENTER);
-    	headerLabel.setFont(new Font("Arial", Font.BOLD, 12));
+    	JLabel headerLabel = new JLabel("<html><div style='font-size:14px; font-weight:bold;'>Summary of Payment Registered</div></html>", SwingConstants.CENTER);
+    	headerLabel.setFont(new Font("Arial", Font.BOLD, 11));
+    	headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    	JLabel summaryLabel = new JLabel("<html><div style='font-size:11px; padding:5px 10px;'>" +
-    	        "<b>Activity:</b> " + getActivity() + "<br>" +
-    	        "<b>Amount (EUR):</b> " + getAmount() + "<br>" +
-    	        "<b>NIF:</b> " + getNIF() + "<br>" +
-    	        "<b>Date:</b> " + getDate() + "<br>" +
-    	        "<b>Invoice ID:</b> " + getInvoiceId() +
-    	        "</div></html>", SwingConstants.CENTER);
+    	JLabel summaryLabel = new JLabel("<html><div style='font-size:11px; padding:2px 5px;'>" +
+    		    "<b>Activity:</b> " + getActivity() + "<br>" +
+    		    "<b>Amount (EUR):</b> " + getAmount() + "<br>" +
+    		    "<b>NIF:</b> " + getNIF() + "<br>" +
+    		    "<b>Date:</b> " + getDate() + "<br>" +
+    		    "<b>Invoice ID:</b> " + getInvoiceId() +
+    		    "</div></html>", SwingConstants.CENTER);
 
     	summaryLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    	summaryLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
     	clearFields();
     	summaryPanel.removeAll();
-    	summaryPanel.setLayout(new GridLayout(2, 1));
+    	summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
     	summaryPanel.add(headerLabel, BorderLayout.NORTH);
     	summaryPanel.add(summaryLabel, BorderLayout.CENTER);
     	summaryPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
@@ -154,19 +156,20 @@ public class RegisterPaymentView extends AbstractView {
     	clearFields();
 
     	errorPanel.setLayout(new BorderLayout());
-    	errorPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Red border for error
+    	errorPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
 
         // Error header
-        JLabel errorHeader = new JLabel("<html><h2 style='color:red;'>Error</h2></html>", SwingConstants.CENTER);
-        errorHeader.setFont(new Font("Arial", Font.BOLD, 14));
-        errorHeader.setBorder(new EmptyBorder(3, 3, 3, 3));
+        JLabel errorHeader = new JLabel("<html><div style='color:red; font-size:14px; font-weight:bold;'>Error</div></html>", SwingConstants.CENTER);
+        errorHeader.setFont(new Font("Arial", Font.BOLD, 11));
+        errorHeader.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Error message
-        JLabel errorLabel = new JLabel("<html><div style='font-size:11px; padding:5px 10px; color:red;'>" + errorMessage + "</div></html>", SwingConstants.CENTER);
+        JLabel errorLabel = new JLabel("<html><div style='color:red; font-size:11px; padding:2px 5px;'>" + errorMessage + "</div></html>", SwingConstants.CENTER);
         
         errorLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+        errorLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     	
-        errorPanel.setLayout(new GridLayout(2, 1));
+        errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.Y_AXIS));
         errorPanel.add(errorHeader, BorderLayout.NORTH); // Add header
         errorPanel.add(errorLabel, BorderLayout.CENTER); // Add error message
         
@@ -212,7 +215,7 @@ public class RegisterPaymentView extends AbstractView {
     }
 
     public String getAmount() {
-        return amountField.getText(); //Double.parseDouble(amountField.getText());
+        return amountField.getText();
     }
 
     public String getNIF() {

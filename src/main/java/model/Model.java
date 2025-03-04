@@ -11,8 +11,6 @@ import java.sql.*;
 
 import util.ApplicationException;
 import util.Database;
-import util.SemanticValidations;
-import util.SwingMain;
 
 public class Model {
 	
@@ -35,6 +33,12 @@ public class Model {
     }
     
 	// Registration of Payments
+	/**
+	 * Fetch SponsorshipAgreement in DB corresponding to Company identified by it NIF/VAT and name of activity selected
+	 * @param nifOrVat
+	 * @param activity
+	 * @return id of the SponsorshipAgreement
+	 */
 	public Integer getSponsorshipAgreementId(String nifOrVat, String activity) {
 	    String sql = "SELECT sa.id " +
 	                 "FROM SponsorshipAgreements sa " +
@@ -56,39 +60,12 @@ public class Model {
 	    }
 	}
 	
-	public Integer getActivityId(String name) {
-		String sql = "SELECT a.id FROM Activities a WHERE a.name = ?;";
-		
-		try {
-	    	List<Object[]> result = db.executeQueryArray(sql, name);
-		    
-		    if (result.isEmpty()) {
-		    	throw new ApplicationException("No Activity found");
-		    } else {
-		    	return Integer.parseInt(result.get(0)[0].toString());
-		    }
-	    } catch (Exception e) {
-	    	throw new ApplicationException("Unexpected error while retrieving Activity ID: " + e.getMessage());
-	    }
-	}
-	
-	public void validateActivity(Integer idSponsorshipAgreement, String activity) {
-		String sql = "SELECT a.name FROM Activity a JOIN SponsorshipAgreement sa ON a.id = sa.isActivity;";
-		
-		try {
-	    	List<Object[]> result = db.executeQueryArray(sql);
-		    
-		    if (result.isEmpty()) {
-		    	throw new ApplicationException("No Agreement found for that Activity");
-		    } else {
-		    	validateCondition(result.get(0)[0].toString() == activity, "There is no agreement for that activity");
-		    }
-	    } catch (Exception e) {
-	    	throw new ApplicationException("Unexpected error while retrieving Activity: " + e.getMessage());
-	    }
-	}
-	
-	public void getInvoiceId(Integer invoiceId, Integer idSponsorshipAgreement) {
+	/**
+	 * Fetch Invoice in DB corresponding to SponsorshipAgreement identified by its ID
+	 * @param idSponsorshipAgreement
+	 * @return id of Invoice found
+	 */
+	public String getInvoiceId(Integer idSponsorshipAgreement) {
 		String sql = "SELECT i.id FROM Invoices i WHERE i.idSponsorshipAgreement = ?;";
 		
 		try {
@@ -97,45 +74,19 @@ public class Model {
 			if (result.isEmpty()) {
 				throw new ApplicationException("No Invoice Found");
 			} else {
-				try {
-	    			validateNumber(invoiceId, "Invalid Invoice ID provided");
-	    			validateCondition((Integer.parseInt(result.get(0)[0].toString()) == invoiceId), "Incorrect Invoice ID provided");
-	    		} catch (Exception e) {
-	    			throw new ApplicationException(e.getMessage());
-	    		}
+				return result.get(0)[0].toString();
 			}
 		} catch (Exception e) {
 			throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
 		}
 	}
-	
+
 	/**
-	 * Semantic Validation of Date a Payment was received according to business logic
-	 * RULE #1: Date cannot be in the future
-	 * RULE #2: Never before Invoice generation
-	 * @param date the payment was made
-	 * @param invoiceId invoice the payment belongs to
+	 * Register Payment in DB
+	 * @param idInvoice
+	 * @param dateSponsorshipPayment
+	 * @param amountSponsorshipPayments
 	 */
-	public void validateDate(String date, Integer invoiceId) {
-        String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
-
-        try {
-        	List<Object[]> result = db.executeQueryArray(query, invoiceId);
-            
-            if (result.isEmpty()) {
-            	throw new ApplicationException("No Invoice Found");
-            } else {
-            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
-            	Date paymentDate = Date.valueOf(date);
-            	SemanticValidations.validateDateInPast(paymentDate, SwingMain.getTodayDate(), true, "Invalid date of payment: cannot be after today's date");
-            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
-            }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	throw new ApplicationException(e.getMessage());
-        }
-    }
-
     public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
         String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
         
@@ -150,8 +101,12 @@ public class Model {
         }
     }
     
+    /**
+     * Fetch name of all current Activities in DB available for sponsorship
+     * @return list of arrays of Objects with the name of the activities in first position of each array
+     */
     public List<Object[]> getListActivities() {
-    	String query = "SELECT name FROM Activities;";
+    	String query = "SELECT name FROM Activities WHERE status <> 'cancelled';";
     	
     	return db.executeQueryArray(query);
     }
@@ -163,11 +118,30 @@ public class Model {
      * 
      */
     
-    
-    
-    // TODO
-    
-    
+    /**
+	 * Semantic Validation of Date a Payment was received according to business logic
+	 * RULE: Never before Invoice generation
+	 * @param date the payment was made
+	 * @param invoiceId invoice the payment belongs to
+	 */
+	public void validatePaymentDate(String date, Integer invoiceId) {
+        String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
+
+        try {
+        	List<Object[]> result = db.executeQueryArray(query, invoiceId);
+            
+            if (result.isEmpty()) {
+            	throw new ApplicationException("No Invoice Found");
+            } else {
+            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
+            	Date paymentDate = Date.valueOf(date);
+            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
+            }
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	throw new ApplicationException(e.getMessage());
+        }
+    }
     
     /* ================================================================================
      * 
