@@ -1,12 +1,44 @@
 package util;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Contains validations pertaining to the business logic of the data. Used in the model.
  */
-public class SemanticValidations {
-
+public class SemanticValidations
+{
+	// Instance that allows the connection to the DB and execution of queries
+	private static Database db = new Database();
+	
+	// ============================================================
+	
+	public static void validateIdSponsorContact(String idSponsorContact)
+	{
+		String sql = "SELECT EXISTS(SELECT 1 FROM SponsorContacts WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, idSponsorContact);
+		if(result.get(0)[0] == "0")
+			throw new ApplicationException("The provided idSponsorContact does not exist in table SponsorContacts");
+	}
+	
+	public static void validateIdGBMember(String idGBMember)
+	{
+		String sql = "SELECT EXISTS(SELECT 1 FROM GBMembers WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, idGBMember);
+		if(result.get(0)[0] == "0")
+			throw new ApplicationException("The provided idGBMember does not exist in table GBMembers");
+	}
+	public static void validateIdActivity(String idActivity)
+	{
+		String sql = "SELECT EXISTS(SELECT 1 FROM Activities WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, idActivity);
+		if(result.get(0)[0] == "0")
+			throw new ApplicationException("The provided idActivity does not exist in table Activities");
+	}
+	
+	
+	// ============================================================
+	
     /**
      * Validates if a number is within a specified range.
      *
