@@ -35,5 +35,11 @@ public class RegisterSponsorshipModel {
 	    return db.executeQueryArray(sql);
 	}
 
+	public void insertSponsorshipAgreement(String idSponsorContact, String idGBMember, String activity, String amount, String date) {
+		// TODO Add validations
+		String sql = "INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, activity, amount, date, status) VALUES "
+				+ "(?, ?, ?, ?, ?, 'signed')";
+        db.executeUpdate(sql, idSponsorContact, idGBMember, activity, amount, date);
+	}
 	
 }

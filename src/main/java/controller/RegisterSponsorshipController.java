@@ -1,11 +1,13 @@
 package controller;
 
+import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
 import javax.swing.ComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
@@ -13,6 +15,8 @@ import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
 import model.RegisterSponsorshipModel;
 import util.SwingUtil;
+import util.SyntacticValidations;
+import util.UnexpectedException;
 import view.RegisterSponsorshipView;
 
 public class RegisterSponsorshipController {
@@ -84,9 +88,7 @@ public class RegisterSponsorshipController {
     	
     	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
-				// TODO
-			}
+			public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper(() -> showSubmitDialog()); }
 		});
 
     }
@@ -112,24 +114,39 @@ public class RegisterSponsorshipController {
 		if("".equals(this.lastSelectedActivity)) {  restartView(); }
 		else
 		{
-			this.lastSelectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
-			String id = SwingUtil.getKeyFromText(this.lastSelectedSponsor);
-			this.getContacts(id); // Populate ComboBox with contacts
+			String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
+			if (this.lastSelectedSponsor != selectedSponsor)
+			{
+				this.lastSelectedSponsor = selectedSponsor;
+				String id = SwingUtil.getKeyFromText(lastSelectedSponsor);
+				this.getContacts(id); // Populate ComboBox with contacts
+			}
 			
 			this.setInputsEnabled(true);
 		}
 		
 		// ------------------------------------------------------------
 		// Check JTextField inputs:
+		boolean valid = true;
+		
+		// Validate amount
 		String amount = this.view.getAmountTextField().getText();
-		String agreementDate = this.view.getAgreementDateTextField().getText();
-		
-
-		
-		if("".equals(amount) || "".equals(amount))
+		if(!SyntacticValidations.isDecimal(amount))
 		{
-			this.view.getButtonLowRight().setEnabled(true);
-		}
+			this.view.getAmountTextField().setForeground(Color.RED);
+			valid = false;
+		} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+		
+		// Validate agreement date
+		String agreementDate = this.view.getAgreementDateTextField().getText();
+		if(!SyntacticValidations.isDate(agreementDate))
+		{
+			this.view.getAgreementDateTextField().setForeground(Color.RED);
+			valid = false;
+		} else { this.view.getAgreementDateTextField().setForeground(Color.BLACK); }
+		
+		// Activate/Deactivate the submit button
+		this.view.getButtonLowRight().setEnabled(valid);
 		
 	}
 	
@@ -194,5 +211,53 @@ public class RegisterSponsorshipController {
     	this.view.getAgreementDateTextField().setEnabled(enabled);
     	this.view.getAmountTextField().setEnabled(enabled);
     }
+    
+    // ================================================================================
+
+    private void showSubmitDialog()
+    {
+        int row = this.view.getActivityTable().getSelectedRow(); 
+        
+        String activity = "";
+        
+        if (row >= 0)
+            activity = (String) this.view.getActivityTable().getModel().getValueAt(row, 1);
+        
+        if (activity == "")
+            throw new UnexpectedException("Submit called with no activity selected.");
+
+        String sponsor = (String) view.getSponsorComboBox().getSelectedItem();
+        String contact = (String) view.getContactComboBox().getSelectedItem();
+        String GBmember = (String) view.getGbMemberComboBox().getSelectedItem();
+        String amount = this.view.getAmountTextField().getText();
+        String agreementDate = this.view.getAgreementDateTextField().getText();
+
+        String message = "<html><body>"
+                + "<p>You are about to add a sponsorship agreement for the activity: <b>" + activity + "</b>.</p>"
+                + "<p><b>Details:</b></p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Sponsor:</b></td><td style='padding: 2px 5px;'>" + sponsor + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Contact:</b></td><td style='padding: 2px 5px;'>" + contact + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>GB Member:</b></td><td style='padding: 2px 5px;'>" + GBmember + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + " euros</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Agreement Date:</b></td><td style='padding: 2px 5px;'>" + agreementDate + "</td></tr>"
+                + "</table>"
+                + "<p><i>Do you want to proceed with adding this sponsorship agreement?</i></p>"
+                + "</body></html>";
+
+        int response = JOptionPane.showConfirmDialog(
+            this.view.getFrame(),              // Parent component
+            message,                           // HTML formatted message
+            "Add Sponsorship Agreement",      // Dialog title
+            JOptionPane.YES_NO_OPTION,         // Option type (Yes/No)
+            JOptionPane.QUESTION_MESSAGE       // Message type (question icon)
+        );
+        
+        if (response == JOptionPane.YES_OPTION)
+        {
+        	this.model.insertSponsorshipAgreement(contact, GBmember, activity, amount, agreementDate);
+        } 
+    }
+
 
 }

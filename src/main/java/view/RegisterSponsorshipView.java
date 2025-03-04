@@ -78,49 +78,60 @@ public class RegisterSponsorshipView extends AbstractView {
 	private JPanel createRightPanel()
 	{
 		JPanel panel = new JPanel();
-        panel.setLayout(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(5, 5, 5, 5);
-        gbc.anchor = GridBagConstraints.WEST;
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5, 5, 5, 5);
+		gbc.anchor = GridBagConstraints.WEST;
 
-        // Fields Panel with Border
-        JPanel fieldsPanel = new JPanel(new GridBagLayout());
-        fieldsPanel.setBorder(BorderFactory.createTitledBorder("Agreement Details"));
-        GridBagConstraints fieldsGbc = new GridBagConstraints();
-        fieldsGbc.insets = new Insets(5, 5, 5, 5);
-        fieldsGbc.anchor = GridBagConstraints.WEST;
+		// Fields Panel with Border
+		JPanel fieldsPanel = new JPanel(new GridBagLayout());
+		fieldsPanel.setBorder(BorderFactory.createTitledBorder("Agreement Details"));
+		GridBagConstraints fieldsGbc = new GridBagConstraints();
+		fieldsGbc.insets = new Insets(5, 5, 5, 5);
+		fieldsGbc.anchor = GridBagConstraints.WEST;
 
-        JLabel sponsorLabel = new JLabel("Select a sponsor:");
-        JLabel contactLabel = new JLabel("Select a contact:");
-        JLabel gbMemberLabel = new JLabel("Select a GB member:");
-        JLabel amountLabel = new JLabel("Amount (euro):");
-        JLabel agreementDateLabel = new JLabel("Agreement Date:");
-        
-        JComponent[][] fields = {
-            {sponsorLabel, sponsorComboBox},
-            {contactLabel, contactComboBox},
-            {gbMemberLabel, gbMemberComboBox},
-            {amountLabel, amountTextField},
-            {agreementDateLabel, agreementDateTextField}
-        };
+		// Labels
+		JLabel sponsorLabel = new JLabel("Select a sponsor:");
+		JLabel contactLabel = new JLabel("Select a contact:");
+		JLabel gbMemberLabel = new JLabel("Select a GB member:");
+		JLabel amountLabel = new JLabel("Amount (euro):");
+		JLabel agreementDateLabel = new JLabel("Agreement Date (yyyy-MM-dd):");
 
-        for (int i = 0; i < fields.length; i++) {
-            fieldsGbc.gridx = 0;
-            fieldsGbc.gridy = i;
-            fieldsPanel.add(fields[i][0], fieldsGbc);
-            
-            fieldsGbc.gridx = 1;
-            fieldsPanel.add(fields[i][1], fieldsGbc);
-        }
+		// Fields
+		JComponent[][] fields = {
+		    {sponsorLabel, sponsorComboBox},
+		    {contactLabel, contactComboBox},
+		    {gbMemberLabel, gbMemberComboBox},
+		    {amountLabel, amountTextField},
+		    {agreementDateLabel, agreementDateTextField}
+		};
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 2;
-        panel.add(fieldsPanel, gbc);
+		// Add labels above inputs
+		for (int i = 0; i < fields.length; i++) {
+		    // Set label in the first row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2; // position label in even rows
+		    fieldsPanel.add(fields[i][0], fieldsGbc);
+
+		    // Set input field in the second row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
+		    fieldsGbc.gridwidth = 2; // input spans two columns
+		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
+		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
+		    fieldsPanel.add(fields[i][1], fieldsGbc);
+		}
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		panel.add(fieldsPanel, gbc);
+
+
 
         return panel;
 	}
-	
+		
 	
 	
 	public JTable getActivityTable() {
