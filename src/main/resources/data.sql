@@ -14,9 +14,9 @@ INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
 (2, 'Mary White', 'mary@citycouncil.gov', '555-5678');
 
 -- Insert SponsorshipAgreements
-INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, activity, amount, date, status) VALUES
-(1, 1, 'Tech Innovation Summit', 5000.00, '2024-01-15', 'signed'),
-(2, 2, 'Community Cleanup', 2000.00, '2024-02-01', 'closed');
+INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES
+(1, 1, 1, 5000.00, '2024-01-15', 'signed'),
+(2, 2, 2, 2000.00, '2024-02-01', 'closed');
 
 -- Insert Invoices
 INSERT INTO Invoices (idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES
