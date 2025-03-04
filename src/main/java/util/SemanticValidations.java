@@ -17,7 +17,8 @@ public class SemanticValidations {
      */
     public static void validateNumberInRange(int number, int min, int max, String message)
     {
-    	SyntacticValidations.validateCondition(number >= min && number <= max, message);
+    	if (number < min || number > max)
+    		throw new ApplicationException(message);
     }
 
     /**
@@ -31,10 +32,11 @@ public class SemanticValidations {
     public static void validateDateInPast(Date date, Date today, boolean includeToday, String message)
     {
     	if(includeToday)
-    		SyntacticValidations.validateCondition(date.before(today) || date.equals(today), message);
-    	else
-    		SyntacticValidations.validateCondition(date.before(today), message);
-    }
+    		if (date.after(today))
+        		throw new ApplicationException(message);
+    	else if (date.after(today) || date.equals(today))
+        		throw new ApplicationException(message);
+    	}
 
     /**
      * Validates if a date is in the future.
@@ -47,9 +49,10 @@ public class SemanticValidations {
     public static void validateDateInFuture(Date date, Date today, boolean includeToday, String message)
     {
     	if(includeToday)
-    		SyntacticValidations.validateCondition(date.after(today) || date.equals(today), message);
-    	else
-    		SyntacticValidations.validateCondition(date.after(today), message);
+    		if (date.before(today))
+        		throw new ApplicationException(message);
+    	else if (date.before(today) || date.equals(today))
+        		throw new ApplicationException(message);
     }
 
     /**
@@ -60,7 +63,8 @@ public class SemanticValidations {
      */
     public static void validatePositiveNumber(double number, String message)
     {
-    	SyntacticValidations.validateCondition(number > 0, message);
+    	if (number <= 0)
+    		throw new ApplicationException(message);
     }
     
     /**
@@ -71,8 +75,8 @@ public class SemanticValidations {
      */
     public static void validatePositiveNumberOrZero(double number, String message)
     {
-    	SyntacticValidations.validateCondition(number >= 0, message);
-    }
+    	if (number < 0)
+    		throw new ApplicationException(message);    }
 
     /**
      * Validates that a string is one of the allowed values.
@@ -86,33 +90,4 @@ public class SemanticValidations {
         for (String validValue : validValues) if (validValue.equals(value)) return;
         throw new ApplicationException(message);
     }
-    
-    /**
-     * Validates the given email address using a regular expression pattern.
-     * The email is considered valid if it matches the pattern:
-     * a sequence of alphanumeric characters, followed by an "@" symbol, then a domain, and a valid top-level domain (e.g., .com, .org).
-     * 
-     * @param email the email address to be validated
-     * @throws ApplicationException if the email does not match the expected pattern
-     */
-    public static void validateEmail(String email, String message)
-    {
-        String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
-        SyntacticValidations.validateMatchesPattern(email, emailRegex, message);
-    }
-
-    /**
-     * Validates the given phone number using a regular expression pattern.
-     * The phone number is considered valid if it matches the international phone number format,
-     * optionally starting with a "+" followed by 1 to 15 digits.
-     * 
-     * @param phoneNumber the phone number to be validated
-     * @throws ApplicationException if the phone number does not match the expected pattern
-     */
-    public static void validatePhoneNumber(String phoneNumber, String message)
-    {
-        String phoneRegex = "^\\+?[1-9]\\d{1,14}$";
-        SyntacticValidations.validateMatchesPattern(phoneNumber, phoneRegex, message);
-    }
-
 }
