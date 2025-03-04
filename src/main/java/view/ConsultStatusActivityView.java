@@ -103,6 +103,8 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createTopPanel() {
         // Activity selection panel
+        String[] activityColumns = {"Edition", "Activity Name", "Dates", "State"};
+        activityTable.setModel(new DefaultTableModel(activityColumns, 0));
         activityTable.setName("activityTable");
         activityTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         activityTable.setDefaultEditor(Object.class, null);
@@ -162,6 +164,8 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createCentralPanel() {
         // Sponsorship panel
+        String[] sponsorshipColumns = {"Sponsor Name", "Agreement Date", "Status"};
+        sponsorshipTable.setModel(new DefaultTableModel(sponsorshipColumns, 0));
         sponsorshipTable.setDefaultEditor(Object.class, null);
         JScrollPane sponsorshipScroll = new JScrollPane(sponsorshipTable);
         sponsorshipScroll.setBorder(BorderFactory.createTitledBorder("Sponsorships"));
@@ -187,6 +191,8 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createIncomePanel() {
         // Income panel
+        String[] incomeColumns = {"Source", "Amount", "Status"};
+        incomeTable.setModel(new DefaultTableModel(incomeColumns, 0));
         incomeTable.setDefaultEditor(Object.class, null);
         JScrollPane incomeScroll = new JScrollPane(incomeTable);
         incomeScroll.setBorder(BorderFactory.createTitledBorder("Income"));
@@ -212,6 +218,8 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createExpensesPanel() {
         // Expenses panel
+        String[] expensesColumns = {"Description", "Amount", "Status"};
+        expensesTable.setModel(new DefaultTableModel(expensesColumns, 0));
         expensesTable.setDefaultEditor(Object.class, null);
         JScrollPane expensesScroll = new JScrollPane(expensesTable);
         expensesScroll.setBorder(BorderFactory.createTitledBorder("Expenses"));
@@ -360,5 +368,21 @@ public class ConsultStatusActivityView extends AbstractView {
 
     public JTextField getSubTotalExpensesActualField() {
         return subTotalExpensesActualField;
+    }
+
+    public JTable getActivityTable() {
+        return activityTable;
+    }
+
+    public JTable getSponsorshipTable() {
+        return sponsorshipTable;
+    }
+
+    public JTable getIncomeTable() {
+        return incomeTable;
+    }
+
+    public JTable getExpensesTable() {
+        return expensesTable;
     }
 }
