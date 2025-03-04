@@ -1,12 +1,18 @@
 package model;
 
 import java.util.List;
+
+import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
+import DTOs.SponsorOrganizationsDTO;
 import util.Database;
 
-public class US125Model {
+public class InvoiceManagementModel {
 	
-	public static final String SQL_FILTERED_INVOICES = "SELECT I.id, I.dateIssued FROM Invoices I JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id JOIN SponsorContacts SC ON SA.idSponsorContact = SC.id JOIN SponsorOrganizations SO ON SC.idSponsorOrganization = SO.id JOIN Activities A ON SA.idActivity = A.id WHERE SO.id = ? AND A.id = ?;";
+	public static final String SQL_FILTERED_INVOICES = "SELECT I.id, I.dateIssued, I.totalAmount FROM Invoices I "
+			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
+			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
+			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
 
 	private Database db = new Database();
 		
@@ -31,15 +37,15 @@ public class US125Model {
 		return db.executeQueryPojo(InvoicesDTO.class, sql);
 	}
 
-	public String getSponsorIdByName(String nameSponsor) {
-		String sql = "SELECT id FROM SponsorOrganizations WHERE name = ?;";
-		List<String> sponsors = db.executeQueryPojo(String.class, sql, nameSponsor);
+	public SponsorOrganizationsDTO getSponsorByName(String nameSponsor) {
+		String sql = "SELECT id FROM SponsorOrganizations WHERE name == ?;";
+		List<SponsorOrganizationsDTO> sponsors = db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nameSponsor);
 		return sponsors.get(0);
 	}
 	
-	public String getActivityIdByName(String nameActivity) {
-		String sql = "SELECT id FROM Activities WHERE name = ?;";
-		List<String> activities = db.executeQueryPojo(String.class, sql, nameActivity);
+	public ActivitiesDTO getActivityByName(String nameActivity) {
+		String sql = "SELECT id FROM Activities WHERE name == ?;";
+		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}
 	

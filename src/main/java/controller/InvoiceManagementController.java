@@ -1,9 +1,11 @@
 package controller;
 
-import model.US125Model;
+import model.InvoiceManagementModel;
 import util.Params;
-import view.US125View;
+import view.InvoiceManagementView;
+import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
+import DTOs.SponsorOrganizationsDTO;
 import giis.demo.util.SwingUtil;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -11,12 +13,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 
-public class US125Controller {
+public class InvoiceManagementController {
     
-    protected US125Model model;
-    protected US125View view; 
+    protected InvoiceManagementModel model;
+    protected InvoiceManagementView view; 
     
-    public US125Controller(US125Model m, US125View v) { 
+    public InvoiceManagementController(InvoiceManagementModel m, InvoiceManagementView v) { 
         this.model = m;
         this.view = v;
         this.initView();
@@ -75,10 +77,10 @@ public class US125Controller {
     }
     
     public void updateInvoiceTable() {
-    	String selectedSponsor = model.getSponsorIdByName(String.valueOf(view.getSponsorComboBox().getSelectedItem()));
-        String selectedActivity = model.getActivityIdByName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
+    	SponsorOrganizationsDTO selectedSponsor = model.getSponsorByName(String.valueOf(view.getSponsorComboBox().getSelectedItem()));
+        ActivitiesDTO selectedActivity = model.getActivityByName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
         
-    	List<InvoicesDTO> data = model.getInvoicesBySponsorAndActivity(selectedSponsor, selectedActivity);
+        List<InvoicesDTO> data = model.getInvoicesBySponsorAndActivity(selectedSponsor.getId(), selectedActivity.getId());
         
         Params params = new Params();
         

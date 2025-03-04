@@ -9,19 +9,15 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
-import controller.US125Controller;
-import model.US125Model;
-import view.ExampleView;
-import view.US125View;
-
+import controller.InvoiceManagementController;
+import model.InvoiceManagementModel;
+import view.InvoiceManagementView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -125,13 +121,8 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
-	    });
-	    
-	    addButtonToMain(buttonPanel, "Run US125", () -> {
-	    	new US125Controller(new US125Model(), new US125View());
+	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
+	    	new InvoiceManagementController(new InvoiceManagementModel(), new InvoiceManagementView());
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

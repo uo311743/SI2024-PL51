@@ -3,14 +3,14 @@ package view;
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 
-public class US125View extends AbstractView {
+public class InvoiceManagementView extends AbstractView {
     
     private JTable invoiceTable;
     private JComboBox<Object> sponsorComboBox;
     private JComboBox<Object> activityComboBox;
     private JButton filterButton;
     
-    public US125View() {
+    public InvoiceManagementView() {
         super("Invoice Management");
     }
     
