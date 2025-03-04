@@ -11,6 +11,8 @@ import java.sql.*;
 
 import util.ApplicationException;
 import util.Database;
+import util.SemanticValidations;
+import util.SwingMain;
 
 public class Model {
 	
@@ -109,12 +111,12 @@ public class Model {
 	
 	/**
 	 * Semantic Validation of Date a Payment was received according to business logic
-	 * RULE: Never before Invoice generation
+	 * RULE #1: Date cannot be in the future
+	 * RULE #2: Never before Invoice generation
 	 * @param date the payment was made
 	 * @param invoiceId invoice the payment belongs to
-	 * @return whether the payment was previous to invoice
 	 */
-	public boolean validateDate(String date, Integer invoiceId) {
+	public void validateDate(String date, Integer invoiceId) {
         String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
 
         try {
@@ -125,15 +127,15 @@ public class Model {
             } else {
             	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
             	Date paymentDate = Date.valueOf(date);
-            	return !paymentDate.before(invoiceIssuedDate);
+            	SemanticValidations.validateDateInPast(paymentDate, SwingMain.getTodayDate(), true, "Invalid date of payment: cannot be after today's date");
+            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
             }
         } catch (Exception e) {
         	e.printStackTrace();
         	throw new ApplicationException(e.getMessage());
         }
     }
-    
-    // Register Payment
+
     public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
         String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
         
