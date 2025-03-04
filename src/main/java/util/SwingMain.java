@@ -17,6 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import controller.ConsultStatusActivityController;
+import model.ConsultStatusActivityModel;
+import view.ConsultStatusActivityView;
 import view.ExampleView;
 
 import javax.swing.BorderFactory;
@@ -122,9 +125,8 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
+	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
+	    	new ConsultStatusActivityController(new ConsultStatusActivityModel(), new ConsultStatusActivityView());
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
