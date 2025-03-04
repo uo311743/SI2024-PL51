@@ -24,6 +24,13 @@ public class SemanticValidations
 		if(result.get(0)[0] == "0")
 			throw new ApplicationException(message);
 	}
+	public static void validateStatus(String status) 
+	{
+	    if (status == null || status.trim().isEmpty()) {
+	        throw new IllegalArgumentException("Status cannot be null or empty");
+	    }
+	}
+	
 	
 	
 	// ============================================================

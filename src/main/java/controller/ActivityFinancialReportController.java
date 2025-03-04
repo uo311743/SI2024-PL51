@@ -7,6 +7,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.swing.ComboBoxModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
 import giis.demo.util.SwingUtil;
@@ -27,9 +29,7 @@ public class ActivityFinancialReportController {
         this.model = m;
         this.view = v;
         this.initView();
-        this.initController();
-        
-        this.valid = true;
+        this.initController();        
     }
 
     public void initController() {
@@ -40,6 +40,36 @@ public class ActivityFinancialReportController {
         	public void mouseReleased(MouseEvent e) {
         		SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
         	}
+        });
+        
+        this.view.getStartDateField().getDocument().addDocumentListener(new DocumentListener() {
+        	@Override
+        	public void insertUpdate(DocumentEvent e) {
+        		SwingUtil.exceptionWrapper(() -> applyFilters());
+        	}
+        	
+        	@Override
+        	public void removeUpdate(DocumentEvent e) {
+        		SwingUtil.exceptionWrapper(() -> applyFilters());
+        	}
+        	
+        	@Override
+        	public void changedUpdate(DocumentEvent e) {}
+        });
+        
+        this.view.getEndDateField().getDocument().addDocumentListener(new DocumentListener() {
+        	@Override
+        	public void insertUpdate(DocumentEvent e) {
+        		SwingUtil.exceptionWrapper(() -> applyFilters());
+        	}
+        	
+        	@Override
+        	public void removeUpdate(DocumentEvent e) {
+        		SwingUtil.exceptionWrapper(() -> applyFilters());
+        	}
+        	
+        	@Override
+        	public void changedUpdate(DocumentEvent e) {}
         });
     }
     
@@ -99,6 +129,7 @@ public class ActivityFinancialReportController {
     }
     
     private void applyFilters() {
+    	// Validations
     	if (!SyntacticValidations.isDate(view.getStartDateField().getText()) || !SyntacticValidations.isDate(view.getEndDateField().getText())) {
     		if (!SyntacticValidations.isDate(view.getStartDateField().getText())) {
     			view.getStartDateField().setForeground(Color.RED);
@@ -107,9 +138,13 @@ public class ActivityFinancialReportController {
         		view.getEndDateField().setForeground(Color.RED);
     		}
     		valid = false;
+    	} 
+    	else {
+    		view.getStartDateField().setForeground(Color.BLACK);
+    		view.getEndDateField().setForeground(Color.BLACK);    		
     	}
-    	view.getFilterButton().setEnabled(valid);
-    	
+		view.getFilterButton().setEnabled(valid);
+		
         Date startDate = Util.isoStringToDate(view.getStartDateField().getText());
         Date endDate = Util.isoStringToDate(view.getEndDateField().getText());
         String status = (String) view.getStatusComboBox().getSelectedItem();

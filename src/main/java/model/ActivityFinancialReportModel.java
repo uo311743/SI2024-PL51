@@ -29,34 +29,34 @@ public class ActivityFinancialReportModel {
     
     public MovementsDTO getAmountEstimatedIncomeByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status = 'estimated' AND type == 'income' AND idActivity == ?;";
+    	String sql = "SELECT amount FROM Movements WHERE status == 'estimated' AND type == 'income' AND idActivity == ?;";
         List<MovementsDTO> income = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return income.get(0);
     }
     
     public MovementsDTO getAmountEstimatedExpenseByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status = 'estimated' AND type == 'expense' AND idActivity == ?;";
+    	String sql = "SELECT amount FROM Movements WHERE status == 'estimated' AND type == 'expense' AND idActivity == ?;";
         List<MovementsDTO> income = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return income.get(0);
     }
     
     public MovementsDTO getAmountIncomeByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status = 'paid' AND type == 'income' AND idActivity == ?;";
+    	String sql = "SELECT amount FROM Movements WHERE status == 'paid' AND type == 'income' AND idActivity == ?;";
         List<MovementsDTO> income = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return income.get(0);
     }
     
     public MovementsDTO getAmountExpenseByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status = 'paid' AND type == 'expense' AND idActivity == ?;";
+    	String sql = "SELECT amount FROM Movements WHERE status == 'paid' AND type == 'expense' AND idActivity == ?;";
         List<MovementsDTO> income = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return income.get(0);
     }
     
     public List<ActivitiesDTO> getFilteredActivities(Date startDate, Date endDate, String status) {
-    	Seman
+    	SemanticValidations.validateStatus(status);
         String sql = "SELECT name, status, dateStart, dateEnd FROM Activities WHERE dateStart >= ? AND dateEnd <= ?";
         
         if (status == null) {
