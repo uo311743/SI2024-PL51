@@ -49,19 +49,6 @@ public class US129Controller {
         view.getStatusComboBox().setModel(lmodel);
     }
     
-    private void applyFilters() {
-        String startDateStr = view.getStartDateField().getText();
-        String endDateStr = view.getEndDateField().getText();
-        String status = (String) view.getStatusComboBox().getSelectedItem();
-
-        Date startDate = Util.isoStringToDate(startDateStr);
-        Date endDate = Util.isoStringToDate(endDateStr);
-
-        List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
-        updateReportTable(filteredActivities);
-        updateTotals(filteredActivities);
-    }
-    
     public void showCurrentYearData() {
         Calendar calendario = Calendar.getInstance();
         calendario.setTime(SwingMain.getTodayDate());
@@ -85,9 +72,30 @@ public class US129Controller {
         view.getReportTable().setModel(tableModel);
     }
     
+    private void applyFilters() {
+        Date startDate = Util.isoStringToDate(view.getStartDateField().getText());
+        Date endDate = Util.isoStringToDate(view.getEndDateField().getText());
+        String status = (String) view.getStatusComboBox().getSelectedItem();
+
+        List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
+        
+        updateReportTable(filteredActivities);
+        updateTotals(filteredActivities);
+    }
+    
     private void updateReportTable(List<ActivitiesDTO> filteredActivities) {
-    	// Pendiente apuntes Ángel
-        // view.getReportTable().setModel(tmodel);
+    	DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Start Date", "End Date", "Name", "Status", "Income", "Expense", "Balance"}, 0);
+        
+        for (ActivitiesDTO activity : filteredActivities) {
+            tableModel.addRow(new Object[]{
+                activity.getDateStart(), 
+                activity.getDateEnd(),
+                activity.getName(),
+                activity.getStatus()
+            });
+        }
+        
+        view.getReportTable().setModel(tableModel);
     }
 
     private void updateTotals(List<ActivitiesDTO> filteredActivities) {
