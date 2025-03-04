@@ -17,10 +17,11 @@ import javax.swing.ListSelectionModel;
 
 public class ConsultStatusActivityView extends AbstractView {
     private JTable activityTable, sponsorshipTable, incomeTable, expensesTable;
-    private JTextField totalIncomeEstimatedField, totalIncomePaidField, totalExpensesEstimatedField, totalExpensesPaidField;
-    private JTextField balanceEstimatedField, balanceActualField;
-    private JTextField subTotalSponsorshipIncomeEstimatedField, subTotalSponsorshipIncomeActualField;
-    private JTextField subTotalSponsorshipExpensesEstimatedField, subTotalSponsorshipExpensesActualField;
+    
+    private JTextField totalEstimatedIncomeField, totalEstimatedExpensesField, totalEstimatedBalanceField;
+    private JTextField totalActualIncomeField, totalActualExpensesField, totalActualBalanceField;
+    
+    private JTextField subTotalSponsorshipEstimatedField, subTotalSponsorshipActualField;
     private JTextField subTotalSponsorshipBalanceEstimatedField, subTotalSponsorshipBalanceActualField;
     private JTextField subTotalIncomeEstimatedField, subTotalIncomeActualField;
     private JTextField subTotalExpensesEstimatedField, subTotalExpensesActualField;
@@ -33,26 +34,22 @@ public class ConsultStatusActivityView extends AbstractView {
     protected void initialize() {
         this.createButtonLowLeft("Go back");
 
-        totalIncomeEstimatedField = new JTextField(10);
-        totalIncomeEstimatedField.setEditable(false);
-        totalIncomePaidField = new JTextField(10);
-        totalIncomePaidField.setEditable(false);
-        totalExpensesEstimatedField = new JTextField(10);
-        totalExpensesEstimatedField.setEditable(false);
-        totalExpensesPaidField = new JTextField(10);
-        totalExpensesPaidField.setEditable(false);
-        balanceEstimatedField = new JTextField(10);
-        balanceEstimatedField.setEditable(false);
-        balanceActualField = new JTextField(10);
-        balanceActualField.setEditable(false);
-        subTotalSponsorshipIncomeEstimatedField = new JTextField(10);
-        subTotalSponsorshipIncomeEstimatedField.setEditable(false);
-        subTotalSponsorshipIncomeActualField = new JTextField(10);
-        subTotalSponsorshipIncomeActualField.setEditable(false);
-        subTotalSponsorshipExpensesEstimatedField = new JTextField(10);
-        subTotalSponsorshipExpensesEstimatedField.setEditable(false);
-        subTotalSponsorshipExpensesActualField = new JTextField(10);
-        subTotalSponsorshipExpensesActualField.setEditable(false);
+        totalEstimatedIncomeField = new JTextField(10);
+        totalEstimatedIncomeField.setEditable(false);
+        totalActualIncomeField = new JTextField(10);
+        totalActualIncomeField.setEditable(false);
+        totalEstimatedExpensesField = new JTextField(10);
+        totalEstimatedExpensesField.setEditable(false);
+        totalActualExpensesField = new JTextField(10);
+        totalActualExpensesField.setEditable(false);
+        totalEstimatedBalanceField = new JTextField(10);
+        totalEstimatedBalanceField.setEditable(false);
+        totalActualBalanceField = new JTextField(10);
+        totalActualBalanceField.setEditable(false);
+        subTotalSponsorshipEstimatedField = new JTextField(10);
+        subTotalSponsorshipEstimatedField.setEditable(false);
+        subTotalSponsorshipActualField = new JTextField(10);
+        subTotalSponsorshipActualField.setEditable(false);
         subTotalSponsorshipBalanceEstimatedField = new JTextField(10);
         subTotalSponsorshipBalanceEstimatedField.setEditable(false);
         subTotalSponsorshipBalanceActualField = new JTextField(10);
@@ -117,11 +114,11 @@ public class ConsultStatusActivityView extends AbstractView {
         JLabel totalExpensesEstimated = new JLabel("Expenses:");
         JLabel balanceEstimated = new JLabel("Balance:");
         estimatedPanel.add(totalIncomeEstimated);
-        estimatedPanel.add(totalIncomeEstimatedField);
+        estimatedPanel.add(totalEstimatedIncomeField);
         estimatedPanel.add(totalExpensesEstimated);
-        estimatedPanel.add(totalExpensesEstimatedField);
+        estimatedPanel.add(totalEstimatedExpensesField);
         estimatedPanel.add(balanceEstimated);
-        estimatedPanel.add(balanceEstimatedField);
+        estimatedPanel.add(totalEstimatedBalanceField);
 
         // Actual totals panel
         JPanel actualPanel = new JPanel();
@@ -131,11 +128,11 @@ public class ConsultStatusActivityView extends AbstractView {
         JLabel totalExpensesPaid = new JLabel("Expenses:");
         JLabel balanceActual = new JLabel("Balance:");
         actualPanel.add(totalIncomePaid);
-        actualPanel.add(totalIncomePaidField);
+        actualPanel.add(totalActualIncomeField);
         actualPanel.add(totalExpensesPaid);
-        actualPanel.add(totalExpensesPaidField);
+        actualPanel.add(totalActualExpensesField);
         actualPanel.add(balanceActual);
-        actualPanel.add(balanceActualField);
+        actualPanel.add(totalActualBalanceField);
 
         // Totals panel with two columns
         JPanel totalPanel = new JPanel(new GridLayout(1, 2));
@@ -244,9 +241,9 @@ public class ConsultStatusActivityView extends AbstractView {
         JLabel subTotalSponsorshipIncomeEstimated = new JLabel("Estimated:");
         JLabel subTotalSponsorshipIncomeActual = new JLabel("Actual:");
         panel.add(subTotalSponsorshipIncomeEstimated);
-        panel.add(subTotalSponsorshipIncomeEstimatedField);
+        panel.add(subTotalSponsorshipEstimatedField);
         panel.add(subTotalSponsorshipIncomeActual);
-        panel.add(subTotalSponsorshipIncomeActualField);
+        panel.add(subTotalSponsorshipActualField);
         return panel;
     }
 
@@ -274,83 +271,149 @@ public class ConsultStatusActivityView extends AbstractView {
         return panel;
     }
 
-    public JTextField getTotalIncomeEstimatedField() {
-        return totalIncomeEstimatedField;
-    }
+	public JTable getActivityTable() {
+		return activityTable;
+	}
 
-    public JTextField getTotalIncomePaidField() {
-        return totalIncomePaidField;
-    }
+	public void setActivityTable(JTable activityTable) {
+		this.activityTable = activityTable;
+	}
 
-    public JTextField getTotalExpensesEstimatedField() {
-        return totalExpensesEstimatedField;
-    }
+	public JTable getSponsorshipTable() {
+		return sponsorshipTable;
+	}
 
-    public JTextField getTotalExpensesPaidField() {
-        return totalExpensesPaidField;
-    }
+	public void setSponsorshipTable(JTable sponsorshipTable) {
+		this.sponsorshipTable = sponsorshipTable;
+	}
 
-    public JTextField getBalanceEstimatedField() {
-        return balanceEstimatedField;
-    }
+	public JTable getIncomeTable() {
+		return incomeTable;
+	}
 
-    public JTextField getBalanceActualField() {
-        return balanceActualField;
-    }
+	public void setIncomeTable(JTable incomeTable) {
+		this.incomeTable = incomeTable;
+	}
 
-    public JTextField getSubTotalSponsorshipIncomeEstimatedField() {
-        return subTotalSponsorshipIncomeEstimatedField;
-    }
+	public JTable getExpensesTable() {
+		return expensesTable;
+	}
 
-    public JTextField getSubTotalSponsorshipIncomeActualField() {
-        return subTotalSponsorshipIncomeActualField;
-    }
+	public void setExpensesTable(JTable expensesTable) {
+		this.expensesTable = expensesTable;
+	}
 
-    public JTextField getSubTotalSponsorshipExpensesEstimatedField() {
-        return subTotalSponsorshipExpensesEstimatedField;
-    }
+	public JTextField getTotalEstimatedIncomeField() {
+		return totalEstimatedIncomeField;
+	}
 
-    public JTextField getSubTotalSponsorshipExpensesActualField() {
-        return subTotalSponsorshipExpensesActualField;
-    }
+	public void setTotalEstimatedIncomeField(JTextField totalEstimatedIncomeField) {
+		this.totalEstimatedIncomeField = totalEstimatedIncomeField;
+	}
 
-    public JTextField getSubTotalSponsorshipBalanceEstimatedField() {
-        return subTotalSponsorshipBalanceEstimatedField;
-    }
+	public JTextField getTotalEstimatedExpensesField() {
+		return totalEstimatedExpensesField;
+	}
 
-    public JTextField getSubTotalSponsorshipBalanceActualField() {
-        return subTotalSponsorshipBalanceActualField;
-    }
+	public void setTotalEstimatedExpensesField(JTextField totalEstimatedExpensesField) {
+		this.totalEstimatedExpensesField = totalEstimatedExpensesField;
+	}
 
-    public JTextField getSubTotalIncomeEstimatedField() {
-        return subTotalIncomeEstimatedField;
-    }
+	public JTextField getTotalEstimatedBalanceField() {
+		return totalEstimatedBalanceField;
+	}
 
-    public JTextField getSubTotalIncomeActualField() {
-        return subTotalIncomeActualField;
-    }
+	public void setTotalEstimatedBalanceField(JTextField totalEstimatedBalanceField) {
+		this.totalEstimatedBalanceField = totalEstimatedBalanceField;
+	}
 
-    public JTextField getSubTotalExpensesEstimatedField() {
-        return subTotalExpensesEstimatedField;
-    }
+	public JTextField getTotalActualIncomeField() {
+		return totalActualIncomeField;
+	}
 
-    public JTextField getSubTotalExpensesActualField() {
-        return subTotalExpensesActualField;
-    }
+	public void setTotalActualIncomeField(JTextField totalActualIncomeField) {
+		this.totalActualIncomeField = totalActualIncomeField;
+	}
 
-    public JTable getActivityTable() {
-        return activityTable;
-    }
+	public JTextField getTotalActualExpensesField() {
+		return totalActualExpensesField;
+	}
 
-    public JTable getSponsorshipTable() {
-        return sponsorshipTable;
-    }
+	public void setTotalActualExpensesField(JTextField totalActualExpensesField) {
+		this.totalActualExpensesField = totalActualExpensesField;
+	}
 
-    public JTable getIncomeTable() {
-        return incomeTable;
-    }
+	public JTextField getTotalActualBalanceField() {
+		return totalActualBalanceField;
+	}
 
-    public JTable getExpensesTable() {
-        return expensesTable;
-    }
+	public void setTotalActualBalanceField(JTextField totalActualBalanceField) {
+		this.totalActualBalanceField = totalActualBalanceField;
+	}
+
+	public JTextField getSubTotalSponsorshipEstimatedField() {
+		return subTotalSponsorshipEstimatedField;
+	}
+
+	public void setSubTotalSponsorshipEstimatedField(JTextField subTotalSponsorshipEstimatedField) {
+		this.subTotalSponsorshipEstimatedField = subTotalSponsorshipEstimatedField;
+	}
+
+	public JTextField getSubTotalSponsorshipActualField() {
+		return subTotalSponsorshipActualField;
+	}
+
+	public void setSubTotalSponsorshipActualField(JTextField subTotalSponsorshipActualField) {
+		this.subTotalSponsorshipActualField = subTotalSponsorshipActualField;
+	}
+
+	public JTextField getSubTotalSponsorshipBalanceEstimatedField() {
+		return subTotalSponsorshipBalanceEstimatedField;
+	}
+
+	public void setSubTotalSponsorshipBalanceEstimatedField(JTextField subTotalSponsorshipBalanceEstimatedField) {
+		this.subTotalSponsorshipBalanceEstimatedField = subTotalSponsorshipBalanceEstimatedField;
+	}
+
+	public JTextField getSubTotalSponsorshipBalanceActualField() {
+		return subTotalSponsorshipBalanceActualField;
+	}
+
+	public void setSubTotalSponsorshipBalanceActualField(JTextField subTotalSponsorshipBalanceActualField) {
+		this.subTotalSponsorshipBalanceActualField = subTotalSponsorshipBalanceActualField;
+	}
+
+	public JTextField getSubTotalIncomeEstimatedField() {
+		return subTotalIncomeEstimatedField;
+	}
+
+	public void setSubTotalIncomeEstimatedField(JTextField subTotalIncomeEstimatedField) {
+		this.subTotalIncomeEstimatedField = subTotalIncomeEstimatedField;
+	}
+
+	public JTextField getSubTotalIncomeActualField() {
+		return subTotalIncomeActualField;
+	}
+
+	public void setSubTotalIncomeActualField(JTextField subTotalIncomeActualField) {
+		this.subTotalIncomeActualField = subTotalIncomeActualField;
+	}
+
+	public JTextField getSubTotalExpensesEstimatedField() {
+		return subTotalExpensesEstimatedField;
+	}
+
+	public void setSubTotalExpensesEstimatedField(JTextField subTotalExpensesEstimatedField) {
+		this.subTotalExpensesEstimatedField = subTotalExpensesEstimatedField;
+	}
+
+	public JTextField getSubTotalExpensesActualField() {
+		return subTotalExpensesActualField;
+	}
+
+	public void setSubTotalExpensesActualField(JTextField subTotalExpensesActualField) {
+		this.subTotalExpensesActualField = subTotalExpensesActualField;
+	}
+
+    
 }
