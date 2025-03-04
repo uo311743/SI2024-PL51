@@ -1,25 +1,25 @@
 package DTOs;
 
 public class MovementsDTO {
-    private int id;
-    private int idActivity;
+    private String id;
+    private String idActivity;
     private String type;
     private String concept;
-    private double amount;
+    private String amount;
     private String date;
     private String receiptNumber;
     private String status;
     
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public int getIdActivity() {
+	public String getIdActivity() {
 		return idActivity;
 	}
-	public void setIdActivity(int idActivity) {
+	public void setIdActivity(String idActivity) {
 		this.idActivity = idActivity;
 	}
 	public String getType() {
@@ -34,10 +34,10 @@ public class MovementsDTO {
 	public void setConcept(String concept) {
 		this.concept = concept;
 	}
-	public double getAmount() {
+	public String getAmount() {
 		return amount;
 	}
-	public void setAmount(double amount) {
+	public void setAmount(String amount) {
 		this.amount = amount;
 	}
 	public String getDate() {

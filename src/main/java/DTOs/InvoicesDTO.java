@@ -1,25 +1,25 @@
 package DTOs;
 
 public class InvoicesDTO {
-    private int id;
-    private int idSponsorshipAgreement;
+    private String id;
+    private String idSponsorshipAgreement;
     private String dateIssued;
     private String dateSent;
     private String dateExpiration;
-    private double totalAmount;
-    private double taxRate;
+    private String totalAmount;
+    private String taxRate;
     private String status;
     
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public int getIdSponsorshipAgreement() {
+	public String getIdSponsorshipAgreement() {
 		return idSponsorshipAgreement;
 	}
-	public void setIdSponsorshipAgreement(int idSponsorshipAgreement) {
+	public void setIdSponsorshipAgreement(String idSponsorshipAgreement) {
 		this.idSponsorshipAgreement = idSponsorshipAgreement;
 	}
 	public String getDateIssued() {
@@ -40,16 +40,16 @@ public class InvoicesDTO {
 	public void setDateExpiration(String dateExpiration) {
 		this.dateExpiration = dateExpiration;
 	}
-	public double getTotalAmount() {
+	public String getTotalAmount() {
 		return totalAmount;
 	}
-	public void setTotalAmount(double totalAmount) {
+	public void setTotalAmount(String totalAmount) {
 		this.totalAmount = totalAmount;
 	}
-	public double getTaxRate() {
+	public String getTaxRate() {
 		return taxRate;
 	}
-	public void setTaxRate(double taxRate) {
+	public void setTaxRate(String taxRate) {
 		this.taxRate = taxRate;
 	}
 	public String getStatus() {

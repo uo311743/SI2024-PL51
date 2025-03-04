@@ -1,22 +1,22 @@
 package DTOs;
 
 public class SponsorContactsDTO {
-    private int id;
-    private int idSponsorOrganization;
+    private String id;
+    private String idSponsorOrganization;
     private String name;
     private String email;
     private String phone;
     
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public int getIdSponsorOrganization() {
+	public String getIdSponsorOrganization() {
 		return idSponsorOrganization;
 	}
-	public void setIdSponsorOrganization(int idSponsorOrganization) {
+	public void setIdSponsorOrganization(String idSponsorOrganization) {
 		this.idSponsorOrganization = idSponsorOrganization;
 	}
 	public String getName() {
