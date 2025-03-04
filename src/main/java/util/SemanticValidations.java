@@ -19,8 +19,8 @@ public class SemanticValidations
 	
 	public static void validateIdForTable(String id, String table, String message)
 	{
-		String sql = "SELECT EXISTS(SELECT 1 FROM ? WHERE id = ?);";
-		List<Object[]> result = db.executeQueryArray(sql, table, id);
+		String sql = "SELECT EXISTS(SELECT 1 FROM " + table +" WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, id);
 		if(result.get(0)[0] == "0")
 			throw new ApplicationException(message);
 	}
