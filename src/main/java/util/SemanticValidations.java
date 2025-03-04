@@ -1,5 +1,7 @@
 package util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -10,30 +12,17 @@ public class SemanticValidations
 {
 	// Instance that allows the connection to the DB and execution of queries
 	private static Database db = new Database();
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+
 	
 	// ============================================================
 	
-	public static void validateIdSponsorContact(String idSponsorContact)
+	public static void validateIdForTable(String id, String table, String message)
 	{
-		String sql = "SELECT EXISTS(SELECT 1 FROM SponsorContacts WHERE id = ?);";
-		List<Object[]> result = db.executeQueryArray(sql, idSponsorContact);
+		String sql = "SELECT EXISTS(SELECT 1 FROM ? WHERE id = ?);";
+		List<Object[]> result = db.executeQueryArray(sql, table, id);
 		if(result.get(0)[0] == "0")
-			throw new ApplicationException("The provided idSponsorContact does not exist in table SponsorContacts");
-	}
-	
-	public static void validateIdGBMember(String idGBMember)
-	{
-		String sql = "SELECT EXISTS(SELECT 1 FROM GBMembers WHERE id = ?);";
-		List<Object[]> result = db.executeQueryArray(sql, idGBMember);
-		if(result.get(0)[0] == "0")
-			throw new ApplicationException("The provided idGBMember does not exist in table GBMembers");
-	}
-	public static void validateIdActivity(String idActivity)
-	{
-		String sql = "SELECT EXISTS(SELECT 1 FROM Activities WHERE id = ?);";
-		List<Object[]> result = db.executeQueryArray(sql, idActivity);
-		if(result.get(0)[0] == "0")
-			throw new ApplicationException("The provided idActivity does not exist in table Activities");
+			throw new ApplicationException(message);
 	}
 	
 	
@@ -47,9 +36,13 @@ public class SemanticValidations
      * @param max     the maximum allowed value
      * @param message the exception message if validation fails
      */
-    public static void validateNumberInRange(int number, int min, int max, String message)
+    public static void validateNumberInRange(String number, String min, String max, String message)
     {
-    	if (number < min || number > max)
+        double tmp_number = Double.parseDouble(number);
+        double tmp_min = Double.parseDouble(min);
+        double tmp_max = Double.parseDouble(max);
+
+    	if (tmp_number < tmp_min || tmp_number > tmp_max)
     		throw new ApplicationException(message);
     }
 
@@ -61,12 +54,19 @@ public class SemanticValidations
      * @param includeToday    whether today's date should be considered as valid or not
      * @param message         the exception message if validation fails
      */
-    public static void validateDateInPast(Date date, Date today, boolean includeToday, String message)
+    public static void validateDateInPast(String date, boolean includeToday, String message)
     {
+        Date tmp_today = SwingMain.getTodayDate();
+        Date tmp_date = null;
+        try {tmp_date = DATE_FORMAT.parse(date);}
+        catch (ParseException e) {
+        	throw new UnexpectedException("Invalid date for validateDateInPast");
+        }
+        		
     	if(includeToday)
-    		if (date.after(today))
+    		if (tmp_date.after(tmp_today))
         		throw new ApplicationException(message);
-    	else if (date.after(today) || date.equals(today))
+    	else if (tmp_date.after(tmp_today) || tmp_date.equals(tmp_today))
         		throw new ApplicationException(message);
     	}
 
@@ -78,12 +78,19 @@ public class SemanticValidations
      * @param includeToday    whether today's date should be considered as valid or not
      * @param message         the exception message if validation fails
      */
-    public static void validateDateInFuture(Date date, Date today, boolean includeToday, String message)
+    public static void validateDateInFuture(String date, boolean includeToday, String message)
     {
+    	Date tmp_today = SwingMain.getTodayDate();
+        Date tmp_date = null;
+        try {tmp_date = DATE_FORMAT.parse(date);}
+        catch (ParseException e) {
+        	throw new UnexpectedException("Invalid date for validateDateInPast");
+        }
+
     	if(includeToday)
-    		if (date.before(today))
+    		if (tmp_date.before(tmp_today))
         		throw new ApplicationException(message);
-    	else if (date.before(today) || date.equals(today))
+    	else if (tmp_date.before(tmp_today) || tmp_date.equals(tmp_today))
         		throw new ApplicationException(message);
     }
 
@@ -93,9 +100,10 @@ public class SemanticValidations
      * @param number  the number to validate
      * @param message the exception message if validation fails
      */
-    public static void validatePositiveNumber(double number, String message)
+    public static void validatePositiveNumber(String number, String message)
     {
-    	if (number <= 0)
+        double tmp_number = Double.parseDouble(number);
+    	if (tmp_number <= 0)
     		throw new ApplicationException(message);
     }
     
@@ -105,9 +113,10 @@ public class SemanticValidations
      * @param number  the number to validate
      * @param message the exception message if validation fails
      */
-    public static void validatePositiveNumberOrZero(double number, String message)
+    public static void validatePositiveNumberOrZero(String number, String message)
     {
-    	if (number < 0)
+        double tmp_number = Double.parseDouble(number);
+    	if (tmp_number < 0)
     		throw new ApplicationException(message);    }
 
     /**
