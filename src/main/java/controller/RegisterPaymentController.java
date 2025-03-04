@@ -113,6 +113,7 @@ public class RegisterPaymentController {
 			view.showError("All fields must be filled except Invoice ID (Optional)");
 			return false;
 		}
+		
 		if (!SyntacticValidations.isDate(date)) {
 			view.showError("Please enter date in format: yyyy-MM-dd");
 			return false;

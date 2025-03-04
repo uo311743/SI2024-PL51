@@ -215,6 +215,9 @@ public class RegisterPaymentView extends AbstractView {
     }
 
     public String getAmount() {
+    	if (amountField.getText().equals("0.00")) {
+    		return "";
+    	}
         return amountField.getText();
     }
 
@@ -223,6 +226,9 @@ public class RegisterPaymentView extends AbstractView {
     }
 
     public String getDate() {
+    	if (dateField.getText().equals("YYYY-MM-DD")) {
+    		return "";
+    	}
         return dateField.getText();
     }
 
