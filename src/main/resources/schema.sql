@@ -98,7 +98,7 @@ CREATE TABLE Movements (
     concept TEXT NOT NULL,
     amount REAL NOT NULL,
     date TEXT,
-    receiptNumber TEXT,
+    receiptNumber TEXT UNIQUE,
     status TEXT NOT NULL CHECK(lower(status) IN ('estimated', 'cancelled', 'paid')),
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
 );
