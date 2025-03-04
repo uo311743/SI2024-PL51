@@ -76,7 +76,7 @@ public class SwingMain {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		//Database db=new Database();
+		Database db=new Database();
 		
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
@@ -136,29 +136,17 @@ public class SwingMain {
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	    	Database db=new Database();
 	        db.createDatabase(false);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Load data for testing", () -> {
-	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
 	    
 	    // Add a button to open the PaymentsView
         addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	// Create instances of Model, View, and Controller
-        	RegisterPaymentController controller = new RegisterPaymentController(new Model(), new RegisterPaymentView());
-        	controller.updateView();
-        	/*
-    		Model model = new Model();
-            RegisterPaymentView view = new RegisterPaymentView();
-            RegisterPaymentController controller = new RegisterPaymentController(model, view);
-
-            // Load and display registrations
-            controller.updateView();
-            */
+        	new RegisterPaymentController(new Model(), new RegisterPaymentView());
 	    });
 	    
 	    /* 

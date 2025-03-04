@@ -3,14 +3,14 @@ package model;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
 import java.util.List;
+
+import DTOs.*;
+
 import java.sql.*;
 
 import util.ApplicationException;
 import util.Database;
-
-import DTOs.*;
 
 public class Model {
 	
@@ -33,49 +33,78 @@ public class Model {
     }
     
 	// Registration of Payments
-	public Integer getSponsorshipAgreementId(String nifOrVat, String activityName) throws SQLException {
+	public Integer getSponsorshipAgreementId(String nifOrVat, String activity) {
 	    String sql = "SELECT sa.id " +
 	                 "FROM SponsorshipAgreements sa " +
 	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id " +
 	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id " +
-	                 "JOIN Activities a ON a.name = ? " +
-	                 "WHERE (so.nif = ? OR so.vat = ?)";
+	                 "JOIN Activities a ON a.id = sa.idActivity " +
+	                 "WHERE (so.nif = ? OR so.vat = ?) AND (a.name = ?);";
 
-	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
-	    	pstmt.setString(1, activityName);
-	    	pstmt.setString(2, nifOrVat);
-	    	pstmt.setString(3, nifOrVat);
-	        ResultSet results = pstmt.executeQuery();
-
-	        if (results.next()) {
-	            Integer id = results.getInt("id");
-	            validateNotNull(id, "No SponsorshipAgreement found");
-	        }
+	    try {
+	    	List<Object[]> result = db.executeQueryArray(sql, nifOrVat, nifOrVat, activity);
+		    
+		    if (result.isEmpty()) {
+		    	throw new ApplicationException("No SponsorshipAgreement found");
+		    } else {
+		    	return Integer.parseInt(result.get(0)[0].toString());
+		    }
 	    } catch (Exception e) {
 	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
 	    }
-
-	    return null;
 	}
 	
-	public Integer getInvoiceId(Integer idSponsorshipAgreement) {
-		String sql = "SELECT i.id FROM Invoices WHERE i.idSponsorshipAgreement = ?";
+	public Integer getActivityId(String name) {
+		String sql = "SELECT a.id FROM Activities a WHERE a.name = ?;";
 		
-		try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-	        // Execute query with parameters: activityName, nifOrVat, nifOrVat (for both NIF and VAT check)
-	        pstmt.setInt(1, idSponsorshipAgreement);
-	        ResultSet results = pstmt.executeQuery();
-
-	        if (results.next()) {
-	        	Integer id = results.getInt("id");
-	            validateNotNull(id, "No Invoice found");
-	        }
+		try {
+	    	List<Object[]> result = db.executeQueryArray(sql, name);
+		    
+		    if (result.isEmpty()) {
+		    	throw new ApplicationException("No Activity found");
+		    } else {
+		    	return Integer.parseInt(result.get(0)[0].toString());
+		    }
 	    } catch (Exception e) {
-	    	throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
+	    	throw new ApplicationException("Unexpected error while retrieving Activity ID: " + e.getMessage());
 	    }
-
-	    return null;
+	}
+	
+	public void validateActivity(Integer idSponsorshipAgreement, String activity) {
+		String sql = "SELECT a.name FROM Activity a JOIN SponsorshipAgreement sa ON a.id = sa.isActivity;";
+		
+		try {
+	    	List<Object[]> result = db.executeQueryArray(sql);
+		    
+		    if (result.isEmpty()) {
+		    	throw new ApplicationException("No Agreement found for that Activity");
+		    } else {
+		    	validateCondition(result.get(0)[0].toString() == activity, "There is no agreement for that activity");
+		    }
+	    } catch (Exception e) {
+	    	throw new ApplicationException("Unexpected error while retrieving Activity: " + e.getMessage());
+	    }
+	}
+	
+	public void getInvoiceId(Integer invoiceId, Integer idSponsorshipAgreement) {
+		String sql = "SELECT i.id FROM Invoices i WHERE i.idSponsorshipAgreement = ?;";
+		
+		try {
+			List<Object[]> result = db.executeQueryArray(sql, idSponsorshipAgreement);
+			
+			if (result.isEmpty()) {
+				throw new ApplicationException("No Invoice Found");
+			} else {
+				try {
+	    			validateNumber(invoiceId, "Invalid Invoice ID provided");
+	    			validateCondition((Integer.parseInt(result.get(0)[0].toString()) == invoiceId), "Incorrect Invoice ID provided");
+	    		} catch (Exception e) {
+	    			throw new ApplicationException(e.getMessage());
+	    		}
+			}
+		} catch (Exception e) {
+			throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
+		}
 	}
 	
 	/**
@@ -86,28 +115,27 @@ public class Model {
 	 * @return whether the payment was previous to invoice
 	 */
 	public boolean validateDate(String date, Integer invoiceId) {
-        String query = "SELECT sa.date FROM SponsorshipAgreements sa JOIN Invoices i ON i.idSponsorshipAgreement == sa.id WHERE i.id = ?";;
-        
-        this.validateDate(date, "Payment Date not valid");
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setInt(1, invoiceId);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                Date agreementDate = Date.valueOf(rs.getString("date"));
-                Date paymentDate = Date.valueOf(date);
-                return !paymentDate.before(agreementDate);
+        String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
+
+        try {
+        	List<Object[]> result = db.executeQueryArray(query, invoiceId);
+            
+            if (result.isEmpty()) {
+            	throw new ApplicationException("No Invoice Found");
+            } else {
+            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
+            	Date paymentDate = Date.valueOf(date);
+            	return !paymentDate.before(invoiceIssuedDate);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	throw new ApplicationException(e.getMessage());
         }
-        
-        return false;
     }
     
     // Register Payment
     public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
-        String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?)";
+        String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
         
         try (PreparedStatement pstmt = connection.prepareStatement(query)) {
             pstmt.setInt(1, idInvoice);
@@ -115,22 +143,15 @@ public class Model {
             pstmt.setDouble(3, amountSponsorshipPayments);
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            e.printStackTrace();
+        	e.printStackTrace();
+        	throw new ApplicationException(e.getMessage());
         }
     }
     
-    public String[] getListActivities() {
-    	String query = "SELECT * FROM Activities";
+    public List<Object[]> getListActivities() {
+    	String query = "SELECT name FROM Activities;";
     	
-    	List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, query);
-    	List<String> names = new ArrayList<>();
-    	
-    	for (ActivitiesDTO a : activities) {
-    		if (a.getStatus() != "cancelled" || a.getStatus() != "closed")
-    		names.add(a.getName());
-    	}
-    	
-    	return names.toArray(new String[0]);
+    	return db.executeQueryArray(query);
     }
 
     

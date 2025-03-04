@@ -2,17 +2,17 @@ package controller;
 
 import model.Model;
 import util.ApplicationException;
-import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
-import util.Util;
 import view.RegisterPaymentView;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Date;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.List;
 
-import javax.swing.JOptionPane;
+import javax.swing.ComboBoxModel;
 
 public class RegisterPaymentController {
 	// Create an Object of Payment type for the Model
@@ -24,66 +24,99 @@ public class RegisterPaymentController {
 		this.model = model;
 		this.view = view;
 		
-		this.view.initializeActivities(model.getListActivities());
-		addRegisterListener();
-	}
-
-	public Model getModel() {
-		return model;
-	}
-
-	public void setModel(Model model) {
-		this.model = model;
-	}
-
-	public RegisterPaymentView getView() {
-		return this.view;
-	}
-
-	public void setView(RegisterPaymentView view) {
-		this.view = view;
+		initController();
+		initView();
 	}
 	
-	public void addRegisterListener()
-	{
-		view.getButtonLowRight().addActionListener(new ActionListener() {
+	public void initController() {
+		this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
 			@Override
-	        public void actionPerformed(ActionEvent e) {
-				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
-	        	/*
-	        	 * try {
-                	SyntacticValidations.validateDate(view.getDate().getText(), "");
-                } catch (ApplicationException ex) {
-                    JOptionPane.showMessageDialog(null, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-                
-	        	if (getView().summaryConcealed())
-	        	{
-	        		getView().setSummaryConcealed();
-	        		getView().configureSummaryPanel();
-	        	}else {
-		            String activity = getView().getActivity();
-		            String amount = getView().getAmount();
-		            String nif = getView().getNIF();
-		            String date = getView().getDate();
-		            String invoiceId = getView().getInvoiceId();
-		            
+	        public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper( () -> {view.disposeView();});}
+		});
+		
+		this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+			@Override
+	        public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper( () -> {view.clearFields();});}
+		});
+		
+		view.getButtonLowRight().addActionListener(new ActionListener() {
+        	@Override
+        	public void actionPerformed(ActionEvent a)
+        	{
+        		// Retrieve data entered from the View
+        		String activity = view.getActivity();
+	            String amount = view.getAmount();
+	            String nif = view.getNIF();
+	            String date = view.getDate();
+	            String invoiceId = view.getInvoiceId();
+	            
+	            if (validateFields(amount, nif, date, invoiceId) == false) {
+	            	view.showError("All fields must be filled");
+	            } else {
+	            	// Syntactic validation of date entered by the user
+	        		try {
+	                	SyntacticValidations.validateDate(view.getDate(), "");
+	                } catch (ApplicationException ex) {
+	                	view.showError("Invalid date format. Please use yyyy-MM-dd.");
+	                	throw new ApplicationException(ex.getMessage());
+	                }
+	        		
+	            	// Track Company to Agreement
 		            Integer idSponsorshipAgreement = -1;
 					try {
 						idSponsorshipAgreement = model.getSponsorshipAgreementId(nif, activity);
-					} catch (SQLException e1) {
-						e1.printStackTrace();
+					} catch (Exception e) {
+						view.showError("No Agreement Found");
+						e.printStackTrace();
+						return;
 					}
-		
-		            if (invoiceId == "") {
-		            	model.getInvoiceId(Integer.parseInt(invoiceId));
-		            }
 		            
-		            model.validateDate(date, Integer.parseInt(invoiceId));
-		            model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
-	        	}*/
+		            // Check if Invoice entered in the Payment is a correct ID attribute
+		            // Fetch in DB if there is an Invoice generated for the Agreement identified by id
+					// Retrieve Invoice ID in case it was not enter or check if Invoice ID entered was the correct one
+	            	try {
+	            		model.getInvoiceId(Integer.parseInt(invoiceId), idSponsorshipAgreement);
+	            	} catch (Exception e) {
+	            		view.showError("No Invoice Found");
+	            		e.printStackTrace();
+	            		return;
+	            	}
+	            	
+		            if (model.validateDate(date, Integer.parseInt(invoiceId))) {
+		            	try {
+			            	model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
+			            } catch (Exception e) {
+			            	view.showError("Internal Error: Could Not Register Payment");
+			            	e.printStackTrace();
+			            	return;
+			            } 
+		            	view.configureSummaryPanel();
+		            } else {
+		            	view.showError("Payment received before Invoice generation");
+		            }
+	            }
 	        }
-		});
+        });
+	}
+	
+	public void initView() {
+		loadActivities();
+		view.setVisible();
+	}
+	
+	public void loadActivities() {
+		List<Object[]> activitiesList = model.getListActivities();
+		
+		ComboBoxModel<Object> lModel = SwingUtil.getComboModelFromList(activitiesList);
+		view.getActivities().setModel(lModel); 
+	}
+	
+	public Boolean validateFields(String amount, String nif, String date, String invoiceId) {
+		if (amount.isEmpty() || nif.isEmpty() || date.isEmpty() || invoiceId.isEmpty()) {
+			return false;
+		}
+		
+		return true;
 	}
 	
 	// Control Model Object
@@ -91,10 +124,4 @@ public class RegisterPaymentController {
 	// Methods to set the properties in the actual Model
 	
 	// Control View Object to be updated any time there is a change in the Model related to Payments
-
-
-	public void updateView()
-	{
-		view.display();
-	}
 }

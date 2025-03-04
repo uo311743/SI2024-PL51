@@ -3,46 +3,52 @@ package view;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import net.miginfocom.swing.MigLayout;
-import util.SwingUtil;
-
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class RegisterPaymentView extends AbstractView {
-    private JComboBox<String> activityComboBox;
+    private JComboBox<Object> activityComboBox;
     private JTextField amountField;
     private JTextField nifField;
     private JTextField dateField;
     private JTextField invoiceIdField;
     
-    private String currentActivities[];
-    
     private JPanel formPanel;
     private JPanel summaryPanel;
-    
-    private Boolean summaryConcealed;
+    private JPanel errorPanel;
     
     public RegisterPaymentView()
     {
     	super("Register Payment");
-    	initialize();
-    	//configMainPanel();
     }
     
     @Override
     protected void initialize()
     {
-    	currentActivities = new String[] {""};
-    	activityComboBox = new JComboBox<>(currentActivities);
+    	activityComboBox = new JComboBox<>();
     	amountField = new JTextField("0.00", 1);
+    	nifField = new JTextField("", 1);
+    	dateField = new JTextField("YYYY-MM-DD", 1);
+    	invoiceIdField = new JTextField("", 1);
+    	formPanel = new JPanel();
+    	summaryPanel = new JPanel();
+    	errorPanel = new JPanel();
+    	
+    	super.createButtonLowLeft("Cancel");
+    	super.createButtonLowMiddle("Clear");
+        super.createButtonLowRight("Register");
+    }
+    
+    @Override
+    protected void configMainPanel()
+    {
+    	super.getMainPanel().setLayout(new GridLayout(2, 1));
+    	
     	amountField.setForeground(Color.GRAY); // Set placeholder color initially
     	amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
-
-        amountField.addFocusListener(new FocusListener() {
+    	
+    	amountField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
                 if (amountField.getText().equals("0.00")) {
@@ -61,9 +67,7 @@ public class RegisterPaymentView extends AbstractView {
                 }
             }
         });
-        
-    	nifField = new JTextField("", 1);
-    	dateField = new JTextField("YYYY-MM-DD", 1);
+    	
     	dateField.setForeground(Color.GRAY); // Set placeholder color initially
     	dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
 
@@ -86,48 +90,13 @@ public class RegisterPaymentView extends AbstractView {
                 }
             }
         });
-        
-    	invoiceIdField = new JTextField("", 1);
-    	formPanel = new JPanel();
-    	summaryPanel = new JPanel();
-    	summaryConcealed = true;
-    	
-    	super.createButtonLowLeft("Cancel");
-        super.createButtonLowRight("Register");
-    }
-    
-    @Override
-    protected void configMainPanel()
-    {
-    	super.getMainPanel().setLayout(new GridLayout(2, 1));
     	
     	configureFormPanel();
-        
-        super.getButtonLowLeft().addActionListener(new ActionListener() {
-        	@Override
-        	public void actionPerformed(ActionEvent e)
-        	{
-        		clearFields();
-        	}
-        });
     }
     
     /*public void setActionRegisterButton(ActionListener a) {
     	super.getButtonLowRight().addActionListener(a);
     }*/
-    
-    public void initializeActivities(String[] activities) {
-    	currentActivities = activities;
-    	activityComboBox.removeAllItems();
-    	
-    	for (String a : activities)
-    	{
-    		activityComboBox.addItem(a);
-    	}
-    	
-    	resetMainPanel();
-    	configMainPanel();
-    }
 
     private void configureFormPanel()
     {
@@ -156,16 +125,23 @@ public class RegisterPaymentView extends AbstractView {
     
     public void configureSummaryPanel()
     {
-    	JLabel summaryLabel = new JLabel("<html><div style='padding:10px;'>" +
+    	JLabel headerLabel = new JLabel("<html><h2>Summary of Payment Registered</h2></html>", SwingConstants.CENTER);
+    	headerLabel.setFont(new Font("Arial", Font.BOLD, 12));
+
+    	JLabel summaryLabel = new JLabel("<html><div style='font-size:11px; padding:5px 10px;'>" +
     	        "<b>Activity:</b> " + getActivity() + "<br>" +
     	        "<b>Amount (EUR):</b> " + getAmount() + "<br>" +
     	        "<b>NIF:</b> " + getNIF() + "<br>" +
     	        "<b>Date:</b> " + getDate() + "<br>" +
     	        "<b>Invoice ID:</b> " + getInvoiceId() +
-    	        "</div></html>");
+    	        "</div></html>", SwingConstants.CENTER);
 
+    	summaryLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+    	
+    	clearFields();
     	summaryPanel.removeAll();
-    	summaryPanel.setLayout(new BorderLayout());
+    	summaryPanel.setLayout(new GridLayout(2, 1));
+    	summaryPanel.add(headerLabel, BorderLayout.NORTH);
     	summaryPanel.add(summaryLabel, BorderLayout.CENTER);
     	summaryPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
     	
@@ -173,8 +149,40 @@ public class RegisterPaymentView extends AbstractView {
     	super.getMainPanel().revalidate();
     	super.getMainPanel().repaint();
     }
+    
+    public void showError(String errorMessage) {
+    	clearFields();
+
+    	errorPanel.setLayout(new BorderLayout());
+    	errorPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1)); // Red border for error
+
+        // Error header
+        JLabel errorHeader = new JLabel("<html><h2 style='color:red;'>Error</h2></html>", SwingConstants.CENTER);
+        errorHeader.setFont(new Font("Arial", Font.BOLD, 14));
+        errorHeader.setBorder(new EmptyBorder(3, 3, 3, 3));
+
+        // Error message
+        JLabel errorLabel = new JLabel("<html><div style='font-size:11px; padding:5px 10px; color:red;'>" + errorMessage + "</div></html>", SwingConstants.CENTER);
+        
+        errorLabel.setFont(new Font("Arial", Font.PLAIN, 11));
+    	
+        errorPanel.setLayout(new GridLayout(2, 1));
+        errorPanel.add(errorHeader, BorderLayout.NORTH); // Add header
+        errorPanel.add(errorLabel, BorderLayout.CENTER); // Add error message
+        
+        super.getMainPanel().add(errorPanel);
+    	super.getMainPanel().revalidate();
+    	super.getMainPanel().repaint();
+    }
 
     public void clearFields() {
+    	super.getMainPanel().remove(summaryPanel);
+    	super.getMainPanel().remove(errorPanel);
+    	super.getMainPanel().revalidate();
+    	super.getMainPanel().repaint();
+    	summaryPanel.removeAll();
+    	errorPanel.removeAll();
+    	
     	// Reset JComboBox to first item or empty selection
         activityComboBox.setSelectedIndex(0);
 
@@ -193,15 +201,14 @@ public class RegisterPaymentView extends AbstractView {
 
         // Reset Invoice ID field
         invoiceIdField.setText("");
-
-        // Clear the summary panel if needed
-        summaryPanel.removeAll();
-        summaryPanel.revalidate();
-        summaryPanel.repaint();
     }
     
     public String getActivity() {
         return (String) activityComboBox.getSelectedItem();
+    }
+    
+    public JComboBox<Object> getActivities() {
+    	return activityComboBox;
     }
 
     public String getAmount() {
@@ -222,18 +229,5 @@ public class RegisterPaymentView extends AbstractView {
 
     public void setInvoiceId(String id) {
         invoiceIdField.setText(id);
-    }
-    
-    public void setSummaryConcealed() {
-    	summaryConcealed = !summaryConcealed;
-    }
-    
-    public Boolean summaryConcealed() {
-    	return summaryConcealed;
-    }
-    
-    public void display()
-    {
-    	super.setVisible();
     }
 }
