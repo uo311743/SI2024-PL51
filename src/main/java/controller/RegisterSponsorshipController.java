@@ -16,7 +16,6 @@ import DTOs.ActivitiesDTO;
 import model.RegisterSponsorshipModel;
 import util.SwingUtil;
 import util.SyntacticValidations;
-import util.UnexpectedException;
 import view.RegisterSponsorshipView;
 
 public class RegisterSponsorshipController {
@@ -50,6 +49,20 @@ public class RegisterSponsorshipController {
 			}
 		});
     	
+    	this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+    		@Override
+			public void mouseReleased(MouseEvent e) {
+    			SwingUtil.exceptionWrapper(() -> restartView());
+    		}
+		});
+    	
+    	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
+			}
+		});
+    	
     	this.view.getActivityTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -65,32 +78,34 @@ public class RegisterSponsorshipController {
     	
     	this.view.getAmountTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
-			public void insertUpdate(DocumentEvent e) { SwingUtil.exceptionWrapper(() -> updateDetail()); }
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> updateDetail());
+    		}
 
 			@Override
-			public void removeUpdate(DocumentEvent e) { SwingUtil.exceptionWrapper(() -> updateDetail()); }
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
 
 			@Override
-			public void changedUpdate(DocumentEvent e) { }
+			public void changedUpdate(DocumentEvent e) {}
     	});
     	
     	
     	this.view.getAgreementDateTextField().getDocument().addDocumentListener(new DocumentListener() {
 			@Override
-			public void insertUpdate(DocumentEvent e) { SwingUtil.exceptionWrapper(() -> updateDetail()); }
+			public void insertUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
 
 			@Override
-			public void removeUpdate(DocumentEvent e) { SwingUtil.exceptionWrapper(() -> updateDetail()); }
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
 
 			@Override
-			public void changedUpdate(DocumentEvent e) { }
+			public void changedUpdate(DocumentEvent e) {}
     	});
-    	
-    	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper(() -> showSubmitDialog()); }
-		});
-
     }
     
     public void initView()
@@ -174,7 +189,7 @@ public class RegisterSponsorshipController {
     private void getActivities()
     {
     	List<ActivitiesDTO> activities = model.getActivitiesbyStatus("registered", "planned", "done");
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
@@ -219,16 +234,22 @@ public class RegisterSponsorshipController {
         int row = this.view.getActivityTable().getSelectedRow(); 
         
         String activity = "";
+        String idActivity = "";
         
         if (row >= 0)
-            activity = (String) this.view.getActivityTable().getModel().getValueAt(row, 1);
-        
-        if (activity == "")
-            throw new UnexpectedException("Submit called with no activity selected.");
+        {
+        	idActivity = (String) this.view.getActivityTable().getModel().getValueAt(row, 0);
+        	activity = (String) this.view.getActivityTable().getModel().getValueAt(row, 1);
+        }
 
         String sponsor = (String) view.getSponsorComboBox().getSelectedItem();
+        
         String contact = (String) view.getContactComboBox().getSelectedItem();
+        String idContact = SwingUtil.getKeyFromText(contact);
+        
         String GBmember = (String) view.getGbMemberComboBox().getSelectedItem();
+        String idGBmember = SwingUtil.getKeyFromText(GBmember);
+
         String amount = this.view.getAmountTextField().getText();
         String agreementDate = this.view.getAgreementDateTextField().getText();
 
@@ -246,17 +267,46 @@ public class RegisterSponsorshipController {
                 + "</body></html>";
 
         int response = JOptionPane.showConfirmDialog(
-            this.view.getFrame(),              // Parent component
-            message,                           // HTML formatted message
-            "Add Sponsorship Agreement",      // Dialog title
-            JOptionPane.YES_NO_OPTION,         // Option type (Yes/No)
-            JOptionPane.QUESTION_MESSAGE       // Message type (question icon)
+            this.view.getFrame(),  message,
+            "Confirm Sponsorship Agreement Details",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
         );
         
-        if (response == JOptionPane.YES_OPTION)
+        if (response != JOptionPane.YES_OPTION) return;
+        
+        int numOldSponshorshipAgreements = this.model.getNumberOldSponsorshipAgreements(idContact, idActivity);
+    	
+        if(numOldSponshorshipAgreements == 0)
         {
-        	this.model.insertSponsorshipAgreement(contact, GBmember, activity, amount, agreementDate);
-        } 
+        	this.model.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+	        JOptionPane.showMessageDialog(
+	    			this.view.getFrame(), "Sponshorship agreement añadido correctamente.",
+	    			"Operación realizada correctamente",
+	    			JOptionPane.INFORMATION_MESSAGE
+	    	);
+	        this.restartView();
+        }
+    	else
+    	{
+    		message = "This action will modify " + numOldSponshorshipAgreements + " sponshorship agreements for that activity and sponshor.";
+    		response = JOptionPane.showConfirmDialog(
+    	            this.view.getFrame(), message,
+    	            "Confirm modification of old Sponsorship Agreements",
+    	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+	        );
+	        
+	        if (response == JOptionPane.YES_OPTION)
+	        {
+	        	this.model.insertUpdateSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+		        JOptionPane.showMessageDialog(
+		    			this.view.getFrame(),
+		    			"Sponshorship agreement añadido correctamente. Los antigos se han marcado como 'modificados'.",
+		    			"Operación realizada correctamente",
+		    			JOptionPane.INFORMATION_MESSAGE
+		    	);
+		        this.restartView();
+	        }
+    	}
     }
 
 

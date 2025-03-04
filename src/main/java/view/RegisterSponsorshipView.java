@@ -39,6 +39,7 @@ public class RegisterSponsorshipView extends AbstractView {
         this.agreementDateTextField = new JTextField(10);
 		
 		super.createButtonLowLeft("Cancel");
+		super.createButtonLowMiddle("Reset");
 		super.createButtonLowRight("Submit");
 	}
 
