@@ -39,12 +39,14 @@ CREATE TABLE SponsorshipAgreements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     idSponsorContact INTEGER NOT NULL,
     idGBMember INTEGER NOT NULL,
-    activity TEXT NOT NULL,
+
+    idActivity TEXT NOT NULL,
     amount REAL NOT NULL,
     date TEXT NOT NULL,
     status TEXT NOT NULL CHECK (lower(status) IN ('signed', 'closed', 'modified', 'cancelled')),
     FOREIGN KEY (idSponsorContact) REFERENCES SponsorContacts(id) ON DELETE CASCADE,
     FOREIGN KEY (idGBMember) REFERENCES GBMembers(id) ON DELETE CASCADE
+    FOREIGN KEY (idActivity) REFERENCES Activity(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Invoices (
