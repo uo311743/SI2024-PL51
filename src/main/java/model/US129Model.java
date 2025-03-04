@@ -7,11 +7,10 @@ import util.Database;
 
 public class US129Model {
 	
-	// Instance that allows the connection to the DB and execution of queries
-	private Database db = new Database();
-	
 	public static final String SQL_SUM_INCOMES = "SELECT COALESCE(SUM(amount), 0) FROM IncomesExpenses WHERE amount >= 0;";
 	public static final String SQL_SUM_EXPENSES = "SELECT COALESCE(SUM(amount), 0) FROM IncomesExpenses WHERE amount < 0;";
+	
+	private Database db = new Database();
     
 	/* ================================================================================
      * 
@@ -20,7 +19,7 @@ public class US129Model {
      */
 	
 	public List<Object[]> getStatusListArray() {
-		String sql = "SELECT Name FROM SponsorOrganizations;";
+		String sql = "SELECT name FROM SponsorOrganizations;";
 		return db.executeQueryArray(sql);
 	}
 	
@@ -45,5 +44,10 @@ public class US129Model {
     public int getAmountExpense() {
     	List<Integer> expense = db.executeQueryPojo(Integer.class, SQL_SUM_EXPENSES);
 		return expense.get(0);
+	}
+    
+    public List<ActivitiesDTO> getActivitiesFromCurrentYear(String startDate, String endDate) {
+		String sql ="SELECT name, status, dateStart, dateEnd FROM Activities WHERE dateStart >= ? AND dateEnd <= ?;";
+		return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate);
 	}
 }

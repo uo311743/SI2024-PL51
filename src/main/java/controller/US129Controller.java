@@ -2,13 +2,16 @@ package controller;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.swing.ComboBoxModel;
+import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
 import giis.demo.util.SwingUtil;
 import giis.demo.util.Util;
 import model.US129Model;
+import util.SwingMain;
 import view.US129View;
 
 public class US129Controller {
@@ -36,6 +39,7 @@ public class US129Controller {
     
     public void initView() {
     	loadStatus();
+    	showCurrentYearData();
         view.setVisible();
     }
     
@@ -56,6 +60,29 @@ public class US129Controller {
         List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
         updateReportTable(filteredActivities);
         updateTotals(filteredActivities);
+    }
+    
+    public void showCurrentYearData() {
+        Calendar calendario = Calendar.getInstance();
+        calendario.setTime(SwingMain.getTodayDate());
+        String startDate = calendario.get(Calendar.YEAR) + "-01-01";
+        String endDate = calendario.get(Calendar.YEAR) + "-12-31";
+        
+        List<ActivitiesDTO> currentYearActivities = model.getActivitiesFromCurrentYear(startDate, endDate);
+        
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Start Date", "End Date", "Name", "Status", "Income", "Expense", "Balance"}, 0);
+        
+        for (ActivitiesDTO activity : currentYearActivities) {
+            
+            tableModel.addRow(new Object[]{
+                activity.getDateStart(), 
+                activity.getDateEnd(),
+                activity.getName(),
+                activity.getStatus()
+            });
+        }
+        
+        view.getReportTable().setModel(tableModel);
     }
     
     private void updateReportTable(List<ActivitiesDTO> filteredActivities) {
