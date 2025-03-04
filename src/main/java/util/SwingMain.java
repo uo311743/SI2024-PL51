@@ -98,12 +98,11 @@ public class SwingMain {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                	SyntacticValidations.validateDate(textField.getText(), "");
-                	Date newDate = Util.isoStringToDate(textField.getText());
+            	if(SyntacticValidations.isDate(textField.getText())){
+            		Date newDate = Util.isoStringToDate(textField.getText());
                     SwingMain.today = newDate;
                     JOptionPane.showMessageDialog(null, "Date updated to: " + Util.dateToIsoString(newDate));
-                } catch (ApplicationException ex) {
+                } else {
                     JOptionPane.showMessageDialog(null, "Invalid date format. Please use yyyy-MM-dd.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
