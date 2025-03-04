@@ -29,28 +29,28 @@ public class ActivityFinancialReportModel {
     
     public MovementsDTO getAmountEstimatedIncomeByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status == 'estimated' AND type == 'income' AND idActivity == ?;";
+    	String sql = "SELECT m.amount FROM Movements m JOIN Activities a ON m.idActivity == a.id WHERE m.status == 'estimated' AND m.type == 'income' AND m.idActivity == ?;";
         List<MovementsDTO> aei = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return aei.get(0);
     }
     
     public MovementsDTO getAmountEstimatedExpenseByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status == 'estimated' AND type == 'expense' AND idActivity == ?;";
+    	String sql = "SELECT m.amount FROM Movements m JOIN Activities a ON m.idActivity == a.id WHERE m.status == 'estimated' AND m.type == 'expense' AND m.idActivity == ?;";
         List<MovementsDTO> aee = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return aee.get(0);
     }
     
     public MovementsDTO getAmountIncomeByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status == 'paid' AND type == 'income' AND idActivity == ?;";
+    	String sql = "SELECT m.amount FROM Movements m JOIN Activities a ON m.idActivity == a.id WHERE m.status == 'paid' AND m.type == 'income' AND m.idActivity == ?;";
         List<MovementsDTO> api = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return api.get(0);
     }
     
     public MovementsDTO getAmountExpenseByActivityId(String activityId) {
     	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
-    	String sql = "SELECT amount FROM Movements WHERE status == 'paid' AND type == 'expense' AND idActivity == ?;";
+    	String sql = "SELECT m.amount FROM Movements m JOIN Activities a ON m.idActivity == a.id WHERE m.status == 'paid' AND m.type == 'expense' AND m.idActivity == ?;";
         List<MovementsDTO> ape = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
         return ape.get(0);
     }

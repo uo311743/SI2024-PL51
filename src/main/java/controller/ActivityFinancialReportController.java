@@ -106,8 +106,8 @@ public class ActivityFinancialReportController {
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
-                model.getAmountIncomeByActivityId(activity.getId()),
-                model.getAmountExpenseByActivityId(activity.getId())
+                model.getAmountIncomeByActivityId(activity.getId()).getAmount(),
+                model.getAmountExpenseByActivityId(activity.getId()).getAmount()
             });
             
             totalEstimatedIncomes = Integer.parseInt(model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount());
