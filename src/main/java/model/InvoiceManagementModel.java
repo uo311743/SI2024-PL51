@@ -52,8 +52,8 @@ public class InvoiceManagementModel {
 	}
 	
 	public List<InvoicesDTO> getInvoicesBySponsorAndActivity(String sponsorId, String activityId) {
-		SemanticValidations.validateIdSponsorOrganization(sponsorId);
-		SemanticValidations.validateIdActivity(activityId);
+		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
+		SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
         return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES, sponsorId, activityId);
     }
 }
