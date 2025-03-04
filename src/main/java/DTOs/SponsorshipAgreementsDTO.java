@@ -4,7 +4,7 @@ public class SponsorshipAgreementsDTO {
     private int id;
     private int idSponsorContact;
     private int idGBMember;
-    private String activity;
+    private int idActivity;
     private double amount;
     private String date;
     private String status;
@@ -27,11 +27,11 @@ public class SponsorshipAgreementsDTO {
 	public void setIdGBMember(int idGBMember) {
 		this.idGBMember = idGBMember;
 	}
-	public String getActivity() {
-		return activity;
+	public int getIdActivity() {
+		return idActivity;
 	}
-	public void setActivity(String activity) {
-		this.activity = activity;
+	public void setIdActivity(int idActivity) {
+		this.idActivity = idActivity;
 	}
 	public double getAmount() {
 		return amount;
