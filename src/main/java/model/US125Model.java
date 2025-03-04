@@ -6,7 +6,7 @@ import util.Database;
 
 public class US125Model {
 	
-	public static final String SQL_FILTERED_INVOICES = "SELECT i.id, i.dateIssued, i.totalAmount FROM Invoices i JOIN SponsorshipAgreements sa ON i.id = sa.id JOIN SponsorContacts sc ON sa.id = sc.id JOIN SponsorOrganizations so ON sc.id = so.id JOIN Activities a ON sa.id = a.id WHERE so.id = ? AND a.id = ?;";
+	public static final String SQL_FILTERED_INVOICES = "SELECT I.id, I.dateIssued FROM Invoices I JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id JOIN SponsorContacts SC ON SA.idSponsorContact = SC.id JOIN SponsorOrganizations SO ON SC.idSponsorOrganization = SO.id JOIN Activities A ON SA.idActivity = A.id WHERE SO.id = ? AND A.id = ?;";
 
 	private Database db = new Database();
 		
