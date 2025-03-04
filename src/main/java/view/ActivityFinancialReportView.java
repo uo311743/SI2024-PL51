@@ -3,7 +3,7 @@ package view;
 import javax.swing.*;
 import net.miginfocom.swing.MigLayout;
 
-public class US129View extends AbstractView {
+public class ActivityFinancialReportView extends AbstractView {
     
     private JTable reportTable;
     private JComboBox<Object> statusComboBox;
@@ -16,8 +16,8 @@ public class US129View extends AbstractView {
     private JLabel profitLabel;
     private JButton filterButton;
     
-    public US129View() {
-        super("Activity Financial Report");
+    public ActivityFinancialReportView() {
+		super("Activity Financial Report");
     }
     
     @Override

@@ -9,19 +9,15 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
-import controller.US129Controller;
-import model.US129Model;
-import view.ExampleView;
-import view.US129View;
-
+import controller.ActivityFinancialReportController;
+import model.ActivityFinancialReportModel;
+import view.ActivityFinancialReportView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -125,13 +121,8 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
-	    });
-	    
-	    addButtonToMain(buttonPanel, "Run US129", () -> {
-	    	new US129Controller(new US129Model(), new US129View());
+	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
+	    	new ActivityFinancialReportController(new ActivityFinancialReportModel(), new ActivityFinancialReportView());
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
