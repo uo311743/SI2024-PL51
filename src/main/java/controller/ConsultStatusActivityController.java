@@ -90,7 +90,7 @@ public class ConsultStatusActivityController {
 	
 	private void getActivities()
     {
-    	List<ActivitiesDTO> activities = model.getAllActivitiesbyStatus();
+    	List<ActivitiesDTO> activities = model.getAllActivities();
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
@@ -98,7 +98,7 @@ public class ConsultStatusActivityController {
     
 	private void getSponsorships(String idActivity)
 	{
-		List<SponsorshipAgreementsDTO> sponsorships = model.getSponsorshipAgreementsByActivity(idActivity);
+		List<SponsorshipAgreementsDTO> sponsorships = model.getApplicableSponsorshipAgreementsByActivity(idActivity);
 		
 		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"amount", "sponsor", "status", "date"}, 0);
 		for(SponsorshipAgreementsDTO item : sponsorships)

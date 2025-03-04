@@ -14,18 +14,18 @@ public class ConsultStatusActivityModel
 	// Instance that allows the connection to the DB and execution of queries
 	private Database db = new Database();
 
-	public List<ActivitiesDTO> getAllActivitiesbyStatus()
+	public List<ActivitiesDTO> getAllActivities()
 	{
 		String sql = "SELECT * FROM Activities;";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql);
 	}
 	
-	public List<SponsorshipAgreementsDTO> getSponsorshipAgreementsByActivity(String idActivity)
+	public List<SponsorshipAgreementsDTO> getApplicableSponsorshipAgreementsByActivity(String idActivity)
 	{
 		SemanticValidations.validateIdForTable(idActivity, "Activities",
 				"ERROR. Provided idActivity for getSponsorshipAgreementsByActivity does not exist.");
 		
-		String sql = "SELECT * FROM SponsorshipAgreements WHERE idActivity = ?;";
+	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
 	    return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
 	}
 	
@@ -60,31 +60,85 @@ public class ConsultStatusActivityModel
 	
 	public double getEstimatedSponshorships(String idActivity)
 	{
-		return 1;
+		SemanticValidations.validateIdForTable(idActivity, "Activities", 
+		        "ERROR. Provided idActivity for getEstimatedSponshorships does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 	
 	public double getActualSponshorships(String idActivity)
 	{
-		return 2;
+		SemanticValidations.validateIdForTable(idActivity, "Activities", 
+		        "ERROR. Provided idActivity for getActualSponshorships does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status = 'closed' AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 	
 	public double getEstimatedIncome(String idActivity)
 	{
-		return 3;
+		SemanticValidations.validateIdForTable(idActivity, "Movements", 
+		        "ERROR. Provided idActivity for getEstimatedIncome does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'income' AND status IN ('estimated', 'paid') AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 	
 	public double getActualIncome(String idActivity)
 	{
-		return 4;
+		SemanticValidations.validateIdForTable(idActivity, "Movements", 
+		        "ERROR. Provided idActivity for getEstimatedIncome does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'income' AND status = 'paid' AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 	
 	public double getEstimatedExpenses(String idActivity)
 	{
-		return 5;
+		SemanticValidations.validateIdForTable(idActivity, "Movements", 
+		        "ERROR. Provided idActivity for getEstimatedIncome does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'expense' AND status IN ('estimated', 'paid') AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 	
 	public double getActualExpenses(String idActivity)
 	{
-		return 6;
+		SemanticValidations.validateIdForTable(idActivity, "Movements", 
+		        "ERROR. Provided idActivity for getEstimatedIncome does not exist."
+	    );
+
+	    String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'expense' AND status = 'paid' AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 }
