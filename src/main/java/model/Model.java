@@ -101,6 +101,31 @@ public class Model {
         }
     }
     
+    public String getActivityId(String name) {
+    	String sql = "SELECT a.id FROM Activities a WHERE a.name = ?;";
+    	
+    	return db.executeQueryArray(sql, name).get(0)[0].toString();
+    }
+    
+    public void registerMovement(String idActivity, String amount, String date, String type, String concept, String receipt, String status) {
+    	String sql = "INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?)";
+		
+    	try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+		       pstmt.setString(1, idActivity);
+		       pstmt.setString(2, type.toLowerCase()); // Ensure lowercase for CHECK constraint
+		       pstmt.setString(3, concept);
+		       pstmt.setString(4, amount);
+		       pstmt.setString(5, date.isEmpty() ? null : date); // Handle optional date
+		       pstmt.setString(6, receipt.isEmpty() ? null : receipt); // Handle optional receipt
+		       pstmt.setString(7, status.toLowerCase()); // Ensure lowercase for CHECK constraint
+		       pstmt.executeUpdate();
+		   } catch (SQLException e) {
+			   e.printStackTrace();
+			   throw new ApplicationException(e.getMessage());
+		   }
+    }
+    
     /**
      * Fetch name of all current Activities in DB available for sponsorship
      * @return list of arrays of Objects with the name of the activities in first position of each array
@@ -110,7 +135,6 @@ public class Model {
     	
     	return db.executeQueryArray(query);
     }
-
     
     /* ================================================================================
      * 

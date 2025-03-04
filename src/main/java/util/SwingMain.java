@@ -17,11 +17,12 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
+import controller.RegisterIncomesExpensesController;
 import controller.RegisterPaymentController;
 import model.Model;
 
 import view.ExampleView;
-
+import view.RegisterIncomesExpensesView;
 import view.RegisterPaymentView;
 
 import javax.swing.BorderFactory;
@@ -146,6 +147,11 @@ public class SwingMain {
 	    // Add a button to open the PaymentsView
         addButtonToMain(buttonPanel, "Register Payment", () -> {
         	new RegisterPaymentController(new Model(), new RegisterPaymentView());
+	    });
+        
+        // Add a button to open the IncomesExpensesView
+        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
+        	new RegisterIncomesExpensesController(new Model(), new RegisterIncomesExpensesView());
 	    });
 	    
 	    /* 
