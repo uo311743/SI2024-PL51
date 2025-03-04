@@ -100,8 +100,8 @@ public class SwingMain {
         button.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-               if(SyntacticValidations.isDate(textField.getText())) {
-                	Date newDate = Util.isoStringToDate(textField.getText());
+            	if(SyntacticValidations.isDate(textField.getText())){
+            		Date newDate = Util.isoStringToDate(textField.getText());
                     SwingMain.today = newDate;
                     JOptionPane.showMessageDialog(null, "Date updated to: " + Util.dateToIsoString(newDate));
                 } else {
