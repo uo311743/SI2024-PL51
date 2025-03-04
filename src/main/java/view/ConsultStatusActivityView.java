@@ -1,10 +1,10 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -14,7 +14,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.table.DefaultTableModel;
 
 public class ConsultStatusActivityView extends AbstractView {
     private JTable activityTable, sponsorshipTable, incomeTable, expensesTable;
@@ -87,8 +86,9 @@ public class ConsultStatusActivityView extends AbstractView {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.weighty = 0.25;
+        gbc.insets = new Insets(0, 0, 0, 0);
         mainPanel.add(topPanel, gbc);
 
         gbc.gridy = 1;
@@ -103,8 +103,6 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createTopPanel() {
         // Activity selection panel
-        String[] activityColumns = {"Edition", "Activity Name", "Dates", "State"};
-        activityTable.setModel(new DefaultTableModel(activityColumns, 0));
         activityTable.setName("activityTable");
         activityTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         activityTable.setDefaultEditor(Object.class, null);
@@ -164,8 +162,6 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createCentralPanel() {
         // Sponsorship panel
-        String[] sponsorshipColumns = {"Sponsor Name", "Agreement Date", "Status"};
-        sponsorshipTable.setModel(new DefaultTableModel(sponsorshipColumns, 0));
         sponsorshipTable.setDefaultEditor(Object.class, null);
         JScrollPane sponsorshipScroll = new JScrollPane(sponsorshipTable);
         sponsorshipScroll.setBorder(BorderFactory.createTitledBorder("Sponsorships"));
@@ -179,6 +175,7 @@ public class ConsultStatusActivityView extends AbstractView {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.7;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         centralPanel.add(sponsorshipScroll, gbc);
 
@@ -191,8 +188,6 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createIncomePanel() {
         // Income panel
-        String[] incomeColumns = {"Source", "Amount", "Status"};
-        incomeTable.setModel(new DefaultTableModel(incomeColumns, 0));
         incomeTable.setDefaultEditor(Object.class, null);
         JScrollPane incomeScroll = new JScrollPane(incomeTable);
         incomeScroll.setBorder(BorderFactory.createTitledBorder("Income"));
@@ -206,6 +201,7 @@ public class ConsultStatusActivityView extends AbstractView {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.7;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         incomePanel.add(incomeScroll, gbc);
 
@@ -218,8 +214,6 @@ public class ConsultStatusActivityView extends AbstractView {
 
     private JPanel createExpensesPanel() {
         // Expenses panel
-        String[] expensesColumns = {"Description", "Amount", "Status"};
-        expensesTable.setModel(new DefaultTableModel(expensesColumns, 0));
         expensesTable.setDefaultEditor(Object.class, null);
         JScrollPane expensesScroll = new JScrollPane(expensesTable);
         expensesScroll.setBorder(BorderFactory.createTitledBorder("Expenses"));
@@ -233,6 +227,7 @@ public class ConsultStatusActivityView extends AbstractView {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.7;
+        gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         expensesPanel.add(expensesScroll, gbc);
 
@@ -244,42 +239,15 @@ public class ConsultStatusActivityView extends AbstractView {
     }
 
     private JPanel createSponsorshipSubTotalPanel() {
-        // Estimated sponsorship totals panel
-        JPanel estimatedPanel = new JPanel();
-        estimatedPanel.setLayout(new BoxLayout(estimatedPanel, BoxLayout.Y_AXIS));
-        estimatedPanel.setBorder(BorderFactory.createTitledBorder("Estimated"));
-        JLabel subTotalSponsorshipIncomeEstimated = new JLabel("Income:");
-        JLabel subTotalSponsorshipExpensesEstimated = new JLabel("Expenses:");
-        JLabel subTotalSponsorshipBalanceEstimated = new JLabel("Balance:");
-        estimatedPanel.add(subTotalSponsorshipIncomeEstimated);
-        estimatedPanel.add(subTotalSponsorshipIncomeEstimatedField);
-        estimatedPanel.add(subTotalSponsorshipExpensesEstimated);
-        estimatedPanel.add(subTotalSponsorshipExpensesEstimatedField);
-        estimatedPanel.add(subTotalSponsorshipBalanceEstimated);
-        estimatedPanel.add(subTotalSponsorshipBalanceEstimatedField);
-
-        // Actual sponsorship totals panel
-        JPanel actualPanel = new JPanel();
-        actualPanel.setLayout(new BoxLayout(actualPanel, BoxLayout.Y_AXIS));
-        actualPanel.setBorder(BorderFactory.createTitledBorder("Actual"));
-        JLabel subTotalSponsorshipIncomeActual = new JLabel("Income:");
-        JLabel subTotalSponsorshipExpensesActual = new JLabel("Expenses:");
-        JLabel subTotalSponsorshipBalanceActual = new JLabel("Balance:");
-        actualPanel.add(subTotalSponsorshipIncomeActual);
-        actualPanel.add(subTotalSponsorshipIncomeActualField);
-        actualPanel.add(subTotalSponsorshipExpensesActual);
-        actualPanel.add(subTotalSponsorshipExpensesActualField);
-        actualPanel.add(subTotalSponsorshipBalanceActual);
-        actualPanel.add(subTotalSponsorshipBalanceActualField);
-
-        // Sponsorship totals panel with two columns
-        JPanel totalPanel = new JPanel(new GridLayout(1, 2));
-        totalPanel.add(estimatedPanel);
-        totalPanel.add(actualPanel);
-        totalPanel.setBorder(BorderFactory.createTitledBorder("Sponsorship Sub-Total"));
-        totalPanel.setPreferredSize(new Dimension(400, 150));
-
-        return totalPanel;
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        panel.setBorder(BorderFactory.createTitledBorder("Sponsorship Sub-Total"));
+        JLabel subTotalSponsorshipIncomeEstimated = new JLabel("Estimated:");
+        JLabel subTotalSponsorshipIncomeActual = new JLabel("Actual:");
+        panel.add(subTotalSponsorshipIncomeEstimated);
+        panel.add(subTotalSponsorshipIncomeEstimatedField);
+        panel.add(subTotalSponsorshipIncomeActual);
+        panel.add(subTotalSponsorshipIncomeActualField);
+        return panel;
     }
 
     private JPanel createIncomeSubTotalPanel() {
