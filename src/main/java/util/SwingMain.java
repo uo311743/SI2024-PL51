@@ -143,11 +143,6 @@ public class SwingMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
-	    
-	    // Add a button to open the PaymentsView
-        addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	new RegisterPaymentController(new Model(), new RegisterPaymentView());
-	    });
         
         // Add a button to open the IncomesExpensesView
         addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
