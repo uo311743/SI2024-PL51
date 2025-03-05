@@ -1,6 +1,5 @@
 package model;
 
-import java.util.Date;
 import java.util.List;
 import DTOs.ActivitiesDTO;
 import DTOs.MovementsDTO;
@@ -20,6 +19,20 @@ public class ActivityFinancialReportModel {
 	public List<ActivitiesDTO> getActivitiesFromCurrentYear(String startDate, String endDate) {
 		String sql ="SELECT id, name, status, dateStart, dateEnd FROM Activities WHERE dateStart >= ? AND dateEnd <= ?;";
 		return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate);
+	}
+	
+	public MovementsDTO getIncomeByActivityId(String activityId) {
+		SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
+		String sql = "SELECT * FROM Movements WHERE type = 'income' AND idActivity = ?;";
+		List<MovementsDTO> income = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
+        return income.get(0);
+	}
+	
+	public MovementsDTO getExpenseByActivityId(String activityId) {
+		SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
+		String sql = "SELECT * FROM Movements WHERE type = 'expense' AND idActivity = ?;";
+		List<MovementsDTO> expense = db.executeQueryPojo(MovementsDTO.class, sql, activityId);
+        return expense.get(0);
 	}
     
     public MovementsDTO getAmountEstimatedIncomeByActivityId(String activityId) {
@@ -50,7 +63,7 @@ public class ActivityFinancialReportModel {
         return ape.get(0);
     }
     
-    public List<ActivitiesDTO> getFilteredActivities(Date startDate, Date endDate, String status) {
+    public List<ActivitiesDTO> getFilteredActivities(String startDate, String endDate, String status) {
     	SemanticValidations.validateStatus(status);
         String sql = "SELECT id, name, status, dateStart, dateEnd FROM Activities WHERE dateStart >= ? AND dateEnd <= ?";
         
