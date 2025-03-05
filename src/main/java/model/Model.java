@@ -34,7 +34,7 @@ public class Model {
     
 	// Registration of Payments
 	/**
-	 * Fetch SponsorshipAgreement in DB corresponding to Company identified by it NIF/VAT and name of activity selected
+	 * Fetch SponsorshipAgreement in DB corresponding to Company identified by it NIF/VAT and name of activity selected with a valid status
 	 * @param nifOrVat
 	 * @param activity
 	 * @return id of the SponsorshipAgreement
@@ -45,13 +45,13 @@ public class Model {
 	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id " +
 	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id " +
 	                 "JOIN Activities a ON a.id = sa.idActivity " +
-	                 "WHERE (so.nif = ? OR so.vat = ?) AND (a.name = ?);";
+	                 "WHERE (so.nif = ? OR so.vat = ?) AND (a.name = ?) AND (sa.status <> 'cancelled');";
 
 	    try {
 	    	List<Object[]> result = db.executeQueryArray(sql, nifOrVat, nifOrVat, activity);
 		    
 		    if (result.isEmpty()) {
-		    	throw new ApplicationException("No SponsorshipAgreement found");
+		    	throw new ApplicationException("No Prevailing SponsorshipAgreement found");
 		    } else {
 		    	return Integer.parseInt(result.get(0)[0].toString());
 		    }
@@ -61,18 +61,18 @@ public class Model {
 	}
 	
 	/**
-	 * Fetch Invoice in DB corresponding to SponsorshipAgreement identified by its ID
+	 * Fetch Invoice in DB corresponding to SponsorshipAgreement identified by its ID with a valid status
 	 * @param idSponsorshipAgreement
 	 * @return id of Invoice found
 	 */
 	public String getInvoiceId(Integer idSponsorshipAgreement) {
-		String sql = "SELECT i.id FROM Invoices i WHERE i.idSponsorshipAgreement = ?;";
+		String sql = "SELECT i.id FROM Invoices i WHERE i.idSponsorshipAgreement = ? AND i.status <> 'cancelled';";
 		
 		try {
 			List<Object[]> result = db.executeQueryArray(sql, idSponsorshipAgreement);
 			
 			if (result.isEmpty()) {
-				throw new ApplicationException("No Invoice Found");
+				throw new ApplicationException("No Prevailing Invoice Found");
 			} else {
 				return result.get(0)[0].toString();
 			}
@@ -99,6 +99,23 @@ public class Model {
         	e.printStackTrace();
         	throw new ApplicationException(e.getMessage());
         }
+    }
+    
+    /**
+     * Fetch in DB a Payment already made for the invoice identified by its ID
+     * @param idInvoice ID of the Invoice that corresponds to the payment
+     * @return SponsorhipPaymentDTO Object if there is a Payment registered; null otherwise
+     */
+    public SponsorshipPaymentsDTO getSponsorshipPayment(String idInvoice) {
+    	String query = "SELECT * FROM SponsorshipPayments sp WHERE sp.idInvoice = ?;";
+    	
+    	List<SponsorshipPaymentsDTO> results = db.executeQueryPojo(SponsorshipPaymentsDTO.class, query, idInvoice);
+    	
+    	if (!results.isEmpty()) {
+    		return results.get(0);
+    	}
+    	
+    	return null;
     }
     
     /**

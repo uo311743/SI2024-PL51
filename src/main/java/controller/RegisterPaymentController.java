@@ -80,13 +80,17 @@ public class RegisterPaymentController {
 		            try {
 		            	model.validatePaymentDate(date, Integer.parseInt(invoiceId));
 		            	try {
-			            	model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
+		            		if (model.getSponsorshipPayment(invoiceId) == null) {
+		            			model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
+		            			view.configureSummaryPanel();
+		            			return;
+		            		}
+		            		view.showError("Payment for that Invoice Already Exists");
 			            } catch (Exception e) {
 			            	view.showError("Internal Error: Could Not Register Payment");
 			            	e.printStackTrace();
 			            	return;
-			            } 
-		            	view.configureSummaryPanel();
+			            }
 		            } catch (Exception e) {
 		            	view.showError("Payment received before Invoice generation");
 		            	throw new ApplicationException(e.getMessage());
