@@ -18,12 +18,10 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import controller.RegisterIncomesExpensesController;
-import controller.RegisterPaymentController;
 import model.Model;
 
 import view.ExampleView;
 import view.RegisterIncomesExpensesView;
-import view.RegisterPaymentView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;

@@ -101,12 +101,27 @@ public class Model {
         }
     }
     
+    /**
+     * Get Activity ID by a given name
+     * @param name of the activity to fetch
+     * @return ID of activity with the name provided
+     */
     public String getActivityId(String name) {
     	String sql = "SELECT a.id FROM Activities a WHERE a.name = ?;";
     	
     	return db.executeQueryArray(sql, name).get(0)[0].toString();
     }
     
+    /**
+     * Register Movement into DB
+     * @param idActivity
+     * @param amount
+     * @param date
+     * @param type
+     * @param concept
+     * @param receipt
+     * @param status
+     */
     public void registerMovement(String idActivity, String amount, String date, String type, String concept, String receipt, String status) {
     	String sql = "INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
