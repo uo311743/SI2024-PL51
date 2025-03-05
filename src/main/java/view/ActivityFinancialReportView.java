@@ -23,7 +23,7 @@ public class ActivityFinancialReportView extends AbstractView {
     @Override
     protected void initialize() {
         this.reportTable = new JTable();
-        this.statusComboBox = new JComboBox<>();
+        this.statusComboBox = new JComboBox<>(new String[] {"all", "estimated", "paid", "cancelled"});
         this.startDateField = new JTextField(10); 
         this.endDateField = new JTextField(10);  
         this.totalEstimatedIncomeLabel = new JLabel("Estimated Income: 0");

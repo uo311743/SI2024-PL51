@@ -6,7 +6,6 @@ import java.awt.event.MouseEvent;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import javax.swing.ComboBoxModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -74,15 +73,8 @@ public class ActivityFinancialReportController {
     }
     
     public void initView() {
-    	loadStatus();
     	showCurrentData();
         view.setVisible();
-    }
-    
-    public void loadStatus() {
-        List<Object[]> sponsorList = model.getStatusListArray();
-        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
-        view.getStatusComboBox().setModel(lmodel);
     }
     
     public void showCurrentData() {
@@ -93,6 +85,7 @@ public class ActivityFinancialReportController {
         String endDate = calendario.get(Calendar.YEAR) + "-12-31";
         
         List<ActivitiesDTO> currentYearActivities = model.getActivitiesFromCurrentYear(startDate, endDate);
+        String value1, value2, value3, value4;
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
         
@@ -100,20 +93,44 @@ public class ActivityFinancialReportController {
         int totalEstimatedExpenses = 0;
         int totalPaidIncomes = 0;
         int totalPaidExpenses = 0;
-        
         for (ActivitiesDTO activity : currentYearActivities) {
-            tableModel.addRow(new Object[]{
+        	try {
+        		value1 = model.getAmountIncomeByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value1 = "0";
+        	}
+        	try {
+        		value2 = model.getAmountExpenseByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value2 = "0";
+        	}
+        	try {
+        		value3 = model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value3 = "0";
+        	}
+        	try {
+        		value4 = model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value4 = "0";
+        	}
+        	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
-                model.getAmountIncomeByActivityId(activity.getId()).getAmount(),
-                model.getAmountExpenseByActivityId(activity.getId()).getAmount()
+                value1,
+                value2,
+                Double.parseDouble(value1) - Double.parseDouble(value2)
             });
             
-            totalEstimatedIncomes = Integer.parseInt(model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount());
-            totalEstimatedExpenses = Integer.parseInt(model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount());
-            totalPaidIncomes = Integer.parseInt(model.getAmountIncomeByActivityId(activity.getId()).getAmount());
-            totalPaidExpenses = Integer.parseInt(model.getAmountExpenseByActivityId(activity.getId()).getAmount());
+            totalEstimatedIncomes += Double.parseDouble(value3);
+            totalEstimatedExpenses += Double.parseDouble(value4);
+            totalPaidIncomes += Double.parseDouble(value1);
+            totalPaidExpenses += Double.parseDouble(value2);
         }
         
         view.getReportTable().setModel(tableModel);
@@ -156,6 +173,8 @@ public class ActivityFinancialReportController {
     
     private void update(List<ActivitiesDTO> filteredActivities) {
     	// Table
+    	String value1, value2, value3, value4;
+    	
     	DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
         
         int totalEstimatedIncomes = 0;
@@ -164,18 +183,43 @@ public class ActivityFinancialReportController {
         int totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : filteredActivities) {
+        	try {
+        		value1 = model.getAmountIncomeByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value1 = "0";
+        	}
+        	try {
+        		value2 = model.getAmountExpenseByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value2 = "0";
+        	}
+        	try {
+        		value3 = model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value3 = "0";
+        	}
+        	try {
+        		value4 = model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount();
+        	}
+        	catch (Exception e){
+        		value4 = "0";
+        	}
             tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
-                model.getAmountIncomeByActivityId(activity.getId()),
-                model.getAmountExpenseByActivityId(activity.getId())
+                value1,
+                value2,
+                Double.parseDouble(value1) - Double.parseDouble(value2)
             });
             
-            totalEstimatedIncomes = Integer.parseInt(model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount());
-            totalEstimatedExpenses = Integer.parseInt(model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount());
-            totalPaidIncomes = Integer.parseInt(model.getAmountIncomeByActivityId(activity.getId()).getAmount());
-            totalPaidExpenses = Integer.parseInt(model.getAmountExpenseByActivityId(activity.getId()).getAmount());
+            totalEstimatedIncomes += Double.parseDouble(value3);
+            totalEstimatedExpenses += Double.parseDouble(value4);
+            totalPaidIncomes += Double.parseDouble(value1);
+            totalPaidExpenses += Double.parseDouble(value2);
         }
         
         view.getReportTable().setModel(tableModel);
