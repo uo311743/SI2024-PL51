@@ -157,6 +157,27 @@ public class ActivityFinancialReportController {
         view.getProfitLabel().setText("Profit: " + profit);
     }
     
+    public void checkTextFields() {
+    	boolean valid = true;
+		if (!SyntacticValidations.isDate(view.getStartDateField().getText())) {
+			view.getStartDateField().setForeground(Color.RED);
+			valid = false;
+		} 
+		else {
+			view.getStartDateField().setForeground(Color.BLACK);
+		}
+		
+		if (!SyntacticValidations.isDate(view.getEndDateField().getText())) {
+    		view.getEndDateField().setForeground(Color.RED);
+			valid = false;
+		}
+		else {
+    		view.getEndDateField().setForeground(Color.BLACK);
+		}
+    	
+		view.getFilterButton().setEnabled(valid);
+    }
+    
     private void applyFilters() {
     	String startDate = view.getStartDateField().getText();
         String endDate = view.getEndDateField().getText();
@@ -241,26 +262,5 @@ public class ActivityFinancialReportController {
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
         view.getProfitLabel().setText("Profit: " + profit);
-    }
-    
-    public void checkTextFields() {
-    	boolean valid = true;
-		if (!SyntacticValidations.isDate(view.getStartDateField().getText())) {
-			view.getStartDateField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else {
-			view.getStartDateField().setForeground(Color.BLACK);
-		}
-		
-		if (!SyntacticValidations.isDate(view.getEndDateField().getText())) {
-    		view.getEndDateField().setForeground(Color.RED);
-			valid = false;
-		}
-		else {
-    		view.getEndDateField().setForeground(Color.BLACK);
-		}
-    	
-		view.getFilterButton().setEnabled(valid);
     }
 }
