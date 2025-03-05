@@ -25,7 +25,7 @@ INSERT INTO Invoices (idSponsorshipAgreement, dateIssued, dateSent, dateExpirati
 
 -- Insert SponsorshipPayments
 INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES
-(1, '2024-01-25', 5000.00),
+--(1, '2024-01-25', 5000.00),
 (2, '2024-02-10', 2000.00);
 
 -- Insert Activities
