@@ -32,6 +32,10 @@ import controller.ConsultStatusActivityController;
 import model.ConsultStatusActivityModel;
 import view.ConsultStatusActivityView;
 
+import controller.ActivityFinancialReportController;
+import model.ActivityFinancialReportModel;
+import view.ActivityFinancialReportView;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -162,6 +166,12 @@ public class SwingMain {
 	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
 	    	new ConsultStatusActivityController(new ConsultStatusActivityModel(), new ConsultStatusActivityView());
 	    });
+
+	    // US 29129
+	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
+	    	new ActivityFinancialReportController(new ActivityFinancialReportModel(), new ActivityFinancialReportView());
+	    });
+	    
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
