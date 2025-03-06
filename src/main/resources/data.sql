@@ -10,8 +10,10 @@ INSERT INTO GBMembers (name, role) VALUES
 
 -- Insert SponsorContacts
 INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
-(1, 'John Doe', 'john@techcorp.com', '555-1234'),
-(2, 'Mary White', 'mary@citycouncil.gov', '555-5678');
+(1, 'John Doe', 'john@techcorp.com', '+34911234567'),
+(2, 'Mary White', 'mary@citycouncil.gov', '+34912345678'),
+(2, 'Robert Smith', 'robert@citycouncil.gov', '+34913456789');
+
 
 -- Insert SponsorshipAgreements
 INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES
@@ -31,7 +33,8 @@ INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES
 -- Insert Activities
 INSERT INTO Activities (name, status, dateStart, dateEnd, place) VALUES
 ('Olimpics 2024', 'planned', '2024-03-10', '2024-03-12', 'Convention Center'),
-('ImpulsoTIC Week 2024', 'done', '2024-02-15', '2024-02-15', 'Central Park');
+('ImpulsoTIC Week 2024', 'done', '2024-02-15', '2024-02-15', 'Central Park'),
+('ImpulsoTIC Week 2023', 'closed', '2023-02-15', '2024-02-15', 'Central Park');
 
 -- Insert Levels
 INSERT INTO Levels (name, fee) VALUES

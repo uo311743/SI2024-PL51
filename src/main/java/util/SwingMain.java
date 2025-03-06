@@ -17,7 +17,9 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
-import view.ExampleView;
+import controller.RegisterSponsorshipController;
+import model.RegisterSponsorshipModel;
+import view.RegisterSponsorshipView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -122,9 +124,12 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
+
+	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
+	    	new RegisterSponsorshipController(
+	    			new RegisterSponsorshipModel(),
+	    			new RegisterSponsorshipView()
+	    	);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {

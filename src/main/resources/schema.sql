@@ -39,6 +39,7 @@ CREATE TABLE SponsorshipAgreements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     idSponsorContact INTEGER NOT NULL,
     idGBMember INTEGER NOT NULL,
+
     idActivity TEXT NOT NULL,
     amount REAL NOT NULL,
     date TEXT NOT NULL,
@@ -71,7 +72,7 @@ CREATE TABLE SponsorshipPayments (
 CREATE TABLE Activities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT UNIQUE NOT NULL,
-    status TEXT NOT NULL CHECK (lower(status) IN ('registered', 'planned', 'cancelled', 'done')),
+    status TEXT NOT NULL CHECK (lower(status) IN ('registered', 'planned', 'cancelled', 'done', 'closed')),
     dateStart TEXT,
     dateEnd TEXT,
     place TEXT
