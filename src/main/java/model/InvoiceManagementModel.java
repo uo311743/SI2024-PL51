@@ -14,11 +14,12 @@ public class InvoiceManagementModel {
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
 	
+
 	public static final String SQL_SO_INFO = "SELECT SO.* FROM Invoices I "
-			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact == SA.id "
-			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization == SO.id "
-			+ "JOIN SponsorOrganizations SO ON SC.idSponsorOrganization == SO.id "
-			+ "WHERE I.id == ?;";
+			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact = SA.id "
+			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization = SO.id "
+			+ "JOIN SponsorOrganizations SO ON SC.idSponsorOrganization = SO.id "
+			+ "WHERE I.id = ?;";
 
 	private Database db = new Database();
 		
