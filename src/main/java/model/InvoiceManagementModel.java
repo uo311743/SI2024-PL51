@@ -14,10 +14,11 @@ public class InvoiceManagementModel {
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
 	
-	public static final String SQL_SO_INFO = "SELECT * FROM SponsorOrganizations SO "
-			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization = SO.id "
-			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact = SA.id "
-			+ "JOIN Invoices I ON I.idSponsorshipAgreement = SA.id WHERE I.id = ?;";
+	public static final String SQL_SO_INFO = "SELECT SO.* FROM Invoices I "
+			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact == SA.id "
+			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization == SO.id "
+			+ "JOIN SponsorOrganizations SO ON SC.idSponsorOrganization == SO.id "
+			+ "WHERE I.id == ?;";
 
 	private Database db = new Database();
 		
@@ -42,9 +43,9 @@ public class InvoiceManagementModel {
 		return db.executeQueryPojo(InvoicesDTO.class, sql);
 	}
 	
-	public SponsorOrganizationsDTO getSOByInvoiceId(String activityId) {
-		SemanticValidations.validateIdForTable(activityId, "SponsorOrganizations", "Not valid ID");
-		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, activityId);
+	public SponsorOrganizationsDTO getSOByInvoiceId(String invoiceId) {
+		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
+		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, invoiceId);
 		return data.get(0);
 	}
 
