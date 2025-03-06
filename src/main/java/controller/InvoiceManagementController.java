@@ -1,7 +1,6 @@
 package controller;
 
 import model.InvoiceManagementModel;
-import util.Params;
 import view.InvoiceManagementView;
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
@@ -58,17 +57,15 @@ public class InvoiceManagementController {
     public void showData() {
         List<InvoicesDTO> data = model.getInvoices();
         
-        Params params = new Params();
-        
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
         
         for (InvoicesDTO invoice : data) {
             tableModel.addRow(new Object[]{
                 invoice.getId(), 
                 invoice.getDateIssued(), 
-                params.getTaxName(),      
-                params.getTaxNif(),     
-                params.getTaxAddress(), 
+                model.getSOByInvoiceId(invoice.getId()).getName(),      
+                model.getSOByInvoiceId(invoice.getId()).getNif(),      
+                model.getSOByInvoiceId(invoice.getId()).getAddress(),       
                 invoice.getTotalAmount()    
             });
         }
@@ -82,17 +79,15 @@ public class InvoiceManagementController {
         
         List<InvoicesDTO> data = model.getInvoicesBySponsorAndActivity(selectedSponsor.getId(), selectedActivity.getId());
         
-        Params params = new Params();
-        
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
         
         for (InvoicesDTO invoice : data) {
             tableModel.addRow(new Object[]{
                 invoice.getId(), 
                 invoice.getDateIssued(), 
-                params.getTaxName(),      
-                params.getTaxNif(),     
-                params.getTaxAddress(), 
+                model.getSOByInvoiceId(invoice.getId()).getName(),      
+                model.getSOByInvoiceId(invoice.getId()).getNif(),      
+                model.getSOByInvoiceId(invoice.getId()).getAddress(), 
                 invoice.getTotalAmount()    
             });
         }
