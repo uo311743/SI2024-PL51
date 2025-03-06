@@ -24,6 +24,11 @@ import controller.InvoiceManagementController;
 import model.InvoiceManagementModel;
 import view.InvoiceManagementView;
 
+import controller.RegisterPaymentController;
+import model.RegisterPaymentModel;
+
+import view.RegisterPaymentView;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -75,8 +80,9 @@ public class SwingMain {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize()
-	{
+	private void initialize() {
+		Database db=new Database();
+		
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
 	    frame.setBounds(0, 0, 300, 300);
@@ -142,17 +148,20 @@ public class SwingMain {
 	    	new InvoiceManagementController(new InvoiceManagementModel(), new InvoiceManagementView());
 	    });
 	    
+	 	// US 29126
+        addButtonToMain(buttonPanel, "Register Payment", () -> {
+        	new RegisterPaymentController(new RegisterPaymentModel(), new RegisterPaymentView());
+	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	        Database db = new Database();
 	        db.createDatabase(false);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Load data for testing", () -> {
-	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
+	    
 	    
 	    /* 
 	     *     END ADD BUTTONS
@@ -188,7 +197,6 @@ public class SwingMain {
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
 	}
-
 
 
 	public JFrame getFrame() { return this.frame; }
