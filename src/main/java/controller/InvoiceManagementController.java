@@ -1,11 +1,11 @@
 package controller;
 
 import model.InvoiceManagementModel;
+import util.SwingUtil;
 import view.InvoiceManagementView;
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import DTOs.SponsorOrganizationsDTO;
-import giis.demo.util.SwingUtil;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
