@@ -91,11 +91,6 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>2.18.2</version>
 		</dependency>
-		<dependency>
-			<groupId>giis</groupId>
-			<artifactId>SysInfo-1</artifactId>
-			<version>2.1.4-SNAPSHOT</version>
-		</dependency>
 	</dependencies>
 
 	<build>
