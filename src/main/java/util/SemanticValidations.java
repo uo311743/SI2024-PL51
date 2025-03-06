@@ -24,6 +24,16 @@ public class SemanticValidations
 		if(result.get(0)[0] == "0")
 			throw new ApplicationException(message);
 	}
+	public static void validateName(String name) 
+	{
+	    if (name == null || name.trim().isEmpty()) {
+	        throw new IllegalArgumentException("Name cannot be null or empty");
+	    }
+	    if (name.matches("-")) {
+	        throw new IllegalArgumentException("No dash allowed");
+	    }
+	}
+
 	
 	
 	// ============================================================

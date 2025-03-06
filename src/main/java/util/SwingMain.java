@@ -9,7 +9,6 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +19,10 @@ import javax.swing.SwingConstants;
 import controller.RegisterSponsorshipController;
 import model.RegisterSponsorshipModel;
 import view.RegisterSponsorshipView;
+
+import controller.InvoiceManagementController;
+import model.InvoiceManagementModel;
+import view.InvoiceManagementView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -72,7 +75,8 @@ public class SwingMain {
 	/**
 	 * Initialize the contents of the frame.
 	 */
-	private void initialize() {
+	private void initialize()
+	{
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
 	    frame.setBounds(0, 0, 300, 300);
@@ -125,12 +129,19 @@ public class SwingMain {
 	     */
 
 
+	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
 	    	new RegisterSponsorshipController(
 	    			new RegisterSponsorshipModel(),
 	    			new RegisterSponsorshipView()
 	    	);
 	    });
+	    
+	    // US 29125
+	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
+	    	new InvoiceManagementController(new InvoiceManagementModel(), new InvoiceManagementView());
+	    });
+	    
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        Database db = new Database();
