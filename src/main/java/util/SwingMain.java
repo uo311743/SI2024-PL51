@@ -20,7 +20,6 @@ import javax.swing.SwingConstants;
 import controller.RegisterIncomesExpensesController;
 import model.Model;
 
-import view.ExampleView;
 import view.RegisterIncomesExpensesView;
 
 import javax.swing.BorderFactory;
@@ -127,11 +126,6 @@ public class SwingMain {
 	     * 
 	     *     START ADD BUTTONS
 	     */
-
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
-	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
