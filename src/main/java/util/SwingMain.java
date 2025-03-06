@@ -28,6 +28,9 @@ import controller.RegisterPaymentController;
 import model.RegisterPaymentModel;
 
 import view.RegisterPaymentView;
+import controller.ConsultStatusActivityController;
+import model.ConsultStatusActivityModel;
+import view.ConsultStatusActivityView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -133,8 +136,7 @@ public class SwingMain {
 	     * 
 	     *     START ADD BUTTONS
 	     */
-
-
+	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
 	    	new RegisterSponsorshipController(
@@ -151,6 +153,14 @@ public class SwingMain {
 	 	// US 29126
         addButtonToMain(buttonPanel, "Register Payment", () -> {
         	new RegisterPaymentController(new RegisterPaymentModel(), new RegisterPaymentView());
+        });
+        
+        // US 29127
+        // TODO
+        
+        // US 29128
+	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
+	    	new ConsultStatusActivityController(new ConsultStatusActivityModel(), new ConsultStatusActivityView());
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
