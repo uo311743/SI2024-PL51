@@ -13,6 +13,11 @@ public class InvoiceManagementModel {
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
+	
+	public static final String SQL_SO_INFO = "SELECT * FROM SponsorOrganizations SO "
+			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization = SO.id "
+			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact = SA.id "
+			+ "JOIN Invoices I ON I.idSponsorshipAgreement = SA.id WHERE I.id = ?;";
 
 	private Database db = new Database();
 		
@@ -35,6 +40,12 @@ public class InvoiceManagementModel {
 	public List<InvoicesDTO> getInvoices() {
 		String sql ="SELECT id, dateIssued, totalAmount FROM Invoices;";
 		return db.executeQueryPojo(InvoicesDTO.class, sql);
+	}
+	
+	public SponsorOrganizationsDTO getSOByInvoiceId(String activityId) {
+		SemanticValidations.validateIdForTable(activityId, "SponsorOrganizations", "Not valid ID");
+		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, activityId);
+		return data.get(0);
 	}
 
 	public SponsorOrganizationsDTO getSponsorByName(String nameSponsor) {
