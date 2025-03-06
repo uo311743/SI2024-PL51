@@ -114,6 +114,13 @@ public abstract class AbstractView {
 		return;
 	}
 	
+	protected final void setFrameTitle(String title) {
+		JPanel topPanel = createTitlePanel(title);
+
+        // Agregar el panel contenedor al frame en la parte superior
+        frame.add(topPanel, BorderLayout.NORTH);
+	}
+	
 	/**
 	 * Creates a panel with a title.
 	 * @param title is the text to be displayed.

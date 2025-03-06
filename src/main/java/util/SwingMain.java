@@ -19,6 +19,8 @@ import javax.swing.SwingConstants;
 import controller.RegisterSponsorshipController;
 import model.RegisterSponsorshipModel;
 import view.RegisterSponsorshipView;
+import controller.RegisterIncomesExpensesController;
+import model.RegisterIncomesExpensesModel;
 
 import controller.InvoiceManagementController;
 import model.InvoiceManagementModel;
@@ -35,6 +37,7 @@ import view.ConsultStatusActivityView;
 import controller.ActivityFinancialReportController;
 import model.ActivityFinancialReportModel;
 import view.ActivityFinancialReportView;
+import view.RegisterIncomesExpensesView;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -139,8 +142,7 @@ public class SwingMain {
 	    /* --------------------------------------------------------------------------------
 	     * 
 	     *     START ADD BUTTONS
-	     */
-	    
+	     */	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
 	    	new RegisterSponsorshipController(
@@ -160,7 +162,9 @@ public class SwingMain {
         });
         
         // US 29127
-        // TODO
+        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
+        	new RegisterIncomesExpensesController(new RegisterIncomesExpensesModel(), new RegisterIncomesExpensesView());
+	    });
         
         // US 29128
 	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
@@ -181,7 +185,7 @@ public class SwingMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
-	    
+
 	    
 	    /* 
 	     *     END ADD BUTTONS
