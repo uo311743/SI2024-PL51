@@ -17,7 +17,7 @@ public class ActivityFinancialReportView extends AbstractView {
     private JButton filterButton;
     
     public ActivityFinancialReportView() {
-		super("Activity Financial Report");
+		super("Activity Incomes and Expenses Report");
     }
     
     @Override

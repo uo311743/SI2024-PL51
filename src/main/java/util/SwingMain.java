@@ -121,7 +121,7 @@ public class SwingMain {
 	     *     START ADD BUTTONS
 	     */
 
-	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
+	    addButtonToMain(buttonPanel, "Activity Incomes and Expenses Report", () -> {
 	    	new ActivityFinancialReportController(new ActivityFinancialReportModel(), new ActivityFinancialReportView());
 	    });
 	    
