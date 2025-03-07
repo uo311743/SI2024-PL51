@@ -9,9 +9,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
-import giis.demo.util.SwingUtil;
 import model.ActivityFinancialReportModel;
 import util.SwingMain;
+import util.SwingUtil;
 import util.SyntacticValidations;
 import view.ActivityFinancialReportView;
 
@@ -85,70 +85,42 @@ public class ActivityFinancialReportController {
     	view.getEndDateField().setText(endDate);
         
         List<ActivitiesDTO> currentYearActivities = model.getActivitiesFromCurrentYear(startDate, endDate);
-        String value1, value2, value3, value4, valueIncome, valueExpense;
         
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Income Estimated", "Income Paid", "Expense Estimated", "Expense Paid", "Balance Estimated", "Balance Paid"}, 0);
         
-        int totalEstimatedIncomes = 0;
-        int totalEstimatedExpenses = 0;
-        int totalPaidIncomes = 0;
-        int totalPaidExpenses = 0;
+        double totalEstimatedIncomes = 0;
+        double totalEstimatedExpenses = 0;
+        double totalPaidIncomes = 0;
+        double totalPaidExpenses = 0;
+        
         for (ActivitiesDTO activity : currentYearActivities) {
-        	try {
-        		valueIncome = model.getIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		valueIncome = "0";
-        	}
-        	try {
-        		valueExpense = model.getExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		valueExpense = "0";
-        	}
-        	try {
-        		value1 = model.getAmountIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value1 = "0";
-        	}
-        	try {
-        		value2 = model.getAmountExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value2 = "0";
-        	}
-        	try {
-        		value3 = model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value3 = "0";
-        	}
-        	try {
-        		value4 = model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value4 = "0";
-        	}
+        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
+        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
+        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	
         	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
-                valueIncome,
-                valueExpense,
-                Double.parseDouble(valueIncome) - Double.parseDouble(valueExpense)
+                ei,
+                pi,
+                ee,
+                pe,
+                ei - ee,
+                pi - pe
             });
             
-            totalEstimatedIncomes += Double.parseDouble(value3);
-            totalEstimatedExpenses += Double.parseDouble(value4);
-            totalPaidIncomes += Double.parseDouble(value1);
-            totalPaidExpenses += Double.parseDouble(value2);
+        	totalEstimatedIncomes += ei;
+            totalEstimatedExpenses += ee;
+            totalPaidIncomes += pi;
+            totalPaidExpenses += pe;
         }
         
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        int profit = totalPaidIncomes - totalPaidExpenses;
+        double profit = totalPaidIncomes - totalPaidExpenses;
         
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
@@ -190,72 +162,41 @@ public class ActivityFinancialReportController {
     
     private void update(List<ActivitiesDTO> filteredActivities) {
     	// Table
-    	System.out.print(filteredActivities);
-    	String value1, value2, value3, value4, valueIncome, valueExpense;
-    	
     	DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
         
-        int totalEstimatedIncomes = 0;
-        int totalEstimatedExpenses = 0;
-        int totalPaidIncomes = 0;
-        int totalPaidExpenses = 0;
+        double totalEstimatedIncomes = 0;
+        double totalEstimatedExpenses = 0;
+        double totalPaidIncomes = 0;
+        double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : filteredActivities) {
-        	try {
-        		valueIncome = model.getIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		valueIncome = "0";
-        	}
-        	try {
-        		valueExpense = model.getExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		valueExpense = "0";
-        	}
-        	try {
-        		value1 = model.getAmountIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value1 = "0";
-        	}
-        	try {
-        		value2 = model.getAmountExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value2 = "0";
-        	}
-        	try {
-        		value3 = model.getAmountEstimatedIncomeByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value3 = "0";
-        	}
-        	try {
-        		value4 = model.getAmountEstimatedExpenseByActivityId(activity.getId()).getAmount();
-        	}
-        	catch (Exception e){
-        		value4 = "0";
-        	}
-            tableModel.addRow(new Object[]{
+        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
+        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
+        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	
+        	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
-                valueIncome,
-                valueExpense,
-                Double.parseDouble(valueIncome) - Double.parseDouble(valueExpense)
+                ei,
+                pi,
+                ee,
+                pe,
+                ei - ee,
+                pi - pe
             });
             
-            totalEstimatedIncomes += Double.parseDouble(value3);
-            totalEstimatedExpenses += Double.parseDouble(value4);
-            totalPaidIncomes += Double.parseDouble(value1);
-            totalPaidExpenses += Double.parseDouble(value2);
+        	totalEstimatedIncomes += ei;
+            totalEstimatedExpenses += ee;
+            totalPaidIncomes += pi;
+            totalPaidExpenses += pe;
         }
         
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        int profit = totalPaidIncomes - totalPaidExpenses;
+        double profit = totalPaidIncomes - totalPaidExpenses;
         
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
