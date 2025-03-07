@@ -128,13 +128,10 @@ public class ActivityFinancialReportController {
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        double profit = totalPaidIncomes - totalPaidExpenses;
-        
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
-        view.getProfitLabel().setText("Profit: " + profit);
     }
     
     public void checkTextFields() {
@@ -170,7 +167,7 @@ public class ActivityFinancialReportController {
     
     private void update(List<ActivitiesDTO> filteredActivities) {
     	// Table
-    	DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Income Estimated", "Income Paid", "Expense Estimated", "Expense Paid", "Balance Estimated", "Balance Paid"}, 0);
         
         double totalEstimatedIncomes = 0;
         double totalEstimatedExpenses = 0;
@@ -204,12 +201,9 @@ public class ActivityFinancialReportController {
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        double profit = totalPaidIncomes - totalPaidExpenses;
-        
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
-        view.getProfitLabel().setText("Profit: " + profit);
     }
 }
