@@ -3,21 +3,26 @@ package controller;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
-
 import DTOs.ActivitiesDTO;
 import DTOs.MovementsDTO;
 import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
-import model.ConsultStatusActivityModel;
+import model.ActivitiesModel;
+import model.MovementsModel;
+import model.SponsorOrganizationsModel;
+import model.SponsorshipAgreementsModel;
 import util.SwingUtil;
 import view.ConsultStatusActivityView;
 
 public class ConsultStatusActivityController {
 
-	protected ConsultStatusActivityModel model;
+	protected ActivitiesModel activitiesModel;
+	protected SponsorOrganizationsModel soModel;
+	protected SponsorshipAgreementsModel saModel;
+	protected MovementsModel movementsModel;
+	
     protected ConsultStatusActivityView view; 
 
     private String lastSelectedActivity;
@@ -28,9 +33,13 @@ public class ConsultStatusActivityController {
 
     // ================================================================================
 
-    public ConsultStatusActivityController(ConsultStatusActivityModel m, ConsultStatusActivityView v)
+    public ConsultStatusActivityController(ActivitiesModel am, SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, MovementsModel mm, ConsultStatusActivityView v)
     { 
-        this.model = m;
+        this.activitiesModel = am;
+        this.soModel = som;
+        this.saModel = sam;
+        this.movementsModel = mm;
+        
         this.view = v;
         this.initView();
         this.initController();
@@ -90,7 +99,7 @@ public class ConsultStatusActivityController {
 	
 	private void getActivities()
     {
-    	List<ActivitiesDTO> activities = model.getAllActivities();
+    	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
@@ -98,12 +107,12 @@ public class ConsultStatusActivityController {
     
 	private void getSponsorships(String idActivity)
 	{
-		List<SponsorshipAgreementsDTO> sponsorships = model.getApplicableSponsorshipAgreementsByActivity(idActivity);
+		List<SponsorshipAgreementsDTO> sponsorships = saModel.getApplicableSponsorshipAgreementsByActivity(idActivity);
 		
 		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"amount", "sponsor", "status", "date"}, 0);
 		for(SponsorshipAgreementsDTO item : sponsorships)
 		{
-			SponsorOrganizationsDTO sponsor = this.model.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
+			SponsorOrganizationsDTO sponsor = this.soModel.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
 			tmodel.addRow(new Object[] {
 					item.getAmount(),
 					sponsor.getName(),
@@ -115,36 +124,36 @@ public class ConsultStatusActivityController {
 		this.view.getSponsorshipTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getSponsorshipTable());
 		
-		this.estimatedSponsorship = this.model.getEstimatedSponshorships(idActivity);
+		this.estimatedSponsorship = this.saModel.getEstimatedSponshorships(idActivity);
 		this.view.getSubTotalSponsorshipEstimatedField().setText(String.valueOf(this.estimatedSponsorship));
-		this.actualSponsorship = this.model.getActualSponshorships(idActivity);
+		this.actualSponsorship = this.saModel.getActualSponshorships(idActivity);
 		this.view.getSubTotalSponsorshipActualField().setText(String.valueOf(this.actualSponsorship));
 
 	}
 	
 	private void getIncome(String idActivity)
 	{
-		List<MovementsDTO> income = model.getIncomeByActivity(idActivity);
+		List<MovementsDTO> income = movementsModel.getIncomeByActivity(idActivity);
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"amount", "concept", "status", "date"});
 		this.view.getIncomeTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getIncomeTable());
 		
-		this.estimatedIncome = this.model.getEstimatedIncome(idActivity);
+		this.estimatedIncome = this.movementsModel.getEstimatedIncome(idActivity);
 		this.view.getSubTotalIncomeEstimatedField().setText(String.valueOf(this.estimatedIncome));
-		this.actualIncome = this.model.getActualIncome(idActivity);
+		this.actualIncome = this.movementsModel.getActualIncome(idActivity);
 		this.view.getSubTotalIncomeActualField().setText(String.valueOf(this.actualIncome));
 	}
 	
 	private void getExpenses(String idActivity)
 	{
-		List<MovementsDTO> expenses = model.getExpensesByActivity(idActivity);
+		List<MovementsDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"amount", "concept", "status", "date"});
 		this.view.getExpensesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getExpensesTable());
 		
-		this.estimatedExpenses = this.model.getEstimatedExpenses(idActivity);
+		this.estimatedExpenses = this.movementsModel.getEstimatedExpenses(idActivity);
 		this.view.getSubTotalExpensesEstimatedField().setText(String.valueOf(this.estimatedExpenses));
-		this.actualExpenses = this.model.getActualExpenses(idActivity);
+		this.actualExpenses = this.movementsModel.getActualExpenses(idActivity);
 		this.view.getSubTotalExpensesActualField().setText(String.valueOf(this.actualExpenses));
 	}
 	

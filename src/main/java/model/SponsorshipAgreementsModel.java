@@ -1,52 +1,85 @@
 package model;
 
+import java.rmi.UnexpectedException;
+import java.util.Date;
+import java.util.List;
+import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
 import util.Database;
 import util.SemanticValidations;
-import util.UnexpectedException;
 import util.Util;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+public class SponsorshipAgreementsModel {
 
-import DTOs.ActivitiesDTO;
-
-public class RegisterSponsorshipModel
-{
-	// Instance that allows the connection to the DB and execution of queries
+	public static final String SQL_NUMBER_OLD_SA = "SELECT COUNT(sa.id) AS total_agreements "
+				+ "FROM SponsorshipAgreements sa "
+				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
+				+ "WHERE sc.idSponsorOrganization = ( "
+				+ "SELECT idSponsorOrganization "
+				+ "FROM SponsorContacts "
+				+ "WHERE id = ? ) AND sa.idActivity = ?;";
+	
+	public static final String SQL_SA_ID = "SELECT sa.id "
+				+ "FROM SponsorshipAgreements sa "
+				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
+				+ "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id "
+				+ "JOIN Activities a ON a.id = sa.idActivity "
+				+ "WHERE (so.nif = ? OR so.vat = ?) AND (a.name = ?);";
+    
 	private Database db = new Database();
 
-	public List<ActivitiesDTO> getActivitiesbyStatus(String... status)
-	{
-	    // Construcción de los placeholders en función del número de elementos en 'status'
-	    String placeholders = String.join(",", Collections.nCopies(status.length, "?"));
-	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
-
-	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
+	// GETTERS
+	
+	public List<SponsorshipAgreementsDTO> getApplicableSponsorshipAgreementsByActivity(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getSponsorshipAgreementsByActivity does not exist.");
+	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
+	    return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
 	}
 
-
-	public List<Object[]> getAllSponsorsArray()
-	{
-	    String sql = "SELECT id || ' - ' || name AS item FROM SponsorOrganizations";
-	    return db.executeQueryArray(sql);
+    public double getEstimatedSponshorships(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getEstimatedSponshorships does not exist.");
+		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
+	}
+	
+	public double getActualSponshorships(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActualSponshorships does not exist.");
+		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status = 'closed' AND idActivity = ?;";
+	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		if (result == null) {
+			return 0.0;
+		}
+		return (double) result;
 	}
 
-	public List<Object[]> getContactsBySponshorArray(String sponshor)
-	{
-		String sql = "SELECT id || ' - ' || name AS item FROM SponsorContacts WHERE idSponsorOrganization == ?";
-	    return db.executeQueryArray(sql, sponshor);
+    public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity) {
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_SA, idSponsorContact, idActivity);
+		if (result == null || result.isEmpty()) {
+			return 0;
+		}
+		return (int) result.get(0)[0];
 	}
 
-	public List<Object[]> getAllGBMembersArray()
-	{
-		String sql = "SELECT id || ' - ' || name AS item FROM GBMembers";
-	    return db.executeQueryArray(sql);
+    public Integer getSponsorshipAgreementId(String nifOrVat, String activity) {
+	    try {
+	    	List<Object[]> result = db.executeQueryArray(SQL_SA_ID, nifOrVat, nifOrVat, activity);
+		    if (result.isEmpty()) {
+		    	throw new ApplicationException("No SponsorshipAgreement found");
+		    } else {
+		    	return Integer.parseInt(result.get(0)[0].toString());
+		    }
+	    } catch (Exception e) {
+	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
+	    }
 	}
 
-	public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date)
-	{
+    // INSERTIONS
+
+    public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) throws UnexpectedException {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
 				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
 		
@@ -71,8 +104,7 @@ public class RegisterSponsorshipModel
 		db.executeUpdate(sql, idSponsorContact, idGBMember, idActivity, amount, date);
 	}
 
-	public void insertUpdateSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
-		
+    public void insertUpdateSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
 				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
 		
@@ -111,28 +143,9 @@ public class RegisterSponsorshipModel
 		db.executeUpdate(sql, idActivity, idSponsorContact);
 	}
 
-	// ================================================================================
+	// SPECIFIC VALIDATIONS
 
-	public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity)
-	{
-		String sql = "SELECT COUNT(sa.id) AS total_agreements "
-				+ "FROM SponsorshipAgreements sa "
-				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
-				+ "WHERE sc.idSponsorOrganization = ( "
-				+ "    SELECT idSponsorOrganization "
-				+ "    FROM SponsorContacts "
-				+ "    WHERE id = ? "
-				+ ") "
-				+ "AND sa.idActivity = ?;";
-		List<Object[]> result = db.executeQueryArray(sql, idSponsorContact, idActivity);
-		if (result == null || result.isEmpty()) {
-			return 0;
-		}
-		return (int) result.get(0)[0];
-	}
-
-	private void validateDateForUpdateSponsorshipAgreement(String idSponsorContact, String idActivity, String date, String message)
-	{
+	private void validateDateForUpdateSponsorshipAgreement(String idSponsorContact, String idActivity, String date, String message) {
 		String sql = "SELECT MAX(sa.date) AS last_agreement_date "
 				+ "FROM SponsorshipAgreements sa "
 				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "

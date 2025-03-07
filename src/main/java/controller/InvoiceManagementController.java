@@ -1,11 +1,13 @@
 package controller;
 
-import model.InvoiceManagementModel;
 import util.SwingUtil;
 import view.InvoiceManagementView;
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import DTOs.SponsorOrganizationsDTO;
+import model.ActivitiesModel;
+import model.InvoicesModel;
+import model.SponsorOrganizationsModel;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
@@ -14,11 +16,17 @@ import java.util.List;
 
 public class InvoiceManagementController {
     
-    protected InvoiceManagementModel model;
+    protected SponsorOrganizationsModel soModel;
+    protected ActivitiesModel activitiesModel;
+    protected InvoicesModel invoicesModel;
+    
     protected InvoiceManagementView view; 
     
-    public InvoiceManagementController(InvoiceManagementModel m, InvoiceManagementView v) { 
-        this.model = m;
+    public InvoiceManagementController(SponsorOrganizationsModel som, ActivitiesModel am, InvoicesModel im, InvoiceManagementView v) { 
+        this.soModel = som;
+        this.activitiesModel = am;
+        this.invoicesModel = im;
+        
         this.view = v;
         this.initView();
         this.initController();
@@ -43,19 +51,19 @@ public class InvoiceManagementController {
     }
     
     public void loadSponsors() {
-        List<Object[]> sponsorList = model.getSponsorListArray();
+        List<Object[]> sponsorList = soModel.getSponsorListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsorList);
         view.getSponsorComboBox().setModel(lmodel);
     }
     
     public void loadActivities() {
-        List<Object[]> activityList = model.getActivityListArray();
+        List<Object[]> activityList = activitiesModel.getActivityListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(activityList);
         view.getActivityComboBox().setModel(lmodel);
     }
     
     public void showData() {
-        List<InvoicesDTO> data = model.getInvoices();
+        List<InvoicesDTO> data = invoicesModel.getInvoices();
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
         
@@ -63,9 +71,9 @@ public class InvoiceManagementController {
             tableModel.addRow(new Object[]{
                 invoice.getId(), 
                 invoice.getDateIssued(), 
-                model.getSOByInvoiceId(invoice.getId()).getName(),      
-                model.getSOByInvoiceId(invoice.getId()).getNif(),      
-                model.getSOByInvoiceId(invoice.getId()).getAddress(),       
+                soModel.getSOByInvoiceId(invoice.getId()).getName(),      
+                soModel.getSOByInvoiceId(invoice.getId()).getNif(),      
+                soModel.getSOByInvoiceId(invoice.getId()).getAddress(),       
                 invoice.getTotalAmount()    
             });
         }
@@ -74,10 +82,10 @@ public class InvoiceManagementController {
     }
     
     public void updateInvoiceTable() {
-    	SponsorOrganizationsDTO selectedSponsor = model.getSponsorByName(String.valueOf(view.getSponsorComboBox().getSelectedItem()));
-        ActivitiesDTO selectedActivity = model.getActivityByName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
+    	SponsorOrganizationsDTO selectedSponsor = soModel.getSponsorByName(String.valueOf(view.getSponsorComboBox().getSelectedItem()));
+        ActivitiesDTO selectedActivity = activitiesModel.getActivityByName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
         
-        List<InvoicesDTO> data = model.getInvoicesBySponsorAndActivity(selectedSponsor.getId(), selectedActivity.getId());
+        List<InvoicesDTO> data = invoicesModel.getInvoicesBySponsorAndActivity(selectedSponsor.getId(), selectedActivity.getId());
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Invoice ID", "Date", "Name", "NIF", "Address", "Amount"}, 0);
         
@@ -85,9 +93,9 @@ public class InvoiceManagementController {
             tableModel.addRow(new Object[]{
                 invoice.getId(), 
                 invoice.getDateIssued(), 
-                model.getSOByInvoiceId(invoice.getId()).getName(),      
-                model.getSOByInvoiceId(invoice.getId()).getNif(),      
-                model.getSOByInvoiceId(invoice.getId()).getAddress(), 
+                soModel.getSOByInvoiceId(invoice.getId()).getName(),      
+                soModel.getSOByInvoiceId(invoice.getId()).getNif(),      
+                soModel.getSOByInvoiceId(invoice.getId()).getAddress(), 
                 invoice.getTotalAmount()    
             });
         }

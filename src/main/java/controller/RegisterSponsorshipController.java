@@ -4,35 +4,47 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.rmi.UnexpectedException;
 import java.util.List;
-
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
-
 import DTOs.ActivitiesDTO;
-import model.RegisterSponsorshipModel;
+import model.ActivitiesModel;
+import model.GBMembersModel;
+import model.SponsorContactsModel;
+import model.SponsorOrganizationsModel;
+import model.SponsorshipAgreementsModel;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterSponsorshipView;
 
 public class RegisterSponsorshipController {
+		
+	protected SponsorOrganizationsModel soModel;
+	protected SponsorshipAgreementsModel saModel;
+	protected SponsorContactsModel scModel;
+	protected GBMembersModel gbmModel;
+	protected ActivitiesModel activitiesModel;
 	
-	private final static String DEFAULT_VALUE_COMBOBOX = "--------------------";
-	
-	protected RegisterSponsorshipModel model;
     protected RegisterSponsorshipView view; 
     
+	private final static String DEFAULT_VALUE_COMBOBOX = "--------------------";
+
     private String lastSelectedActivity;
     private String lastSelectedSponsor;
 
     // ================================================================================
 
-    public RegisterSponsorshipController(RegisterSponsorshipModel m, RegisterSponsorshipView v)
-    { 
-        this.model = m;
+    public RegisterSponsorshipController(SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, SponsorContactsModel scm, GBMembersModel gbmm, ActivitiesModel am, RegisterSponsorshipView v) { 
+        this.soModel = som;
+        this.saModel = sam;
+        this.scModel = scm;
+        this.gbmModel = gbmm;
+        this.activitiesModel = am;
+        
         this.view = v;
         this.initView();
         this.initController();
@@ -188,7 +200,7 @@ public class RegisterSponsorshipController {
     
     private void getActivities()
     {
-    	List<ActivitiesDTO> activities = model.getActivitiesbyStatus("registered", "planned", "done");
+    	List<ActivitiesDTO> activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
@@ -196,7 +208,7 @@ public class RegisterSponsorshipController {
     
     private void getSponsors()
     {
-    	List<Object[]> sponshors = model.getAllSponsorsArray();
+    	List<Object[]> sponshors = soModel.getAllSponsorsArray();
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponshors);
 		view.getSponsorComboBox().setModel(lmodel);
 		view.getSponsorComboBox().setEnabled(true);
@@ -204,7 +216,7 @@ public class RegisterSponsorshipController {
     
     private void getContacts(String sponshor)
     {
-    	List<Object[]> contacts = model.getContactsBySponshorArray(sponshor);
+    	List<Object[]> contacts = scModel.getContactsBySponshorArray(sponshor);
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(contacts);
 		view.getContactComboBox().setModel(lmodel);
 		view.getContactComboBox().setEnabled(true);
@@ -212,7 +224,7 @@ public class RegisterSponsorshipController {
     
     private void getGBMembers()
     {
-    	List<Object[]> GBMembers = model.getAllGBMembersArray();
+    	List<Object[]> GBMembers = gbmModel.getAllGBMembersArray();
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(GBMembers);
 		view.getGbMemberComboBox().setModel(lmodel);
 		view.getGbMemberComboBox().setEnabled(true);
@@ -274,11 +286,15 @@ public class RegisterSponsorshipController {
         
         if (response != JOptionPane.YES_OPTION) return;
         
-        int numOldSponshorshipAgreements = this.model.getNumberOldSponsorshipAgreements(idContact, idActivity);
+        int numOldSponshorshipAgreements = this.saModel.getNumberOldSponsorshipAgreements(idContact, idActivity);
     	
         if(numOldSponshorshipAgreements == 0)
         {
-        	this.model.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+        	try {
+				this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+			} catch (UnexpectedException e) {
+				e.printStackTrace();
+			}
 	        JOptionPane.showMessageDialog(
 	    			this.view.getFrame(), "Sponshorship agreement añadido correctamente.",
 	    			"Operación realizada correctamente",
@@ -297,7 +313,7 @@ public class RegisterSponsorshipController {
 	        
 	        if (response == JOptionPane.YES_OPTION)
 	        {
-	        	this.model.insertUpdateSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+	        	this.saModel.insertUpdateSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
 		    			"Sponshorship agreement añadido correctamente. Los antigos se han marcado como 'modificados'.",

@@ -9,7 +9,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
-import model.ActivityFinancialReportModel;
+import model.ActivitiesModel;
+import model.MovementsModel;
+import model.SponsorshipAgreementsModel;
 import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -17,11 +19,17 @@ import view.ActivityFinancialReportView;
 
 public class ActivityFinancialReportController {
     
-    protected ActivityFinancialReportModel model;
+    protected MovementsModel movementsModel;
+    protected ActivitiesModel activitiesModel;
+    protected SponsorshipAgreementsModel saModel;
+    
     protected ActivityFinancialReportView view; 
         
-    public ActivityFinancialReportController(ActivityFinancialReportModel m, ActivityFinancialReportView v) { 
-        this.model = m;
+    public ActivityFinancialReportController(MovementsModel mm, ActivitiesModel am, SponsorshipAgreementsModel sam, ActivityFinancialReportView v) { 
+        this.movementsModel = mm;
+        this.activitiesModel = am;
+        this.saModel = sam;
+        
         this.view = v;
         this.initView();
         this.initController();        
@@ -84,7 +92,7 @@ public class ActivityFinancialReportController {
     	view.getStartDateField().setText(startDate);
     	view.getEndDateField().setText(endDate);
         
-        List<ActivitiesDTO> currentYearActivities = model.getActivitiesFromCurrentYear(startDate, endDate);
+        List<ActivitiesDTO> currentYearActivities = activitiesModel.getActivitiesFromCurrentYear(startDate, endDate);
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Income Estimated", "Income Paid", "Expense Estimated", "Expense Paid", "Balance Estimated", "Balance Paid"}, 0);
         
@@ -94,10 +102,10 @@ public class ActivityFinancialReportController {
         double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : currentYearActivities) {
-        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
-        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+        	double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
         	
         	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
@@ -155,7 +163,7 @@ public class ActivityFinancialReportController {
         String endDate = view.getEndDateField().getText();
         String status = (String) view.getStatusComboBox().getSelectedItem();
 
-        List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
+        List<ActivitiesDTO> filteredActivities = activitiesModel.getFilteredActivities(startDate, endDate, status);
         
         update(filteredActivities);
     }
@@ -170,10 +178,10 @@ public class ActivityFinancialReportController {
         double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : filteredActivities) {
-        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
-        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+        	double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
         	
         	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),

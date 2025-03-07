@@ -1,27 +1,36 @@
 package controller;
 
-import model.RegisterPaymentModel;
 import util.ApplicationException;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterPaymentView;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
 import javax.swing.ComboBoxModel;
+import model.ActivitiesModel;
+import model.InvoicesModel;
+import model.SponsorshipAgreementsModel;
+import model.SponsorshipPaymentsModel;
 
 public class RegisterPaymentController {
-	private RegisterPaymentModel model;
+	
+	protected SponsorshipAgreementsModel saModel;
+	protected SponsorshipPaymentsModel spModel;
+	protected ActivitiesModel activitiesModel;
+	protected InvoicesModel invoicesModel;
+	
 	private RegisterPaymentView view;
 	
-	public RegisterPaymentController(RegisterPaymentModel model, RegisterPaymentView view) {
-		this.model = model;
-		this.view = view;
+	public RegisterPaymentController(SponsorshipAgreementsModel sam, SponsorshipPaymentsModel spm, ActivitiesModel am, InvoicesModel im, RegisterPaymentView view) {
+		this.saModel = sam;
+		this.spModel = spm;
+		this.activitiesModel = am;
+		this.invoicesModel = im;
 		
+		this.view = view;
 		initController();
 		initView();
 	}
@@ -54,7 +63,7 @@ public class RegisterPaymentController {
 	            	// Track Sponsorship to Agreement
 		            Integer idSponsorshipAgreement = -1;
 					try {
-						idSponsorshipAgreement = model.getSponsorshipAgreementId(nif, activity);
+						idSponsorshipAgreement = saModel.getSponsorshipAgreementId(nif, activity);
 					} catch (Exception e) {
 						view.showError("No Agreement Found");
 						e.printStackTrace();
@@ -64,7 +73,7 @@ public class RegisterPaymentController {
 					// Retrieve Invoice ID
 					String invoiceRetrieved = "";
 					try {
-						invoiceRetrieved = model.getInvoiceId(idSponsorshipAgreement);
+						invoiceRetrieved = invoicesModel.getInvoiceId(idSponsorshipAgreement);
 	            	} catch (Exception e) {
 	            		view.showError("No Invoice Found");
 	            		e.printStackTrace();
@@ -78,10 +87,10 @@ public class RegisterPaymentController {
 					}
 	            	
 		            try {
-		            	model.validatePaymentDate(date, Integer.parseInt(invoiceId));
+		            	invoicesModel.validatePaymentDate(date, Integer.parseInt(invoiceId));
 		            	try {
-		            		if (model.getSponsorshipPayment(invoiceId) == null) {
-		            			model.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
+		            		if (spModel.getSponsorshipPayment(invoiceId) == null) {
+		            			spModel.registerPayment(idSponsorshipAgreement, date, Double.parseDouble(amount));
 		            			view.configureSummaryPanel();
 		            			return;
 		            		}
@@ -106,7 +115,7 @@ public class RegisterPaymentController {
 	}
 	
 	public void loadActivities() {
-		List<Object[]> activitiesList = model.getListActivities();
+		List<Object[]> activitiesList = activitiesModel.getActivityListArray();
 		
 		ComboBoxModel<Object> lModel = SwingUtil.getComboModelFromList(activitiesList);
 		view.getActivities().setModel(lModel); 

@@ -1,28 +1,31 @@
 package controller;
 
-import model.RegisterIncomesExpensesModel;
 import util.ApplicationException;
 import util.SemanticValidations;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterIncomesExpensesView;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
-
 import javax.swing.ComboBoxModel;
+import model.ActivitiesModel;
+import model.MovementsModel;
 
 public class RegisterIncomesExpensesController {
-	private RegisterIncomesExpensesModel model;
+	
+	protected ActivitiesModel activitiesModel;
+	protected MovementsModel movementsModel;
+	
 	private RegisterIncomesExpensesView view;
 	
-	public RegisterIncomesExpensesController(RegisterIncomesExpensesModel model, RegisterIncomesExpensesView view) {
-		this.model = model;
-		this.view = view;
+	public RegisterIncomesExpensesController(ActivitiesModel am, MovementsModel mm, RegisterIncomesExpensesView view) {
+		this.activitiesModel = am;
+		this.movementsModel = mm;
 		
+		this.view = view;
 		initController();
 		initView();
 	}
@@ -70,7 +73,7 @@ public class RegisterIncomesExpensesController {
 	            String receipt = view.getReceipt();
 	            String status = view.getStatus();
 	            
-	            String idActivity = model.getActivityId(activity);
+	            String idActivity = activitiesModel.getActivityId(activity);
 	            
 	            switch (status) {
 		            case "Estimated":
@@ -94,7 +97,7 @@ public class RegisterIncomesExpensesController {
 	            }
 	            
 	            try {
-	            	model.registerMovement(idActivity, amount, date, type, concept, receipt, status);
+	            	movementsModel.registerMovement(idActivity, amount, date, type, concept, receipt, status);
 	            } catch (Exception e) {
 	            	view.showError("Internal Error: Could Not Register Income/Expense");
 	            	e.printStackTrace();
@@ -112,7 +115,7 @@ public class RegisterIncomesExpensesController {
 	}
 	
 	public void loadActivities() {
-		List<Object[]> activitiesList = model.getListActivities();
+		List<Object[]> activitiesList = activitiesModel.getActivityListArray();
 		
 		ComboBoxModel<Object> lModel = SwingUtil.getComboModelFromList(activitiesList);
 		view.getActivities().setModel(lModel); 

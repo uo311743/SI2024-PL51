@@ -15,30 +15,26 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
 import controller.RegisterSponsorshipController;
-import model.RegisterSponsorshipModel;
+import model.SponsorContactsModel;
+import model.SponsorOrganizationsModel;
+import model.SponsorshipAgreementsModel;
+import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterIncomesExpensesController;
-import model.RegisterIncomesExpensesModel;
-
 import controller.InvoiceManagementController;
-import model.InvoiceManagementModel;
+import model.InvoicesModel;
+import model.MovementsModel;
 import view.InvoiceManagementView;
-
 import controller.RegisterPaymentController;
-import model.RegisterPaymentModel;
-
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
-import model.ConsultStatusActivityModel;
+import model.GBMembersModel;
 import view.ConsultStatusActivityView;
-
 import controller.ActivityFinancialReportController;
-import model.ActivityFinancialReportModel;
+import model.ActivitiesModel;
 import view.ActivityFinancialReportView;
 import view.RegisterIncomesExpensesView;
-
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -145,35 +141,32 @@ public class SwingMain {
 	     */	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(
-	    			new RegisterSponsorshipModel(),
-	    			new RegisterSponsorshipView()
-	    	);
+	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
 	    });
 	    
 	    // US 29125
 	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
-	    	new InvoiceManagementController(new InvoiceManagementModel(), new InvoiceManagementView());
+	    	new InvoiceManagementController(new SponsorOrganizationsModel(), new ActivitiesModel(), new InvoicesModel(), new InvoiceManagementView());
 	    });
 	    
 	 	// US 29126
         addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	new RegisterPaymentController(new RegisterPaymentModel(), new RegisterPaymentView());
+        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new ActivitiesModel(), new InvoicesModel(), new RegisterPaymentView());
         });
         
         // US 29127
         addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
-        	new RegisterIncomesExpensesController(new RegisterIncomesExpensesModel(), new RegisterIncomesExpensesView());
+        	new RegisterIncomesExpensesController(new ActivitiesModel(), new MovementsModel(), new RegisterIncomesExpensesView());
 	    });
         
         // US 29128
 	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
-	    	new ConsultStatusActivityController(new ConsultStatusActivityModel(), new ConsultStatusActivityView());
+	    	new ConsultStatusActivityController(new ActivitiesModel(), new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new ConsultStatusActivityView());
 	    });
 
 	    // US 29129
 	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
-	    	new ActivityFinancialReportController(new ActivityFinancialReportModel(), new ActivityFinancialReportView());
+	    	new ActivityFinancialReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new ActivityFinancialReportView());
 	    });
 	    
 	    
