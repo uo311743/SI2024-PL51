@@ -15,9 +15,30 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+
+import controller.RegisterSponsorshipController;
+import model.RegisterSponsorshipModel;
+import view.RegisterSponsorshipView;
+import controller.RegisterIncomesExpensesController;
+import model.RegisterIncomesExpensesModel;
+
+import controller.InvoiceManagementController;
+import model.InvoiceManagementModel;
+import view.InvoiceManagementView;
+
+import controller.RegisterPaymentController;
+import model.RegisterPaymentModel;
+
+import view.RegisterPaymentView;
+import controller.ConsultStatusActivityController;
+import model.ConsultStatusActivityModel;
+import view.ConsultStatusActivityView;
+
 import controller.ActivityFinancialReportController;
 import model.ActivityFinancialReportModel;
 import view.ActivityFinancialReportView;
+import view.RegisterIncomesExpensesView;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -70,6 +91,8 @@ public class SwingMain {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Database db=new Database();
+		
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
 	    frame.setBounds(0, 0, 300, 300);
@@ -119,22 +142,50 @@ public class SwingMain {
 	    /* --------------------------------------------------------------------------------
 	     * 
 	     *     START ADD BUTTONS
-	     */
+	     */	    
+	    // US 29124
+	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
+	    	new RegisterSponsorshipController(
+	    			new RegisterSponsorshipModel(),
+	    			new RegisterSponsorshipView()
+	    	);
+	    });
+	    
+	    // US 29125
+	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
+	    	new InvoiceManagementController(new InvoiceManagementModel(), new InvoiceManagementView());
+	    });
+	    
+	 	// US 29126
+        addButtonToMain(buttonPanel, "Register Payment", () -> {
+        	new RegisterPaymentController(new RegisterPaymentModel(), new RegisterPaymentView());
+        });
+        
+        // US 29127
+        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
+        	new RegisterIncomesExpensesController(new RegisterIncomesExpensesModel(), new RegisterIncomesExpensesView());
+	    });
+        
+        // US 29128
+	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
+	    	new ConsultStatusActivityController(new ConsultStatusActivityModel(), new ConsultStatusActivityView());
+	    });
 
-	    addButtonToMain(buttonPanel, "Activity Incomes and Expenses Report", () -> {
+	    // US 29129
+	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
 	    	new ActivityFinancialReportController(new ActivityFinancialReportModel(), new ActivityFinancialReportView());
 	    });
 	    
+	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	        Database db = new Database();
 	        db.createDatabase(false);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Load data for testing", () -> {
-	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
+
 	    
 	    /* 
 	     *     END ADD BUTTONS
@@ -170,7 +221,6 @@ public class SwingMain {
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
 	}
-
 
 
 	public JFrame getFrame() { return this.frame; }
