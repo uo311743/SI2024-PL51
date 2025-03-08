@@ -7,16 +7,15 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-
 import net.miginfocom.swing.MigLayout;
 
 public class GenerateInvoicesView extends AbstractView {
     
     private JComboBox<Object> activitiesComboBox;
     private JTable agreementsTable;
-    private JTextField idTextField;
-    private JTextField dateIssuedTextField;
-    private JTextField dateExpTextField;
+    private JLabel idLabel;
+    private JLabel dateIssuedLabel;
+    private JLabel dateExpLabel;
     private JTextField amountTextField;
     private JTextField taxRateTextField;
     
@@ -28,9 +27,9 @@ public class GenerateInvoicesView extends AbstractView {
     protected void initialize() {
         this.agreementsTable = new JTable();
         this.activitiesComboBox = new JComboBox<>();
-        this.idTextField = new JTextField(10);
-        this.dateIssuedTextField = new JTextField(10);
-        this.dateExpTextField = new JTextField(10);
+        this.idLabel = new JLabel("ID: -");
+        this.dateIssuedLabel = new JLabel("Date Issued: -");
+        this.dateExpLabel = new JLabel("Date Expired: -");
         this.amountTextField = new JTextField(10);
         this.taxRateTextField = new JTextField(10);
         
@@ -57,12 +56,9 @@ public class GenerateInvoicesView extends AbstractView {
         // Invoice Details Panel
         JPanel invoiceDetailsPanel = new JPanel(new MigLayout("", "[][grow]", ""));
         invoiceDetailsPanel.add(new JLabel("Invoice Details"), "wrap");
-        invoiceDetailsPanel.add(new JLabel("ID: "));
-        invoiceDetailsPanel.add(idTextField, "wrap");
-        invoiceDetailsPanel.add(new JLabel("Date Issued: "));
-        invoiceDetailsPanel.add(dateIssuedTextField, "wrap");
-        invoiceDetailsPanel.add(new JLabel("Date Expired: "));
-        invoiceDetailsPanel.add(dateExpTextField, "wrap");
+        invoiceDetailsPanel.add(idLabel, "wrap");
+        invoiceDetailsPanel.add(dateIssuedLabel, "wrap");
+        invoiceDetailsPanel.add(dateExpLabel, "wrap");
         invoiceDetailsPanel.add(new JLabel("Amount: "));
         invoiceDetailsPanel.add(amountTextField, "wrap");
         invoiceDetailsPanel.add(new JLabel("Tax Rate: "));
@@ -79,16 +75,16 @@ public class GenerateInvoicesView extends AbstractView {
         return activitiesComboBox;
     }
     
-    public JTextField getIdTextField() {
-        return idTextField;
+    public JLabel getIdLabel() {
+    	return idLabel;
     }
     
-    public JTextField getDateIssuedTextField() {
-        return dateIssuedTextField;
+    public JLabel getDateIssuedLabel() {
+    	return dateIssuedLabel;
     }
     
-    public JTextField getDateExpTextField() {
-        return dateExpTextField;
+    public JLabel getDateExpLabel() {
+    	return dateExpLabel;
     }
     
     public JTextField getAmountTextField() {

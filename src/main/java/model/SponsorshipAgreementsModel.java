@@ -76,6 +76,12 @@ public class SponsorshipAgreementsModel {
 	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
 	    }
 	}
+    
+    public List<SponsorshipAgreementsDTO> getAgreementsByActivityName(String activityName) {
+		SemanticValidations.validateName(activityName);
+		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE A.name == ?;";
+		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
+	}
 
     // INSERTIONS
 
