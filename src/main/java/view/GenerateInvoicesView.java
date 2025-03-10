@@ -11,7 +11,7 @@ import net.miginfocom.swing.MigLayout;
 
 public class GenerateInvoicesView extends AbstractView {
     
-    private JComboBox<Object> activitiesComboBox;
+    private JComboBox<Object> activityComboBox;
     private JTable agreementsTable;
     private JLabel idLabel;
     private JLabel dateIssuedLabel;
@@ -26,8 +26,8 @@ public class GenerateInvoicesView extends AbstractView {
     @Override
     protected void initialize() {
         this.agreementsTable = new JTable();
-        this.activitiesComboBox = new JComboBox<>();
-        this.idLabel = new JLabel("ID: -");
+        this.activityComboBox = new JComboBox<>();
+        this.idLabel = new JLabel("ID Sponsorship Agreement: -");
         this.dateIssuedLabel = new JLabel("Date Issued: -");
         this.dateExpLabel = new JLabel("Date Expired: -");
         this.amountTextField = new JTextField(10);
@@ -44,7 +44,7 @@ public class GenerateInvoicesView extends AbstractView {
         // FilterPanel
         JPanel filterPanel = new JPanel(new MigLayout("", "[center]"));
         filterPanel.add(new JLabel("Select Activity: "));
-        filterPanel.add(activitiesComboBox);
+        filterPanel.add(activityComboBox);
         getMainPanel().add(filterPanel, "cell 0 0 2 1, align center");
 
         // Agreements Table
@@ -71,8 +71,8 @@ public class GenerateInvoicesView extends AbstractView {
         return agreementsTable;
     }
     
-    public JComboBox<Object> getActivitiesComboBox() {
-        return activitiesComboBox;
+    public JComboBox<Object> getActivityComboBox() {
+        return activityComboBox;
     }
     
     public JLabel getIdLabel() {

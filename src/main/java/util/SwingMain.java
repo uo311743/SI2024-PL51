@@ -27,6 +27,7 @@ import model.MovementsModel;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
+import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
@@ -145,7 +146,7 @@ public class SwingMain {
 	    
 	    // US 29125
 	    addButtonToMain(buttonPanel, "GENERATE INVOICES", () -> {
-	    	new GenerateInvoicesView().setVisible();
+	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
 	    });
 	    
 	 	// US 29126

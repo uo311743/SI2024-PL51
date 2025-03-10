@@ -15,10 +15,14 @@ public class InvoicesModel {
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
 	
-	public static final String SQL_NUMBER_OLD_INVOICES = "SELECT COUNT(I.id) FROM Invoices I "
+	public static final String SQL_NUMBER_OLD_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
 			+ "JOIN Activities A ON SA.idActivity == A.id "
 			+ "WHERE A.name == ?;";
+	
+	public static final String SQL_NUMBER_OLD_INVOICES_SA = "SELECT COUNT(I.id) FROM Invoices I "
+			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
+			+ "WHERE SA.id == ?;";
 	
     private Database db = new Database();
 
@@ -50,7 +54,15 @@ public class InvoicesModel {
 	}
     
     public int getNumberOldInvoicesByActivityName(String nameActivity) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_INVOICES, nameActivity);
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_INVOICES_ACTIVITY, nameActivity);
+		if (result == null || result.isEmpty()) {
+			return 0;
+		}
+		return (int) result.get(0)[0];
+	}
+    
+    public int getNumberOldInvoicesBySponsorshipAgreementsId(String idSA) {
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_INVOICES_ACTIVITY, idSA);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
@@ -59,59 +71,39 @@ public class InvoicesModel {
 
 	// INSERTIONS
     
-    public void insertNewSponsorshipAgreement(String idSponsorshipAgreement, String dateIssued, String dateSent, String dateExpiration, String totalAmount, String taxRate) throws UnexpectedException {
-		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts", "Not valid");
-		SemanticValidations.validateIdForTable(idGBMember, "GBMembers", "ERROR. Tried to insert a Sponsorship agreement with an unexisting idGBMember.");
-		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Tried to insert a Sponsorship agreement with an unexisting idActivity.");
-		SemanticValidations.validatePositiveNumber(amount, "ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
-		SemanticValidations.validateDateInPast(date, true, "ERROR. Tried to insert a Sponsorship agreement with a future date.");
+    public void insertNewInvoice(String idSponsorshipAgreement, String dateIssued, String dateSent, String dateExpiration, String totalAmount, String taxRate) throws UnexpectedException {
+		SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
+		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
-		if(getNumberOldSponsorshipAgreements(idSponsorContact, idActivity) != 0)
-			throw new UnexpectedException("Args provided to insertNewSponsorshipAgreement do not correspond to a new Agreement but an old one.");
+		if(getNumberOldInvoicesBySponsorshipAgreementsId(idSponsorshipAgreement) != 0)
+			throw new UnexpectedException("Args are from an old sponsorship agreement");
 		
-		String sql = "INSERT INTO SponsorshipAgreements"
-				+ "(idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES "
-				+ "(?, ?, ?, ?, ?, 'signed')";
-		db.executeUpdate(sql, idSponsorContact, idGBMember, idActivity, amount, date);
+		// Preguntar
+		String sql = "INSERT INTO Invoices"
+				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "
+				+ "(?, ?, ?, ?, ?, ?, 'issued')";
+		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate);
 	}
 
-    public void insertUpdateSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
-		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
-				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
+    public void insertUpdateInvoice(String idSponsorshipAgreement, String dateIssued, String dateSent, String dateExpiration, String totalAmount, String taxRate) {
+    	SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
+		SemanticValidations.validateNumberInRange(taxRate, "0.0", "1.0", "Not valid number (0-1)");
 		
-		SemanticValidations.validateIdForTable(idGBMember, "GBMembers",
-				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idGBMember.");
+		/* Preguntar
+		this.validateDateForUpdateInvoices(dateSent, totalAmount, dateExpiration, taxRate);
+		*/
 		
-		SemanticValidations.validateIdForTable(idActivity, "Activities",
-				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idActivity.");
-		
-		SemanticValidations.validatePositiveNumber(amount,
-				"ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
-		
-		SemanticValidations.validateDateInPast(date, true,
-				"ERROR. Tried to insert a Sponsorship agreement with a future date.");
-		
-		this.validateDateForUpdateSponsorshipAgreement(idSponsorContact, idActivity, date,
-				"ERROR. There already exists a sponsorship after this one's date.");
-		
-		String sql = "INSERT INTO SponsorshipAgreements"
-				+ "(idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES "
+		String sql = "INSERT INTO Invoices"
+				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "
 				+ "(?, ?, ?, ?, ?, 'signed')";
-		db.executeUpdate(sql, idSponsorContact, idGBMember, idActivity, amount, date);
+		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate);
 		
-		sql = "UPDATE SponsorshipAgreements "
-				+ "SET status = 'modified' "
-				+ "WHERE idActivity = ? "
-				+ "AND idSponsorContact IN ("
-				+ "    SELECT id "
-				+ "    FROM SponsorContacts "
-				+ "    WHERE idSponsorOrganization = ("
-				+ "        SELECT idSponsorOrganization "
-				+ "        FROM SponsorContacts "
-				+ "        WHERE id = ?"
-				+ "    )"
-				+ ")";
-		db.executeUpdate(sql, idActivity, idSponsorContact);
+		sql = "UPDATE Invoices "
+				+ "SET status = 'rectified' "
+				+ "WHERE idSponsorshipAgreement = ?;";
+		db.executeUpdate(sql, idSponsorshipAgreement);
 	}
     
     // SPECIFIC VALIDATIONS
