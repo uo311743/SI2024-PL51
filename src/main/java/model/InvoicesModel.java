@@ -79,7 +79,6 @@ public class InvoicesModel {
 		if(getNumberOldInvoicesBySponsorshipAgreementsId(idSponsorshipAgreement) != 0)
 			throw new UnexpectedException("Args are from an old sponsorship agreement");
 		
-		// Preguntar
 		String sql = "INSERT INTO Invoices"
 				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "
 				+ "(?, ?, ?, ?, ?, ?, 'issued')";
@@ -91,9 +90,7 @@ public class InvoicesModel {
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "1.0", "Not valid number (0-1)");
 		
-		/* Preguntar
-		this.validateDateForUpdateInvoices(dateSent, totalAmount, dateExpiration, taxRate);
-		*/
+		this.validateDateForUpdateInvoices(dateIssued, idSponsorshipAgreement);
 		
 		String sql = "INSERT INTO Invoices"
 				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "
@@ -128,4 +125,23 @@ public class InvoicesModel {
     private void validateCondition(boolean condition, String message) {
 		if (!condition) throw new ApplicationException(message);
 	}
+    
+    public void validateDateForUpdateInvoices(String date, String idAgreement) {
+    	String query = "SELECT date FROM SponsorshipAgreements WHERE id = ?;";
+        try {
+        	List<Object[]> result = db.executeQueryArray(query, idAgreement);
+            if (result.isEmpty()) {
+            	throw new ApplicationException("No Agreement Found");
+            } 
+            else {
+            	Date agreementDate = Date.valueOf(result.get(0)[0].toString());
+            	Date invoiceDate = Date.valueOf(date);
+            	validateCondition(agreementDate.before(invoiceDate), "Invoice cannot be made before the agreement generation");
+            }
+        } 
+        catch (Exception e) {
+        	e.printStackTrace();
+        	throw new ApplicationException(e.getMessage());
+        }
+    }
 }

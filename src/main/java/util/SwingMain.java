@@ -145,7 +145,7 @@ public class SwingMain {
 	    });
 	    
 	    // US 29125
-	    addButtonToMain(buttonPanel, "GENERATE INVOICES", () -> {
+	    addButtonToMain(buttonPanel, "Generate Invoices", () -> {
 	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
 	    });
 	    
