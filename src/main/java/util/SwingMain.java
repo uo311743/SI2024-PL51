@@ -29,11 +29,11 @@ import view.InvoiceManagementView;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
+import controller.IncomesExpensesReportController;
 import model.GBMembersModel;
 import view.ConsultStatusActivityView;
-import controller.ActivityFinancialReportController;
+import view.IncomesExpensesReportView;
 import model.ActivitiesModel;
-import view.ActivityFinancialReportView;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -165,8 +165,8 @@ public class SwingMain {
 	    });
 
 	    // US 29129
-	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
-	    	new ActivityFinancialReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new ActivityFinancialReportView());
+	    addButtonToMain(buttonPanel, "Incomes/Expenses Report", () -> {
+	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
 	    

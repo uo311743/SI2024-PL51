@@ -9,19 +9,27 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
-import model.ActivityFinancialReportModel;
+import model.ActivitiesModel;
+import model.MovementsModel;
+import model.SponsorshipAgreementsModel;
 import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
-import view.ActivityFinancialReportView;
+import view.IncomesExpensesReportView;
 
-public class ActivityFinancialReportController {
+public class IncomesExpensesReportController {
     
-    protected ActivityFinancialReportModel model;
-    protected ActivityFinancialReportView view; 
+    protected MovementsModel movementsModel;
+    protected ActivitiesModel activitiesModel;
+    protected SponsorshipAgreementsModel saModel;
+    
+    protected IncomesExpensesReportView view; 
         
-    public ActivityFinancialReportController(ActivityFinancialReportModel m, ActivityFinancialReportView v) { 
-        this.model = m;
+    public IncomesExpensesReportController(MovementsModel mm, ActivitiesModel am, SponsorshipAgreementsModel sam, IncomesExpensesReportView v) { 
+        this.movementsModel = mm;
+        this.activitiesModel = am;
+        this.saModel = sam;
+        
         this.view = v;
         this.initView();
         this.initController();        
@@ -84,7 +92,7 @@ public class ActivityFinancialReportController {
     	view.getStartDateField().setText(startDate);
     	view.getEndDateField().setText(endDate);
         
-        List<ActivitiesDTO> currentYearActivities = model.getActivitiesFromCurrentYear(startDate, endDate);
+        List<ActivitiesDTO> currentYearActivities = activitiesModel.getActivitiesFromCurrentYear(startDate, endDate);
         
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Income Estimated", "Income Paid", "Expense Estimated", "Expense Paid", "Balance Estimated", "Balance Paid"}, 0);
         
@@ -94,10 +102,10 @@ public class ActivityFinancialReportController {
         double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : currentYearActivities) {
-        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
-        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+        	double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
         	
         	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
@@ -120,13 +128,10 @@ public class ActivityFinancialReportController {
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        double profit = totalPaidIncomes - totalPaidExpenses;
-        
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
-        view.getProfitLabel().setText("Profit: " + profit);
     }
     
     public void checkTextFields() {
@@ -155,14 +160,14 @@ public class ActivityFinancialReportController {
         String endDate = view.getEndDateField().getText();
         String status = (String) view.getStatusComboBox().getSelectedItem();
 
-        List<ActivitiesDTO> filteredActivities = model.getFilteredActivities(startDate, endDate, status);
+        List<ActivitiesDTO> filteredActivities = activitiesModel.getFilteredActivities(startDate, endDate, status);
         
         update(filteredActivities);
     }
     
     private void update(List<ActivitiesDTO> filteredActivities) {
     	// Table
-    	DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Incomes", "Expenses", "Balance"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"Date", "Name", "Status", "Income Estimated", "Income Paid", "Expense Estimated", "Expense Paid", "Balance Estimated", "Balance Paid"}, 0);
         
         double totalEstimatedIncomes = 0;
         double totalEstimatedExpenses = 0;
@@ -170,10 +175,10 @@ public class ActivityFinancialReportController {
         double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : filteredActivities) {
-        	double ei = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pi = model.getAmountMovementIncomeByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
-        	double ee = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSAByActivityId(activity.getId());
-        	double pe = model.getAmountMovementExpenseByActivityId(activity.getId()) + model.getAmountSPByActivityId(activity.getId());
+        	double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+        	double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+        	double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
         	
         	tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
@@ -196,12 +201,9 @@ public class ActivityFinancialReportController {
         view.getReportTable().setModel(tableModel);
         
         // Totals
-        double profit = totalPaidIncomes - totalPaidExpenses;
-        
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
-        view.getProfitLabel().setText("Profit: " + profit);
     }
 }
