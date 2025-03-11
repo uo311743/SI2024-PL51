@@ -97,7 +97,7 @@ public class InvoicesModel {
 		
 		String sql = "INSERT INTO Invoices"
 				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "
-				+ "(?, ?, ?, ?, ?, 'signed')";
+				+ "(?, ?, ?, ?, ?, ?, 'issued')";
 		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate);
 		
 		sql = "UPDATE Invoices "

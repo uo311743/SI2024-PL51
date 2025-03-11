@@ -68,21 +68,6 @@ public class GenerateInvoicesController {
 		});
     	
     	// Invoice Details Panel
-    	this.view.getAmountTextField().getDocument().addDocumentListener(new DocumentListener() {
-    		@Override
-			public void insertUpdate(DocumentEvent e) {
-    			SwingUtil.exceptionWrapper(() -> updateDetail());
-    		}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {}
-    	});
-    	
     	this.view.getTaxRateTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -110,13 +95,6 @@ public class GenerateInvoicesController {
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(activityList);
         view.getActivityComboBox().setModel(lmodel);
     }
-    /*
-    private void getAgreements() {
-    	List<SponsorshipAgreementsDTO> agreements = saModel.getAgreementsByActivityName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(agreements, new String[] {"id", "Sponsor", "amount", "date", "status"});
-		this.view.getAgreementsTable().setModel(tmodel);
-		SwingUtil.autoAdjustColumns(view.getAgreementsTable());
-    }*/
     
     private void getAgreements() {
     	List<SponsorshipAgreementsDTO> agreements = saModel.getAgreementsByActivityName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
@@ -135,7 +113,6 @@ public class GenerateInvoicesController {
     }
     
     private void setInputsEnabled(boolean enabled) {
-    	view.getAmountTextField().setEnabled(enabled);
     	view.getTaxRateTextField().setEnabled(enabled);
     }
         
@@ -145,25 +122,16 @@ public class GenerateInvoicesController {
 			restartView();
 		}
 		else {
-			view.getIdLabel().setText("ID: " + lastSelectedAgreement); 
+			view.getIdLabel().setText("ID Sponsorship Agreement: " + lastSelectedAgreement); 
 			view.getDateIssuedLabel().setText("Date Issued: " + (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3));
 			// Preguntar
 			view.getDateExpLabel().setText("Date Expired: " + (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3));
+			view.getAmountLabel().setText("Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 2));
 			
 			this.setInputsEnabled(true);
 		}
 		
 		boolean valid = true;
-		
-		// Validate Amount
-		String amount = this.view.getAmountTextField().getText();
-		if(!SyntacticValidations.isDecimal(amount)) {
-			this.view.getAmountTextField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else { 
-			this.view.getAmountTextField().setForeground(Color.BLACK); 
-		}
 		
 		// Validate TaxRate
 		String taxRate = this.view.getTaxRateTextField().getText();
@@ -184,7 +152,6 @@ public class GenerateInvoicesController {
 		
 		this.getAgreements();
 		
-		this.view.getAmountTextField().setText("");
     	this.view.getTaxRateTextField().setText("");
     	
     	this.setInputsEnabled(false);
@@ -200,7 +167,7 @@ public class GenerateInvoicesController {
         	idAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 0);
         }
 
-        String amount = this.view.getAmountTextField().getText();
+        String amount = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 2);
         String taxRate = this.view.getTaxRateTextField().getText();
         
         String taxAmount = String.valueOf(Double.valueOf(amount) * Double.valueOf(taxRate));
@@ -242,8 +209,8 @@ public class GenerateInvoicesController {
 				e.printStackTrace();
 			}
 	        JOptionPane.showMessageDialog(
-	    			this.view.getFrame(), "Sponshorship agreement añadido correctamente.",
-	    			"Operación realizada correctamente",
+	    			this.view.getFrame(), "Invoice added correctly",
+	    			"This operation has been succesful",
 	    			JOptionPane.INFORMATION_MESSAGE
 	    	);
 	        this.restartView();
@@ -252,7 +219,7 @@ public class GenerateInvoicesController {
     		message = "It will modify " + numOldInvoices + " invoices for that activity.";
     		response = JOptionPane.showConfirmDialog(
     	            this.view.getFrame(), message,
-    	            "Confirm modification of old Invoices",
+    	            "Confirm modification of old invoices",
     	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
 	        );
 	        
@@ -264,8 +231,8 @@ public class GenerateInvoicesController {
 	        	this.invoicesModel.insertUpdateInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), totalAmount, taxRate);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
-		    			"Sponshorship agreement añadido correctamente. Los antigos se han marcado como 'modificados'.",
-		    			"Operación realizada correctamente",
+		    			"Invoice added correctly",
+		    			"This operation has been succesful",
 		    			JOptionPane.INFORMATION_MESSAGE
 		    	);
 		        this.restartView();
