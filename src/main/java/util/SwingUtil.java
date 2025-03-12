@@ -146,4 +146,18 @@ public class SwingUtil {
 		}
 		return cm;
 	}
+	
+	
+	/**
+	 * Extracts the string key from a formatted text string in the form "id - A - B - ...".
+	 *
+	 * @param text The input string in the format "id - name".
+	 * @return The extracted ID as a String.
+	 */
+	public static String getKeyFromText(String text) {
+	    String[] parts = text.split(" - ");
+	    return parts[0].trim();
+	}
+
+
 }

@@ -13,6 +13,8 @@ public class SyntacticValidations {
             "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
 
     public static final String PATTERN_PHONE = "^\\+?[1-9][0-9]{8,14}$";
+    
+    public static final String NIF_PATTERN = "^[A-HJNP-SUVW][0-9]{7}[0-9A-J]$";
 
     /**
      * Validates if the given object is an integer.
