@@ -69,6 +69,14 @@ public class GenerateInvoicesController {
 			}
 		});
     	
+    	// Agreements Table
+    	this.view.getAgreementsTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
+		});
+    	
     	// Invoice Details Panel
     	this.view.getTaxRateTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
