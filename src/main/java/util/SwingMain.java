@@ -9,16 +9,32 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Date;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-
-import view.ExampleView;
-
+import controller.RegisterSponsorshipController;
+import model.SponsorContactsModel;
+import model.SponsorOrganizationsModel;
+import model.SponsorshipAgreementsModel;
+import model.SponsorshipPaymentsModel;
+import view.RegisterSponsorshipView;
+import controller.RegisterIncomesExpensesController;
+import controller.InvoiceManagementController;
+import model.InvoicesModel;
+import model.MovementsModel;
+import view.InvoiceManagementView;
+import controller.RegisterPaymentController;
+import view.RegisterPaymentView;
+import controller.ConsultStatusActivityController;
+import model.GBMembersModel;
+import view.ConsultStatusActivityView;
+import controller.ActivityFinancialReportController;
+import model.ActivitiesModel;
+import view.ActivityFinancialReportView;
+import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -71,6 +87,8 @@ public class SwingMain {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
+		Database db=new Database();
+		
 	    frame = new JFrame();
 	    frame.setTitle(APP_NAME);
 	    frame.setBounds(0, 0, 300, 300);
@@ -120,23 +138,47 @@ public class SwingMain {
 	    /* --------------------------------------------------------------------------------
 	     * 
 	     *     START ADD BUTTONS
-	     */
-
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
+	     */	    
+	    // US 29124
+	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
+	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
 	    });
 	    
+	    // US 29125
+	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
+	    	new InvoiceManagementController(new SponsorOrganizationsModel(), new ActivitiesModel(), new InvoicesModel(), new InvoiceManagementView());
+	    });
+	    
+	 	// US 29126
+        addButtonToMain(buttonPanel, "Register Payment", () -> {
+        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new ActivitiesModel(), new InvoicesModel(), new RegisterPaymentView());
+        });
+        
+        // US 29127
+        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
+        	new RegisterIncomesExpensesController(new ActivitiesModel(), new MovementsModel(), new RegisterIncomesExpensesView());
+	    });
+        
+        // US 29128
+	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
+	    	new ConsultStatusActivityController(new ActivitiesModel(), new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new ConsultStatusActivityView());
+	    });
+
+	    // US 29129
+	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
+	    	new ActivityFinancialReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new ActivityFinancialReportView());
+	    });
+	    
+	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	        Database db = new Database();
 	        db.createDatabase(false);
 	    });
 	    
 	    addButtonToMain(buttonPanel, "Load data for testing", () -> {
-	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
+
 	    
 	    /* 
 	     *     END ADD BUTTONS
@@ -172,7 +214,6 @@ public class SwingMain {
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
 	}
-
 
 
 	public JFrame getFrame() { return this.frame; }

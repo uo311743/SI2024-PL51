@@ -1,7 +1,7 @@
 package DTOs;
 
 public class SponsorshipPaymentsDTO {
-	private String id;
+private String id;
 	private String invoiceId;
 	private String date;
 	private String amount;
