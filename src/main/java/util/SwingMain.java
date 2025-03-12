@@ -121,11 +121,6 @@ public class SwingMain {
 	     * 
 	     *     START ADD BUTTONS
 	     */
-
-	    // FIXME Delete this method and create new ones.
-	    addButtonToMain(buttonPanel, "Run Example", () -> {
-	    	new ExampleView().setVisible();
-	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        Database db = new Database();
@@ -136,6 +131,10 @@ public class SwingMain {
 	    	Database db=new Database();
 			db.createDatabase(false);
 			db.loadDatabase();
+	    });
+	    
+	    addButtonToMain(buttonPanel, "Register Other Movements", () -> {
+	    	
 	    });
 	    
 	    /* 

@@ -31,7 +31,3 @@ public class SponsorshipPaymentsDTO {
 		this.amount = amount;
 	}
 }
-<<<<<<< HEAD
->>>>>>> refs/remotes/origin/develop
-=======
->>>>>>> branch 'develop' of https://github.com/uo311743/SI2024-PL51.git

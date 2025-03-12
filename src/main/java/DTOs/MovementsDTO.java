@@ -7,7 +7,6 @@ public class MovementsDTO {
     private String concept;
     private String amount;
     private String date;
-    private String receiptNumber;
     private String status;
     
 	public String getId() {
@@ -45,12 +44,6 @@ public class MovementsDTO {
 	}
 	public void setDate(String date) {
 		this.date = date;
-	}
-	public String getReceiptNumber() {
-		return receiptNumber;
-	}
-	public void setReceiptNumber(String receiptNumber) {
-		this.receiptNumber = receiptNumber;
 	}
 	public String getStatus() {
 		return status;
