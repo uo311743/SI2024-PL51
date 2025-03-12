@@ -65,6 +65,7 @@ public class GenerateInvoicesController {
     	this.view.getActivityComboBox().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				SwingUtil.exceptionWrapper(() -> restoreDetail());
 				SwingUtil.exceptionWrapper(() -> updateDetail());
 			}
 		});
@@ -96,7 +97,7 @@ public class GenerateInvoicesController {
     
     public void initView() {
     	this.loadActivities();
-    	this.restartView();
+    	this.restoreDetail();
     	view.setVisible();
     }
     
@@ -129,7 +130,7 @@ public class GenerateInvoicesController {
 	public void updateDetail() {	
 		this.lastSelectedAgreement = SwingUtil.getSelectedKey(this.view.getAgreementsTable());
 		if("".equals(this.lastSelectedAgreement)) {  
-			restartView();
+			restoreDetail();
 		}
 		else {
 			view.getIdLabel().setText("ID Sponsorship Agreement: " + lastSelectedAgreement); 
@@ -157,7 +158,7 @@ public class GenerateInvoicesController {
 		this.view.getButtonLowRight().setEnabled(valid);
 	}
 	
-	public void restartView() {
+	public void restoreDetail() {
 		this.view.getButtonLowRight().setEnabled(false);
 		
 		this.getAgreements();
@@ -223,7 +224,7 @@ public class GenerateInvoicesController {
 	    			"This operation has been succesful",
 	    			JOptionPane.INFORMATION_MESSAGE
 	    	);
-	        this.restartView();
+	        this.restoreDetail();
         }
     	else {
     		message = "It will modify " + numOldInvoices + " invoices for that activity.";
@@ -245,7 +246,7 @@ public class GenerateInvoicesController {
 		    			"This operation has been succesful",
 		    			JOptionPane.INFORMATION_MESSAGE
 		    	);
-		        this.restartView();
+		        this.restoreDetail();
 	        }
     	}
     }

@@ -79,7 +79,7 @@ public class SponsorshipAgreementsModel {
     
     public List<SponsorshipAgreementsDTO> getAgreementsByActivityName(String activityName) {
 		SemanticValidations.validateName(activityName);
-		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE A.name == ?;";
+		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ?;";
 		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
 	}
 
