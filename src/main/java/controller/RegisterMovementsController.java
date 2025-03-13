@@ -252,7 +252,7 @@ public class RegisterMovementsController {
 		
 		// Validate amount
 		String amount = this.view.getAmountTextField().getText();
-		if(!SyntacticValidations.isDecimal(amount))
+		if(!SyntacticValidations.isDecimal(amount) && !SyntacticValidations.isNotEmpty(amount))
 		{
 			this.view.getAmountTextField().setForeground(Color.RED);
 			valid = false;
@@ -260,7 +260,8 @@ public class RegisterMovementsController {
 		
 		// Validate date
 		String paymentDate = this.view.getDateTextField().getText();
-		if(!SyntacticValidations.isDate(paymentDate))
+		String status = this.view.getStatus().getSelectedItem().toString();
+		if(!SyntacticValidations.isDate(paymentDate) || (status.equals("paid") && !SyntacticValidations.isNotEmpty(paymentDate)))
 		{
 			this.view.getDateTextField().setForeground(Color.RED);
 			valid = false;
@@ -268,8 +269,7 @@ public class RegisterMovementsController {
 		
 		// Validate concept
 		String concept = this.view.getConceptTextField().getText();
-		String status = this.view.getStatus().getSelectedItem().toString();
-		if(status.equals("paid") && !SyntacticValidations.isNotEmpty(concept)) { valid = false; }
+		if(!SyntacticValidations.isNotEmpty(concept)) { valid = false; }
 		
 		// Activate/Deactivate the submit button
 		this.view.getButtonLowRight().setEnabled(valid);
@@ -337,7 +337,7 @@ public class RegisterMovementsController {
         
         try {
         	if (status.equals("paid")) { SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future"); }
-        	this.movementsModel.registerMovement(idActivity, this.view.getType().getSelectedItem().toString(), concept, amount, date, this.view.getStatus().getSelectedItem().toString());
+        	this.movementsModel.registerMovement(idActivity, this.view.getType().getSelectedItem().toString(), concept, amount, date, status);
         } catch (Exception e) {
         	e.printStackTrace();
         }
