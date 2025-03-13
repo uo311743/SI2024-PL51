@@ -332,8 +332,10 @@ public class RegisterMovementsController {
         
         if (response == 1) return;
 
+        String type = this.view.getType().getSelectedItem().toString();
+        
         try {
-        	SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future");
+        	if (type.equals("paid")) { SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future"); }
         	this.movementsModel.registerMovement(idActivity, this.view.getType().getSelectedItem().toString(), concept, amount, date, this.view.getStatus().getSelectedItem().toString());
         } catch (Exception e) {
         	e.printStackTrace();
