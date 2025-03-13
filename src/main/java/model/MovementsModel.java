@@ -63,6 +63,20 @@ public class MovementsModel {
 		return (double) result;
 	}
 	
+	// Function to get unique 'type' values from Movements table
+    public List<Object[]> getUniqueTypes() {
+        String query = "SELECT DISTINCT type FROM Movements";
+
+        return db.executeQueryArray(query);
+    }
+    
+    // Function to get unique 'type' values from Movements table
+    public List<Object[]> getUniqueStatus() {
+        String query = "SELECT DISTINCT status FROM Movements WHERE status != 'cancelled'";
+
+        return db.executeQueryArray(query);
+    }
+	
 	public List<MovementsDTO> getEstimatedMovementsbyTypeAndActivity(String type, String idActivity)
 	{
 		String sql = "SELECT mo.* FROM Movements mo WHERE mo.status = 'estimated' AND mo.type = ? AND mo.idActivity = ?";

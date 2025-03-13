@@ -3,6 +3,9 @@ package model;
 import java.rmi.UnexpectedException;
 import java.util.Date;
 import java.util.List;
+
+import DTOs.InvoicesDTO;
+import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
 import util.Database;
@@ -44,6 +47,25 @@ public class SponsorshipAgreementsModel {
 			return 0.0;
 		}
 		return (double) result;
+	}
+    
+    public List<SponsorOrganizationsDTO> getSponsorOrganizations()
+	{
+		String sql = "SELECT so.* FROM SponsorOrganizations so";
+		
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql);
+	}
+    
+    public List<InvoicesDTO> getInvoicesBySponsor(String idSponsor)
+	{
+		String sql = "SELECT i.* "
+				+ "FROM Invoices i "
+				+ "JOIN SponsorshipAgreements sa ON i.idSponsorshipAgreement = sa.id "
+				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
+				+ "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id "
+				+ "WHERE so.id = ?;";
+		
+		return db.executeQueryPojo(InvoicesDTO.class, sql, idSponsor);
 	}
 	
 	public double getActualSponshorships(String idActivity) {

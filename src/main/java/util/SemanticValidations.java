@@ -105,10 +105,10 @@ public class SemanticValidations
         	throw new UnexpectedException("Invalid date for validateDateInPast");
         }
 
-    	if(includeToday)
-    		if (tmp_date.before(tmp_today))
+    	if(!includeToday)
+    		if (tmp_date.after(tmp_today))
         		throw new ApplicationException(message);
-    	else if (tmp_date.before(tmp_today) || tmp_date.equals(tmp_today))
+    	else if (tmp_date.after(tmp_today) || tmp_date.equals(tmp_today))
         		throw new ApplicationException(message);
     }
 

@@ -4,6 +4,7 @@ import model.ActivitiesModel;
 import model.InvoicesModel;
 import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
+import util.SemanticValidations;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterPaymentView;
@@ -11,6 +12,8 @@ import view.RegisterPaymentView;
 import java.awt.Color;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.rmi.UnexpectedException;
+import java.sql.Date;
 import java.util.List;
 
 import javax.swing.JOptionPane;
@@ -24,11 +27,8 @@ import DTOs.SponsorOrganizationsDTO;
 
 public class RegisterPaymentController {
 	
-	private final static String DEFAULT_VALUE_COMBOBOX = "--------------------";
-	
 	protected SponsorshipAgreementsModel agreementsModel;
 	protected SponsorshipPaymentsModel paymentsModel;
-	protected ActivitiesModel activitiesModel;
 	protected InvoicesModel invoicesModel;
 	
 	
@@ -36,11 +36,11 @@ public class RegisterPaymentController {
 	
     private String lastSelectedInvoice;
 	
-	public RegisterPaymentController(SponsorshipAgreementsModel sam, SponsorshipPaymentsModel spm, ActivitiesModel am, InvoicesModel im, RegisterPaymentView view) {
+	public RegisterPaymentController(SponsorshipAgreementsModel sam, SponsorshipPaymentsModel spm, InvoicesModel im, RegisterPaymentView view) {
 		this.agreementsModel = sam;
 		this.paymentsModel = spm;
-		this.activitiesModel = am;
 		this.invoicesModel = im;
+		
 		this.view = view;
 		
 		this.initController();
@@ -136,7 +136,7 @@ public class RegisterPaymentController {
 	
 	private void getSponsors()
     {
-    	List<SponsorOrganizationsDTO> sponsors = RegisterSponsorshipModel.getSponsorOrganizations();
+    	List<SponsorOrganizationsDTO> sponsors = this.agreementsModel.getSponsorOrganizations();
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(sponsors, new String[] {"id", "name", "type", "address", "nif", "vat"});
 		this.view.getSponsorsTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getSponsorsTable());
@@ -152,7 +152,7 @@ public class RegisterPaymentController {
         {
         	idSponsor = (String) this.view.getSponsorsTable().getModel().getValueAt(row, 0);
         }
-    	List<InvoicesDTO> invoices = RegisterSponsorshipModel.getInvoicesBySponsor(idSponsor);
+    	List<InvoicesDTO> invoices = this.agreementsModel.getInvoicesBySponsor(idSponsor);
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(invoices, new String[] {"id", "idSponsorshipAgreement", "dateIssued", "dateSent", "dateExpiration", "totalAmount", "taxRate", "status"});
 		this.view.getInvoicesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getInvoicesTable());
@@ -241,21 +241,27 @@ public class RegisterPaymentController {
                 + "<p><i>Do you want to proceed with adding this sponsorship agreement?</i></p>"
                 + "</body></html>";
 
-        int response = JOptionPane.showConfirmDialog(
-            this.view.getFrame(),  message,
-            "Confirm Payment Details",
-            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
-        );
+        Object[] options = {"Yes", "No"};
         
-        if (response != JOptionPane.YES_OPTION) return;
+        int response = JOptionPane.showOptionDialog(null,
+                "Are you sure you want to continue?", 		// The message
+                "Confirmation of Movement Registration",    // The title
+                JOptionPane.DEFAULT_OPTION,          		// The option type
+                JOptionPane.QUESTION_MESSAGE,        		// The message type
+                null,                               		// Icon (null means default question icon)
+                options,                            		// Custom buttons
+                options[0]); 
         
-        this.model.registerPayment(Integer.parseInt(idInvoice), date, Double.parseDouble(amount));
-        JOptionPane.showMessageDialog(
-    			this.view.getFrame(),
-    			"Payment Registered Successfully",
-    			"",
-    			JOptionPane.INFORMATION_MESSAGE
-    	);
+        if (response == 1) return;
+        
+        try {
+        	SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future");
+        	this.invoicesModel.validatePaymentDate(date, Integer.parseInt(idInvoice));
+        	this.paymentsModel.registerPayment(Integer.parseInt(idInvoice), date, Double.parseDouble(amount));
+        } catch (Exception e) {
+        	e.printStackTrace();
+        }
+        
         this.restartView();
     }
 }

@@ -152,7 +152,7 @@ public class SwingMain {
 	    
 	 	// US 29126
         addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new ActivitiesModel(), new InvoicesModel(), new RegisterPaymentView());
+        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new InvoicesModel(), new RegisterPaymentView());
         });
         
         // US 29535

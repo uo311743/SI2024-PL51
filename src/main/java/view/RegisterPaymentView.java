@@ -1,165 +1,193 @@
-package model;
+package view;
 
-import java.util.List;
+import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 
-import DTOs.*;
+import java.awt.*;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 
-import java.sql.*;
-
-import util.ApplicationException;
-import util.Database;
-
-public class RegisterPaymentModel {
-	
-	// Instance that allows the connection to the DB and execution of queries
-	private Database db = new Database();
-	private Connection connection; 
+public class RegisterPaymentView extends AbstractView {
+	private JTable invoicesTable;
+	private JTable sponsorsTable;
+    private JTextField amountTextField;
+    private JTextField dateTextField;
     
-	/* ================================================================================
-     * 
-     *     METHODS
-     * 
-     */
-	
-	public RegisterPaymentModel() {
-        try {
-            connection = DriverManager.getConnection(db.getUrl());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    public RegisterPaymentView() { super("Register Payment"); }
+    
+    @Override
+    protected void initialize()
+    {
+    	this.invoicesTable = new JTable();
+    	this.sponsorsTable = new JTable();
+    	this.amountTextField = new JTextField("");
+    	this.dateTextField = new JTextField("");
+    	
+    	super.createButtonLowLeft("Cancel");
+    	super.createButtonLowMiddle("Clear");
+        super.createButtonLowRight("Register");
     }
     
-	// Registration of Payments
-	/**
-	 * Fetch SponsorshipAgreement in DB corresponding to Company identified by it NIF/VAT and name of activity selected with a valid status
-	 * @param nifOrVat
-	 * @param activity
-	 * @return id of the SponsorshipAgreement
-	 */
-	public Integer getSponsorshipAgreementId(String nifOrVat, String activity) {
-	    String sql = "SELECT sa.id " +
-	                 "FROM SponsorshipAgreements sa " +
-	                 "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id " +
-	                 "JOIN SponsorOrganizations so ON sc.idSponsorOrganization = so.id " +
-	                 "JOIN Activities a ON a.id = sa.idActivity " +
-	                 "WHERE (so.nif = ? OR so.vat = ?) AND (a.name = ?) AND (sa.status <> 'cancelled');";
+    @Override
+    protected void configMainPanel()
+    {
+    	super.getMainPanel().setLayout(new BorderLayout());
+		super.getMainPanel().setBorder(new EmptyBorder(10, 20, 10, 20));
 
-	    try {
-	    	List<Object[]> result = db.executeQueryArray(sql, nifOrVat, nifOrVat, activity);
-		    
-		    if (result.isEmpty()) {
-		    	throw new ApplicationException("No Prevailing SponsorshipAgreement found");
-		    } else {
-		    	return Integer.parseInt(result.get(0)[0].toString());
-		    }
-	    } catch (Exception e) {
-	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
-	    }
-	}
-	
-	/**
-	 * Fetch Invoice in DB corresponding to SponsorshipAgreement identified by its ID with a valid status
-	 * @param idSponsorshipAgreement
-	 * @return id of Invoice found
-	 */
-	public String getInvoiceId(Integer idSponsorshipAgreement) {
-		String sql = "SELECT i.id FROM Invoices i WHERE i.idSponsorshipAgreement = ? AND i.status <> 'cancelled';";
-		
-		try {
-			List<Object[]> result = db.executeQueryArray(sql, idSponsorshipAgreement);
-			
-			if (result.isEmpty()) {
-				throw new ApplicationException("No Prevailing Invoice Found");
-			} else {
-				return result.get(0)[0].toString();
-			}
-		} catch (Exception e) {
-			throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
-		}
-	}
 
-	/**
-	 * Register Payment in DB
-	 * @param idInvoice
-	 * @param dateSponsorshipPayment
-	 * @param amountSponsorshipPayments
-	 */
-    public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
-        String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
-        
-        try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-            pstmt.setInt(1, idInvoice);
-            pstmt.setString(2, dateSponsorshipPayment);
-            pstmt.setDouble(3, amountSponsorshipPayments);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-        	e.printStackTrace();
-        	throw new ApplicationException(e.getMessage());
-        }
-    }
-    
-    /**
-     * Fetch in DB a Payment already made for the invoice identified by its ID
-     * @param idInvoice ID of the Invoice that corresponds to the payment
-     * @return SponsorhipPaymentDTO Object if there is a Payment registered; null otherwise
-     */
-    public SponsorshipPaymentsDTO getSponsorshipPayment(String idInvoice) {
-    	String query = "SELECT * FROM SponsorshipPayments sp WHERE sp.idInvoice = ?;";
+		super.getMainPanel().add(createLeftPanel(), BorderLayout.WEST);
+		super.getMainPanel().add(createRightPanel(), BorderLayout.EAST);
     	
-    	List<SponsorshipPaymentsDTO> results = db.executeQueryPojo(SponsorshipPaymentsDTO.class, query, idInvoice);
+		amountTextField.setForeground(Color.GRAY); // Set placeholder color initially
+		amountTextField.setFont(amountTextField.getFont().deriveFont(Font.ITALIC));
     	
-    	if (!results.isEmpty()) {
-    		return results.get(0);
-    	}
-    	
-    	return null;
-    }
-    
-    /**
-     * Fetch name of all current Activities in DB available for sponsorship
-     * @return list of arrays of Objects with the name of the activities in first position of each array
-     */
-    public List<Object[]> getListActivities() {
-    	String query = "SELECT name FROM Activities WHERE status <> 'cancelled';";
-    	
-    	return db.executeQueryArray(query);
-    }
-
-    
-    /* ================================================================================
-     * 
-     *     SPECIFIC VALIDATIONS
-     * 
-     */
-    
-    /**
-	 * Semantic Validation of Date a Payment was received according to business logic
-	 * RULE: Never before Invoice generation
-	 * @param date the payment was made
-	 * @param invoiceId invoice the payment belongs to
-	 */
-	public void validatePaymentDate(String date, Integer invoiceId) {
-        String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
-
-        try {
-        	List<Object[]> result = db.executeQueryArray(query, invoiceId);
-            
-            if (result.isEmpty()) {
-            	throw new ApplicationException("No Invoice Found");
-            } else {
-            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
-            	Date paymentDate = Date.valueOf(date);
-            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
+		amountTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (amountTextField.getText().equals("0.00")) {
+                	amountTextField.setText("");
+                	amountTextField.setForeground(Color.BLACK); // Normal text color
+                	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.PLAIN));
+                }
             }
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	throw new ApplicationException(e.getMessage());
-        }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (amountTextField.getText().isEmpty()) {
+                	amountTextField.setText("0.00");
+                	amountTextField.setForeground(Color.GRAY); // Placeholder color
+                	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.ITALIC));
+                }
+            }
+        });
+    	
+		dateTextField.setForeground(Color.GRAY); // Set placeholder color initially
+		dateTextField.setFont(dateTextField.getFont().deriveFont(Font.ITALIC));
+
+    	dateTextField.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+                if (dateTextField.getText().equals("YYYY-MM-DD")) {
+                	dateTextField.setText("");
+                	dateTextField.setForeground(Color.BLACK); // Normal text color
+                	dateTextField.setFont(dateTextField.getFont().deriveFont(Font.PLAIN));
+                }
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                if (dateTextField.getText().isEmpty()) {
+                	dateTextField.setText("YYYY-MM-DD");
+                	dateTextField.setForeground(Color.GRAY); // Placeholder color
+                	dateTextField.setFont(dateTextField.getFont().deriveFont(Font.ITALIC));
+                }
+            }
+        });
     }
     
-    
-	private void validateCondition(boolean condition, String message)
+    private JPanel createLeftPanel()
 	{
-		if (!condition) throw new ApplicationException(message);
+    	// Labels
+        JLabel activityLabel = new JLabel("Select a Sponsor to see the Invoices");
+        JLabel invoicesTableLabel = new JLabel("Select an Invoice to Register a Payment");
+
+        // Set table properties
+        sponsorsTable.setName("Sponsors");
+        sponsorsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        sponsorsTable.setDefaultEditor(Object.class, null);
+        JScrollPane activitiesTableScroll = new JScrollPane(sponsorsTable);
+
+        invoicesTable.setName("Invoices");
+        invoicesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        invoicesTable.setDefaultEditor(Object.class, null);
+        JScrollPane invoicesTableScroll = new JScrollPane(invoicesTable);
+
+        // Main panel with vertical layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        // Activity Panel
+        JPanel activitiesPanel = new JPanel(new BorderLayout());
+        activitiesPanel.add(activityLabel, BorderLayout.NORTH);
+        activitiesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        activitiesPanel.add(activitiesTableScroll, BorderLayout.CENTER);
+
+        // Invoices Panel
+        JPanel invoicesPanel = new JPanel(new BorderLayout());
+        invoicesPanel.add(invoicesTableLabel, BorderLayout.NORTH);
+        invoicesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        invoicesPanel.add(invoicesTableScroll, BorderLayout.CENTER);
+
+        // Add panels in correct order
+        panel.add(activitiesPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(invoicesPanel);
+	
+		return panel;
+	}
+
+    private JPanel createRightPanel()
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(30, 30, 30, 30);
+		gbc.anchor = GridBagConstraints.WEST;
+
+		// Fields Panel with Border
+		JPanel fieldsPanel = new JPanel(new GridBagLayout());
+		fieldsPanel.setBorder(BorderFactory.createTitledBorder("Payment Details"));
+		GridBagConstraints fieldsGbc = new GridBagConstraints();
+		fieldsGbc.insets = new Insets(30, 30, 30, 30);
+		fieldsGbc.anchor = GridBagConstraints.WEST;
+
+		// Labels
+		JLabel amountLabel = new JLabel("Amount (euro):");
+		JLabel paymentDateLabel = new JLabel("Date Received:");
+
+		// Fields
+		JComponent[][] fields = {
+		    {amountLabel, amountTextField},
+		    {paymentDateLabel, dateTextField}
+		};
+
+		// Add labels above inputs
+		for (int i = 0; i < fields.length; i++) {
+		    // Set label in the first row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2; // position label in even rows
+		    fieldsPanel.add(fields[i][0], fieldsGbc);
+
+		    // Set input field in the second row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
+		    fieldsGbc.gridwidth = 2; // input spans two columns
+		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
+		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
+		    fieldsPanel.add(fields[i][1], fieldsGbc);
+		}
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		panel.add(fieldsPanel, gbc);
+
+        return panel;
+	}
+
+    public JTextField getAmountTextField() {
+    	return amountTextField;
+    }
+
+    public JTextField getDateTextField() {
+    	return dateTextField;
+    }
+
+	public JTable getInvoicesTable() {
+		return invoicesTable;
+	}
+
+	public JTable getSponsorsTable() {
+		return sponsorsTable;
 	}
 }
