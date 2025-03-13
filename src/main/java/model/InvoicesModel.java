@@ -1,6 +1,5 @@
 package model;
 
-import java.rmi.UnexpectedException;
 import java.sql.Date;
 import java.util.List;
 import DTOs.InvoicesDTO;
@@ -71,13 +70,13 @@ public class InvoicesModel {
 
 	// INSERTIONS
     
-    public void insertNewInvoice(String idSponsorshipAgreement, String dateIssued, String dateSent, String dateExpiration, String totalAmount, String taxRate) throws UnexpectedException {
+    public void insertNewInvoice(String idSponsorshipAgreement, String dateIssued, String dateSent, String dateExpiration, String totalAmount, String taxRate) {
 		SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
 		if(getNumberOldInvoicesBySponsorshipAgreementsId(idSponsorshipAgreement) != 0)
-			throw new UnexpectedException("Args are from an old sponsorship agreement");
+			throw new ApplicationException("Args are from an old sponsorship agreement");
 		
 		String sql = "INSERT INTO Invoices"
 				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "

@@ -16,7 +16,7 @@ public class GenerateInvoicesView extends AbstractView {
     private JLabel idLabel;
     private JLabel dateIssuedLabel;
     private JLabel dateExpLabel;
-    private JLabel amountLabel;
+    private JTextField amountTextField;
     private JTextField taxRateTextField;
     
     public GenerateInvoicesView() {
@@ -30,7 +30,7 @@ public class GenerateInvoicesView extends AbstractView {
         this.idLabel = new JLabel("ID Sponsorship Agreement: -");
         this.dateIssuedLabel = new JLabel("Date Issued: -");
         this.dateExpLabel = new JLabel("Date Expired: -");
-        this.amountLabel = new JLabel("Amount: -");
+        this.amountTextField = new JTextField(10);
         this.taxRateTextField = new JTextField(10);
         
         super.createButtonLowLeft("Cancel");
@@ -59,7 +59,8 @@ public class GenerateInvoicesView extends AbstractView {
         invoiceDetailsPanel.add(idLabel, "wrap");
         invoiceDetailsPanel.add(dateIssuedLabel, "wrap");
         invoiceDetailsPanel.add(dateExpLabel, "wrap");
-        invoiceDetailsPanel.add(amountLabel, "wrap");
+        invoiceDetailsPanel.add(new JLabel("Amount: "));
+        invoiceDetailsPanel.add(amountTextField, "wrap");
         invoiceDetailsPanel.add(new JLabel("Tax Rate: "));
         invoiceDetailsPanel.add(taxRateTextField, "wrap");
         getMainPanel().add(invoiceDetailsPanel, "cell 1 1, grow");
@@ -86,8 +87,8 @@ public class GenerateInvoicesView extends AbstractView {
     	return dateExpLabel;
     }
     
-    public JLabel getAmountLabel() {
-        return amountLabel;
+    public JTextField getAmountTextField() {
+        return amountTextField;
     }
     
     public JTextField getTaxRateTextField() {
