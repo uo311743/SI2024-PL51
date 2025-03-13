@@ -81,21 +81,6 @@ public class GenerateInvoicesController {
 		});
     	
     	// Invoice Details Panel
-    	this.view.getAmountTextField().getDocument().addDocumentListener(new DocumentListener() {
-    		@Override
-			public void insertUpdate(DocumentEvent e) {
-    			SwingUtil.exceptionWrapper(() -> updateDetail());
-    		}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
-			}
-
-			@Override
-			public void changedUpdate(DocumentEvent e) {}
-    	});
-    	
     	this.view.getTaxRateTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
 			public void insertUpdate(DocumentEvent e) {
@@ -141,7 +126,6 @@ public class GenerateInvoicesController {
     }
     
     private void setInputsEnabled(boolean enabled) {
-    	view.getAmountTextField().setEnabled(enabled);
     	view.getTaxRateTextField().setEnabled(enabled);
     }
         
@@ -162,22 +146,13 @@ public class GenerateInvoicesController {
 			view.getIdLabel().setText("ID Sponsorship Agreement: " + lastSelectedAgreement); 
 			view.getDateIssuedLabel().setText("Date Issued: " + today);
 			view.getDateExpLabel().setText("Date Expired: " + expDate);
+			view.getAmountLabel().setText("Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(view.getAgreementsTable().getSelectedRow(), 2));
 			
 			this.setInputsEnabled(true);
 		}
 		
 		boolean valid = true;
 		
-		// Validate Amount
-		String amount = this.view.getAmountTextField().getText();
-		if(!SyntacticValidations.isDecimal(amount)) {
-			this.view.getAmountTextField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else { 
-			this.view.getAmountTextField().setForeground(Color.BLACK); 
-		}
-				
 		// Validate TaxRate
 		String taxRate = this.view.getTaxRateTextField().getText();
 		if(!SyntacticValidations.isDecimal(taxRate)) {
@@ -197,7 +172,6 @@ public class GenerateInvoicesController {
 		
 		this.getAgreements();
 		
-		this.view.getAmountTextField().setText("");
     	this.view.getTaxRateTextField().setText("");
     	
     	this.setInputsEnabled(false);
@@ -213,7 +187,7 @@ public class GenerateInvoicesController {
         	idAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 0);
         }
 
-        String amount = this.view.getAmountTextField().getText();
+        String amount = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 2);
         String taxRate = this.view.getTaxRateTextField().getText();
         
         String taxAmount = String.valueOf(Double.valueOf(amount) * Double.valueOf(taxRate));
