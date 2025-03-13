@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.rmi.UnexpectedException;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
@@ -290,11 +289,8 @@ public class RegisterSponsorshipController {
     	
         if(numOldSponshorshipAgreements == 0)
         {
-        	try {
-				this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
-			} catch (UnexpectedException e) {
-				e.printStackTrace();
-			}
+        	this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+			
 	        JOptionPane.showMessageDialog(
 	    			this.view.getFrame(), "Sponshorship agreement añadido correctamente.",
 	    			"Operación realizada correctamente",

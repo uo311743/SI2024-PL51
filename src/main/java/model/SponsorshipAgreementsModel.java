@@ -1,6 +1,5 @@
 package model;
 
-import java.rmi.UnexpectedException;
 import java.util.Date;
 import java.util.List;
 import DTOs.SponsorshipAgreementsDTO;
@@ -79,7 +78,7 @@ public class SponsorshipAgreementsModel {
 
     // INSERTIONS
 
-    public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) throws UnexpectedException {
+    public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
 				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
 		
@@ -96,7 +95,7 @@ public class SponsorshipAgreementsModel {
 				"ERROR. Tried to insert a Sponsorship agreement with a future date.");
 		
 		if(getNumberOldSponsorshipAgreements(idSponsorContact, idActivity) != 0)
-			throw new UnexpectedException("Args provided to insertNewSponsorshipAgreement do not correspond to a new Agreement but an old one.");
+			throw new ApplicationException("Args provided to insertNewSponsorshipAgreement do not correspond to a new Agreement but an old one.");
 		
 		String sql = "INSERT INTO SponsorshipAgreements"
 				+ "(idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES "
