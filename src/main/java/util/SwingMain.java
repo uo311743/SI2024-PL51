@@ -26,6 +26,7 @@ import controller.InvoiceManagementController;
 import model.InvoicesModel;
 import model.MovementsModel;
 import view.InvoiceManagementView;
+import view.RegisterActivityView;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
@@ -167,6 +168,11 @@ public class SwingMain {
 	    // US 29129
 	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
 	    	new ActivityFinancialReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new ActivityFinancialReportView());
+	    });
+	    
+	    // US 29332
+	    addButtonToMain(buttonPanel, "Register Activity", () -> {
+	    	new RegisterActivityView().setVisible();
 	    });
 	    
 	    

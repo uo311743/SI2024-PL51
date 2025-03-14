@@ -1,1 +1,129 @@
-hola
+package view;
+
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import net.miginfocom.swing.MigLayout;
+
+public class RegisterActivityView extends AbstractView {
+    
+    private JCheckBox nameCheckBox;
+    private JComboBox<Object> nameComboBox;
+    private JTextField nameTextField;
+    private JTextField editionTextField;
+    private JTextField dateStartTextField;
+    private JTextField dateEndTextField;
+    private JTextField placeTextField;
+
+    private JTextField levelNameTextField;
+    private JTextField levelAmountTextField;
+    private JButton addButton;
+    private JTable levelTable;
+    
+    public RegisterActivityView() {
+        super("Register Activity");
+    }
+    
+    @Override
+    protected void initialize() {
+        this.nameCheckBox = new JCheckBox();
+        this.nameComboBox = new JComboBox<>();
+        this.nameTextField = new JTextField(10);
+        this.editionTextField = new JTextField(10);
+        this.dateStartTextField = new JTextField(10);
+        this.dateEndTextField = new JTextField(10);
+        this.placeTextField = new JTextField(10);
+        
+        this.levelNameTextField = new JTextField(10);
+        this.levelAmountTextField = new JTextField(10);
+        this.addButton = new JButton("Add");
+        this.levelTable = new JTable(new DefaultTableModel());
+        
+        super.createButtonLowLeft("Cancel");
+        super.createButtonLowRight("Register Activity");
+    }
+    
+    @Override
+    protected void configMainPanel() {
+        getMainPanel().setLayout(new MigLayout("", "[grow 30][grow 70]", "[grow]"));
+
+        // Activity Panel
+        JPanel activityPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
+        activityPanel.setBorder(BorderFactory.createTitledBorder("Activity Details"));
+        activityPanel.add(new JLabel("Use Templates?"));
+        activityPanel.add(nameCheckBox, "wrap");
+        activityPanel.add(new JLabel("Template Name: "));
+        activityPanel.add(nameComboBox, "wrap");
+        activityPanel.add(new JLabel("Input Name: "));
+        activityPanel.add(nameTextField, "wrap");
+        activityPanel.add(new JLabel("Edition: "));
+        activityPanel.add(editionTextField, "wrap");
+        activityPanel.add(new JLabel("Start Date: "));
+        activityPanel.add(dateStartTextField, "wrap");
+        activityPanel.add(new JLabel("End Date: "));
+        activityPanel.add(dateEndTextField, "wrap");
+        activityPanel.add(new JLabel("Place: "));
+        activityPanel.add(placeTextField, "wrap");
+        getMainPanel().add(activityPanel, "cell 0 0, grow");
+        
+        // Level Panel
+        JPanel rightPanel = new JPanel(new MigLayout("wrap", "[grow]", "[grow 40][grow 60]"));
+        JPanel levelPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
+        levelPanel.setBorder(BorderFactory.createTitledBorder("Sponsorship Level"));
+        levelPanel.add(new JLabel("Sponsorship Name: "));
+        levelPanel.add(levelNameTextField);
+        levelPanel.add(new JLabel("Amount: "));
+        levelPanel.add(levelAmountTextField);
+        levelPanel.add(addButton, "span, right");
+        rightPanel.add(levelPanel, "grow");
+        
+        // Level Table
+        JScrollPane levelTablePanel = new JScrollPane(levelTable);
+        rightPanel.add(levelTablePanel, "grow");
+        getMainPanel().add(rightPanel, "cell 1 0, grow");
+    }
+    
+    // Getters and Setters
+    public JCheckBox getNameCheckBox() { 
+    	return nameCheckBox; 
+    }
+    
+    public JComboBox<Object> getNameComboBox() { 
+    	return nameComboBox; 
+    }
+    
+    public JTextField getNameTextField() { 
+    	return nameTextField; 
+    }
+    
+    public JTextField getEditionTextField() { 
+    	return editionTextField; 
+    }
+    
+    public JTextField getDateStartTextField() { 
+    	return dateStartTextField; 
+    }
+    
+    public JTextField getDateEndTextField() { 
+    	return dateEndTextField; 
+    }
+    
+    public JTextField getPlaceTextField() { 
+    	return placeTextField; 
+    }
+    
+    public JTextField getLevelNameTextField() { 
+    	return levelNameTextField; 
+    }
+    
+    public JTextField getLevelAmountTextField() { 
+    	return levelAmountTextField; 
+    }
+    
+    public JTable getLevelTable() { 
+    	return levelTable; 
+    }
+    
+    public JButton getAddButton() { 
+    	return addButton; 
+    }
+}
