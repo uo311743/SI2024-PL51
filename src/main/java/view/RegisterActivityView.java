@@ -7,12 +7,13 @@ import net.miginfocom.swing.MigLayout;
 public class RegisterActivityView extends AbstractView {
     
     private JCheckBox nameCheckBox;
-    private JComboBox<Object> nameComboBox;
+    private JComboBox<Object> templatesComboBox;
     private JTextField nameTextField;
     private JTextField editionTextField;
     private JTextField dateStartTextField;
     private JTextField dateEndTextField;
     private JTextField placeTextField;
+    private JButton addSponsorshipLevelsButton;
 
     private JTextField levelNameTextField;
     private JTextField levelAmountTextField;
@@ -26,12 +27,13 @@ public class RegisterActivityView extends AbstractView {
     @Override
     protected void initialize() {
         this.nameCheckBox = new JCheckBox();
-        this.nameComboBox = new JComboBox<>();
+        this.templatesComboBox = new JComboBox<>();
         this.nameTextField = new JTextField(10);
         this.editionTextField = new JTextField(10);
         this.dateStartTextField = new JTextField(10);
         this.dateEndTextField = new JTextField(10);
         this.placeTextField = new JTextField(10);
+        this.addSponsorshipLevelsButton = new JButton("Add Sponsorship Levels");
         
         this.levelNameTextField = new JTextField(10);
         this.levelAmountTextField = new JTextField(10);
@@ -52,7 +54,7 @@ public class RegisterActivityView extends AbstractView {
         activityPanel.add(new JLabel("Use Templates?"));
         activityPanel.add(nameCheckBox, "wrap");
         activityPanel.add(new JLabel("Template Name: "));
-        activityPanel.add(nameComboBox, "wrap");
+        activityPanel.add(templatesComboBox, "wrap");
         activityPanel.add(new JLabel("Input Name: "));
         activityPanel.add(nameTextField, "wrap");
         activityPanel.add(new JLabel("Edition: "));
@@ -63,6 +65,7 @@ public class RegisterActivityView extends AbstractView {
         activityPanel.add(dateEndTextField, "wrap");
         activityPanel.add(new JLabel("Place: "));
         activityPanel.add(placeTextField, "wrap");
+        activityPanel.add(addSponsorshipLevelsButton, "span, grow");
         getMainPanel().add(activityPanel, "cell 0 0, grow");
         
         // Level Panel
@@ -84,46 +87,50 @@ public class RegisterActivityView extends AbstractView {
     
     // Getters and Setters
     public JCheckBox getNameCheckBox() { 
-    	return nameCheckBox; 
+        return nameCheckBox; 
     }
     
-    public JComboBox<Object> getNameComboBox() { 
-    	return nameComboBox; 
+    public JComboBox<Object> getTemplatesComboBox() { 
+        return templatesComboBox; 
     }
     
     public JTextField getNameTextField() { 
-    	return nameTextField; 
+        return nameTextField; 
     }
     
     public JTextField getEditionTextField() { 
-    	return editionTextField; 
+        return editionTextField; 
     }
     
     public JTextField getDateStartTextField() { 
-    	return dateStartTextField; 
+        return dateStartTextField; 
     }
     
     public JTextField getDateEndTextField() { 
-    	return dateEndTextField; 
+        return dateEndTextField; 
     }
     
     public JTextField getPlaceTextField() { 
-    	return placeTextField; 
+        return placeTextField; 
+    }
+    
+    public JButton getAddSponsorshipLevelsButton() { 
+        return addSponsorshipLevelsButton; 
     }
     
     public JTextField getLevelNameTextField() { 
-    	return levelNameTextField; 
+        return levelNameTextField; 
     }
     
     public JTextField getLevelAmountTextField() { 
-    	return levelAmountTextField; 
+        return levelAmountTextField; 
     }
     
     public JTable getLevelTable() { 
-    	return levelTable; 
+        return levelTable; 
     }
     
     public JButton getAddButton() { 
-    	return addButton; 
+        return addButton; 
     }
 }
