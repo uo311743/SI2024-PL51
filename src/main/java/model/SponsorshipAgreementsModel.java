@@ -10,7 +10,7 @@ import util.Util;
 
 public class SponsorshipAgreementsModel {
 
-	public static final String SQL_NUMBER_OLD_SA = "SELECT COUNT(sa.id) AS total_agreements "
+	public static final String SQL_NUMBER_SA = "SELECT COUNT(sa.id) AS total_agreements "
 				+ "FROM SponsorshipAgreements sa "
 				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
 				+ "WHERE sc.idSponsorOrganization = ( "
@@ -56,7 +56,7 @@ public class SponsorshipAgreementsModel {
 	}
 
     public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_SA, idSponsorContact, idActivity);
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_SA, idSponsorContact, idActivity);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
@@ -74,6 +74,12 @@ public class SponsorshipAgreementsModel {
 	    } catch (Exception e) {
 	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
 	    }
+	}
+    
+    public List<SponsorshipAgreementsDTO> getSignedAgreementsByActivityName(String activityName) {
+		SemanticValidations.validateName(activityName);
+		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ?;";
+		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
 	}
 
     // INSERTIONS
