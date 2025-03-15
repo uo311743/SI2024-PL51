@@ -22,17 +22,18 @@ import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterIncomesExpensesController;
-import controller.InvoiceManagementController;
 import model.InvoicesModel;
 import model.MovementsModel;
-import view.InvoiceManagementView;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
+import view.IncomesExpensesReportView;
+import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.ConsultStatusActivityView;
-import view.IncomesExpensesReportView;
+import view.GenerateInvoicesView;
+import controller.ActivityFinancialReportController;
 import model.ActivitiesModel;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
@@ -145,8 +146,8 @@ public class SwingMain {
 	    });
 	    
 	    // US 29125
-	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
-	    	new InvoiceManagementController(new SponsorOrganizationsModel(), new ActivitiesModel(), new InvoicesModel(), new InvoiceManagementView());
+	    addButtonToMain(buttonPanel, "Generate Invoices", () -> {
+	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
 	    });
 	    
 	 	// US 29126

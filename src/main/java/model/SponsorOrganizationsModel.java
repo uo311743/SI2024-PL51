@@ -16,6 +16,11 @@ public class SponsorOrganizationsModel {
 	public static final String SQL_SO_ID_SC = "SELECT SO.* FROM SponsorOrganizations SO "
 			+ "JOIN SponsorContacts SC ON SO.id = SC.idSponsorOrganization "
 			+ "WHERE SC.id = ?;";
+	
+	public static final String SQL_SO_ID_SA = "SELECT SO.* FROM SponsorOrganizations SO "
+			+ "JOIN SponsorContacts SC ON SC.idSponsorOrganization == SO.id "
+			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact == SC.id "
+			+ "WHERE SA.id ==?;";
 
     private Database db = new Database();
 
@@ -31,12 +36,13 @@ public class SponsorOrganizationsModel {
 		return db.executeQueryArray(sql);
 	}
     
-	public SponsorOrganizationsDTO getSOByInvoiceId(String invoiceId) {
+	public SponsorOrganizationsDTO getSponsorOrganizationByInvoiceId(String invoiceId) {
 		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
 		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, invoiceId);
 		return data.get(0);
 	}
 	
+	// Review
     public SponsorOrganizationsDTO getSponsorOrganizationByIdSponsorContact(String idSponsorContact) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts", "ERROR. Provided idSponsorContact for getSponsorOrganizationByID does not exist.");
 	    return db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_ID_SC, idSponsorContact).get(0);
@@ -46,6 +52,11 @@ public class SponsorOrganizationsModel {
 		SemanticValidations.validateName(nameSponsor);
 		String sql = "SELECT id FROM SponsorOrganizations WHERE name == ?;";
 		List<SponsorOrganizationsDTO> sponsors = db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nameSponsor);
+		return sponsors.get(0);
+	}
+
+	public SponsorOrganizationsDTO getSponsorOrganizationByAgreementId(String idSA) {
+		List<SponsorOrganizationsDTO> sponsors = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_ID_SA, idSA);
 		return sponsors.get(0);
 	}
 

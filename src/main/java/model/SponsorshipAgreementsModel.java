@@ -1,6 +1,5 @@
 package model;
 
-import java.rmi.UnexpectedException;
 import java.util.Date;
 import java.util.List;
 import DTOs.SponsorshipAgreementsDTO;
@@ -11,7 +10,7 @@ import util.Util;
 
 public class SponsorshipAgreementsModel {
 
-	public static final String SQL_NUMBER_OLD_SA = "SELECT COUNT(sa.id) AS total_agreements "
+	public static final String SQL_NUMBER_SA = "SELECT COUNT(sa.id) AS total_agreements "
 				+ "FROM SponsorshipAgreements sa "
 				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
 				+ "WHERE sc.idSponsorOrganization = ( "
@@ -57,7 +56,7 @@ public class SponsorshipAgreementsModel {
 	}
 
     public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_SA, idSponsorContact, idActivity);
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_SA, idSponsorContact, idActivity);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
@@ -76,10 +75,16 @@ public class SponsorshipAgreementsModel {
 	    	throw new ApplicationException("Unexpected error while retrieving SponsorshipAgreement ID: " + e.getMessage());
 	    }
 	}
+    
+    public List<SponsorshipAgreementsDTO> getSignedAgreementsByActivityName(String activityName) {
+		SemanticValidations.validateName(activityName);
+		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ?;";
+		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
+	}
 
     // INSERTIONS
 
-    public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) throws UnexpectedException {
+    public void insertNewSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
 				"ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
 		
@@ -96,7 +101,7 @@ public class SponsorshipAgreementsModel {
 				"ERROR. Tried to insert a Sponsorship agreement with a future date.");
 		
 		if(getNumberOldSponsorshipAgreements(idSponsorContact, idActivity) != 0)
-			throw new UnexpectedException("Args provided to insertNewSponsorshipAgreement do not correspond to a new Agreement but an old one.");
+			throw new ApplicationException("Args provided to insertNewSponsorshipAgreement do not correspond to a new Agreement but an old one.");
 		
 		String sql = "INSERT INTO SponsorshipAgreements"
 				+ "(idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES "

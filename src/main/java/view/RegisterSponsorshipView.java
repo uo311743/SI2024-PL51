@@ -25,6 +25,7 @@ public class RegisterSponsorshipView extends AbstractView {
 	private JComboBox<Object> gbMemberComboBox;
 	private JTextField amountTextField;
 	private JTextField agreementDateTextField;
+	private JTextField contactEmailTextField;
 	
 	public RegisterSponsorshipView() { super("Register Sponshorship"); }
 	
@@ -37,10 +38,11 @@ public class RegisterSponsorshipView extends AbstractView {
         this.gbMemberComboBox = new JComboBox<>();
         this.amountTextField = new JTextField(10);
         this.agreementDateTextField = new JTextField(10);
+		this.contactEmailTextField = new JTextField(10);
 		
 		super.createButtonLowLeft("Cancel");
 		super.createButtonLowMiddle("Reset");
-		super.createButtonLowRight("Submit");
+		super.createButtonLowRight("Register");
 	}
 
 	@Override
@@ -97,11 +99,13 @@ public class RegisterSponsorshipView extends AbstractView {
 		JLabel gbMemberLabel = new JLabel("Select a GB member:");
 		JLabel amountLabel = new JLabel("Amount (euro):");
 		JLabel agreementDateLabel = new JLabel("Agreement Date (yyyy-MM-dd):");
+		JLabel contactEmailLabel = new JLabel("Contact Email:");
 
 		// Fields
 		JComponent[][] fields = {
 		    {sponsorLabel, sponsorComboBox},
 		    {contactLabel, contactComboBox},
+		    {contactEmailLabel, contactEmailTextField},
 		    {gbMemberLabel, gbMemberComboBox},
 		    {amountLabel, amountTextField},
 		    {agreementDateLabel, agreementDateTextField}
@@ -127,8 +131,6 @@ public class RegisterSponsorshipView extends AbstractView {
 		gbc.gridy = 0;
 		gbc.gridwidth = 2;
 		panel.add(fieldsPanel, gbc);
-
-
 
         return panel;
 	}
@@ -157,6 +159,10 @@ public class RegisterSponsorshipView extends AbstractView {
 
 	public JTextField getAgreementDateTextField() {
 	    return agreementDateTextField;
+	}
+
+	public JTextField getContactEmailTextField() {
+	    return contactEmailTextField;
 	}
 
 }
