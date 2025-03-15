@@ -28,7 +28,7 @@ public class ActivitiesModel {
 	}
 
 	// getListActivities()
-    public List<Object[]> getActivityListArray() {
+    public List<Object[]> getActiveActivityListArray() {
 		String sql = "SELECT name FROM Activities WHERE status IN ('planned', 'done')";
 		return db.executeQueryArray(sql);
 	}

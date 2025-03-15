@@ -14,12 +14,12 @@ public class InvoicesModel {
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
 	
-	public static final String SQL_NUMBER_OLD_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
+	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
 			+ "JOIN Activities A ON SA.idActivity == A.id "
 			+ "WHERE A.name == ?;";
 	
-	public static final String SQL_NUMBER_OLD_INVOICES_SA = "SELECT COUNT(I.id) FROM Invoices I "
+	public static final String SQL_NUMBER_INVOICES_SA = "SELECT COUNT(I.id) FROM Invoices I "
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
 			+ "WHERE SA.id == ?;";
 	
@@ -53,7 +53,7 @@ public class InvoicesModel {
 	}
     
     public int getNumberOldInvoicesByActivityName(String nameActivity) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_INVOICES_ACTIVITY, nameActivity);
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, nameActivity);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
@@ -61,7 +61,7 @@ public class InvoicesModel {
 	}
     
     public int getNumberOldInvoicesBySponsorshipAgreementsId(String idSA) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_OLD_INVOICES_ACTIVITY, idSA);
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, idSA);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}

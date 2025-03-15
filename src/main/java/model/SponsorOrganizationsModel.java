@@ -36,12 +36,13 @@ public class SponsorOrganizationsModel {
 		return db.executeQueryArray(sql);
 	}
     
-	public SponsorOrganizationsDTO getSOByInvoiceId(String invoiceId) {
+	public SponsorOrganizationsDTO getSponsorOrganizationByInvoiceId(String invoiceId) {
 		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
 		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, invoiceId);
 		return data.get(0);
 	}
 	
+	// Review
     public SponsorOrganizationsDTO getSponsorOrganizationByIdSponsorContact(String idSponsorContact) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts", "ERROR. Provided idSponsorContact for getSponsorOrganizationByID does not exist.");
 	    return db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_ID_SC, idSponsorContact).get(0);
@@ -54,7 +55,7 @@ public class SponsorOrganizationsModel {
 		return sponsors.get(0);
 	}
 
-	public SponsorOrganizationsDTO getSOBySAId(String idSA) {
+	public SponsorOrganizationsDTO getSponsorOrganizationByAgreementId(String idSA) {
 		List<SponsorOrganizationsDTO> sponsors = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_ID_SA, idSA);
 		return sponsors.get(0);
 	}

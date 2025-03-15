@@ -104,18 +104,18 @@ public class GenerateInvoicesController {
     }
     
     public void loadActivities() {
-        List<Object[]> activityList = activitiesModel.getActivityListArray();
+        List<Object[]> activityList = activitiesModel.getActiveActivityListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(activityList);
         view.getActivityComboBox().setModel(lmodel);
     }
     
     private void getAgreements() {
-    	List<SponsorshipAgreementsDTO> agreements = saModel.getAgreementsByActivityName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
+    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "Sponsor", "amount", "date", "status"}, 0);
         for (SponsorshipAgreementsDTO agreement : agreements) {
         	tableModel.addRow(new Object[] {
         			agreement.getId(),
-        			soModel.getSOBySAId(agreement.getId()).getName(),
+        			soModel.getSponsorOrganizationByAgreementId(agreement.getId()).getName(),
         			agreement.getAmount(),
         			agreement.getDate(),
         			agreement.getStatus()
