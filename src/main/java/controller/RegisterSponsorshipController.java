@@ -1,6 +1,8 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -56,23 +58,23 @@ public class RegisterSponsorshipController {
 
     public void initController()
     {
-    	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowLeft().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
 			}
 		});
     	
-    	this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowMiddle().addActionListener(new ActionListener() {
     		@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
     			SwingUtil.exceptionWrapper(() -> restartView());
     		}
 		});
     	
-    	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowRight().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
 			}
 		});

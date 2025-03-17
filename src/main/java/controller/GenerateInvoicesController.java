@@ -49,16 +49,16 @@ public class GenerateInvoicesController {
     
     public void initController() {
     	// Low buttons
-    	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowLeft().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
 			}
 		});
     	
-    	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowRight().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent e) {
 				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
 			}
 		});

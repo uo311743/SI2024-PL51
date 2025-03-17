@@ -1,5 +1,7 @@
 package controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -49,9 +51,9 @@ public class ConsultStatusActivityController {
 
     public void initController()
     {
-    	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowLeft().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
 			}
 		});
