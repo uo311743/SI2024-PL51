@@ -58,6 +58,15 @@ public class ActivitiesModel {
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
-
+    
+    public int getNumberActivities() {
+    	String sql = "SELECT COUNT(id) FROM Activities;";
+		List<Object[]> result = db.executeQueryArray(sql);
+		if (result == null || result.isEmpty()) {
+			return 0;
+		}
+		return (int) result.get(0)[0];
+	}
+   
 	// INSERTIONS
 }

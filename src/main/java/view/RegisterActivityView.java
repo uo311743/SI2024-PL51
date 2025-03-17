@@ -10,6 +10,7 @@ public class RegisterActivityView extends AbstractView {
     private JComboBox<Object> templatesComboBox;
     private JTextField nameTextField;
     private JTextField editionTextField;
+    private JTextField statusTextField;
     private JTextField dateStartTextField;
     private JTextField dateEndTextField;
     private JTextField placeTextField;
@@ -17,7 +18,6 @@ public class RegisterActivityView extends AbstractView {
 
     private JTextField levelNameTextField;
     private JTextField levelAmountTextField;
-    private JButton addButton;
     private JTable levelTable;
     
     public RegisterActivityView() {
@@ -30,6 +30,7 @@ public class RegisterActivityView extends AbstractView {
         this.templatesComboBox = new JComboBox<>();
         this.nameTextField = new JTextField(10);
         this.editionTextField = new JTextField(10);
+        this.statusTextField = new JTextField(10);
         this.dateStartTextField = new JTextField(10);
         this.dateEndTextField = new JTextField(10);
         this.placeTextField = new JTextField(10);
@@ -37,7 +38,6 @@ public class RegisterActivityView extends AbstractView {
         
         this.levelNameTextField = new JTextField(10);
         this.levelAmountTextField = new JTextField(10);
-        this.addButton = new JButton("Add");
         this.levelTable = new JTable(new DefaultTableModel());
         
         super.createButtonLowLeft("Cancel");
@@ -59,6 +59,8 @@ public class RegisterActivityView extends AbstractView {
         activityPanel.add(nameTextField, "wrap");
         activityPanel.add(new JLabel("Edition: "));
         activityPanel.add(editionTextField, "wrap");
+        activityPanel.add(new JLabel("Status: "));
+        activityPanel.add(statusTextField, "wrap");
         activityPanel.add(new JLabel("Start Date: "));
         activityPanel.add(dateStartTextField, "wrap");
         activityPanel.add(new JLabel("End Date: "));
@@ -76,7 +78,6 @@ public class RegisterActivityView extends AbstractView {
         levelPanel.add(levelNameTextField);
         levelPanel.add(new JLabel("Amount: "));
         levelPanel.add(levelAmountTextField);
-        levelPanel.add(addButton, "span, right");
         rightPanel.add(levelPanel, "grow");
         
         // Level Table
@@ -100,6 +101,10 @@ public class RegisterActivityView extends AbstractView {
     
     public JTextField getEditionTextField() { 
         return editionTextField; 
+    }
+    
+    public JTextField getStatusTextField() { 
+        return statusTextField; 
     }
     
     public JTextField getDateStartTextField() { 
@@ -128,9 +133,5 @@ public class RegisterActivityView extends AbstractView {
     
     public JTable getLevelTable() { 
         return levelTable; 
-    }
-    
-    public JButton getAddButton() { 
-        return addButton; 
     }
 }

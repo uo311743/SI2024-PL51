@@ -5,23 +5,25 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.ComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import model.ActivitiesModel;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterActivityView;
 
 public class RegisterActivityController {
 	
-	protected TemplatesModel templatesModel;
+	protected ActivityTemplatesModel atModel;
 	protected LevelsModel levelsModel;
+	protected ActivitiesModel activitiesModel;
 		
 	protected RegisterActivityView view;
 	
-    private String lastSelectedAgreement;
-	
-	public RegisterActivityController(TemplatesModel tm, LevelsModel lm, RegisterActivityView v) {
-		this.templatesModel = tm;
+    public RegisterActivityController(ActivityTemplatesModel atm, LevelsModel lm, ActivitiesModel am, RegisterActivityView v) {
+		this.atModel = atm;
 		this.levelsModel = lm;
+		this.activitiesModel = am;
 		
 		this.view = v;
         this.initView();
@@ -43,6 +45,16 @@ public class RegisterActivityController {
 				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
 			}
 		});
+    	
+    	// Add Sponsorship Level Button
+    	this.view.getAddSponsorshipLevelsButton().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// Arreglar
+				SwingUtil.exceptionWrapper(() -> insertDefaultLevel());
+				SwingUtil.exceptionWrapper(() -> getLevels());
+			}
+		});
     }
     
     public void initView() {
@@ -51,7 +63,7 @@ public class RegisterActivityController {
     }
     
     public void loadTemplates() {
-        List<Object[]> templateList = templatesModel.getTemplatesListArray();
+        List<Object[]> templateList = atModel.getTemplatesListArray();
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(templateList);
         view.getTemplatesComboBox().setModel(lmodel);
     }
@@ -59,11 +71,17 @@ public class RegisterActivityController {
     private void setInputsEnabled(boolean enabled) {
     	view.getLevelNameTextField().setEnabled(enabled);
     	view.getLevelAmountTextField().setEnabled(enabled);
-    	view.getAddButton().setEnabled(enabled);
+    }
+    
+    private void insertDefaultLevel(String activityId) {
+    	this.view.getLevelNameTextField().setText("Default");
+    	this.view.getLevelAmountTextField().setText("100.0");
+    	
+		this.levelsModel.insertNewLevel(view.getLevelNameTextField().getText(), view.getLevelAmountTextField().getText(), activityId);
     }
         
 	private void getLevels() {
-    	List<LevelsDTO> levels = levelsModel.getLevelsByActivityId();
+		List<LevelsDTO> levels = levelsModel.getLevelsByActivityId();
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "name", "fee"}, 0);
         for (LevelsDTO level : levels) {
         	tableModel.addRow(new Object[] {
@@ -83,37 +101,41 @@ public class RegisterActivityController {
     	
     	this.setInputsEnabled(false);
     }
-    /*
+    
     private void showSubmitDialog() {
-        int row = this.view.getAgreementsTable().getSelectedRow(); 
+    	String nameActivity;
+    	if (view.getNameCheckBox().isSelected()) {
+            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
+    	}
+    	else {
+            nameActivity = view.getNameTextField().getText();
+    	}
+    	String editionActivity = view.getEditionTextField().getText();
+        String statusActivity = view.getStatusTextField().getText();
+        String dateStartActivity = view.getDateStartTextField().getText();
+        String dateEndActivity = view.getDateEndTextField().getText();
+        String placeActivity = view.getPlaceTextField().getText();
         
-        String idAgreement = "";
-        String nameActivity = String.valueOf(view.getActivityComboBox().getSelectedItem());
-        
-        if (row >= 0) {
-        	idAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 0);
-        }
-
-        String amount = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 2);
-        String taxRate = this.view.getTaxRateTextField().getText();
-        
-        String taxAmount = String.valueOf(Double.valueOf(amount) * Double.valueOf(taxRate));
-        String totalAmount = String.valueOf(Double.valueOf(amount) + Double.valueOf(taxAmount));
+        String nameLevel = view.getLevelNameTextField().getText();
+        String amountLevel = view.getLevelAmountTextField().getText();
 
         String message = "<html><body>"
-                + "<p>Add an invoice for the sponsorship agreement: <b>" + idAgreement + "</b>.</p>"
+                + "<p>Add an activity: </p>"
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
-                + "<tr><td style='padding: 2px 5px;'><b>No tax amount:</b></td><td style='padding: 2px 5px;'>" + amount + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Tax amount:</b></td><td style='padding: 2px 5px;'>" + taxAmount + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Total:</b></td><td style='padding: 2px 5px;'>" + totalAmount + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + editionActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Status:</b></td><td style='padding: 2px 5px;'>" + statusActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Date Start:</b></td><td style='padding: 2px 5px;'>" + dateStartActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Date End:</b></td><td style='padding: 2px 5px;'>" + dateEndActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Place:</b></td><td style='padding: 2px 5px;'>" + placeActivity + "</td></tr>"
                 + "</table>"
-                + "<p><i>Proceed with these invoice?</i></p>"
+                + "<p><i>Proceed with these activity?</i></p>"
                 + "</body></html>";
 
         int response = JOptionPane.showConfirmDialog(
             this.view.getFrame(),  message,
-            "Confirm Sponsorship Agreement Details",
+            "Confirm Activity Details",
             JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
         );
         
@@ -121,44 +143,42 @@ public class RegisterActivityController {
         	return;
         }
         
-        int numOldInvoices = this.invoicesModel.getNumberOldInvoicesByActivityName(nameActivity);
+        int numActivities = this.activitiesModel.getNumberActivities();
     	
-        if(numOldInvoices == 0) {
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
+        if(numActivities == 0) {
+        	SyntacticValidations.isDate(dateStartActivity);
+        	SyntacticValidations.isDate(dateEndActivity);
         
-			this.invoicesModel.insertNewInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), totalAmount, taxRate);
+			this.activitiesModel.insertNewActivity(nameActivity, editionActivity, statusActivity, dateStartActivity, dateEndActivity, placeActivity);
 	        
 			JOptionPane.showMessageDialog(
-	    			this.view.getFrame(), "Invoice added correctly",
+	    			this.view.getFrame(), "Activity added correctly",
 	    			"This operation has been succesful",
 	    			JOptionPane.INFORMATION_MESSAGE
 	    	);
 	        this.restoreDetail();
         }
     	else {
-    		message = "It will modify " + numOldInvoices + " invoices for that activity.";
+    		message = "It will modify " + numActivities + " activities.";
     		response = JOptionPane.showConfirmDialog(
     	            this.view.getFrame(), message,
-    	            "Confirm modification of old invoices",
+    	            "Confirm modification of old activities",
     	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
 	        );
 	        
 	        if (response == JOptionPane.YES_OPTION) {
-	        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        		SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        		SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
+	        	SyntacticValidations.isDate(dateStartActivity);
+	        	SyntacticValidations.isDate(dateEndActivity);
         		
-	        	this.invoicesModel.insertUpdateInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), totalAmount, taxRate);
+	        	this.activitiesModel.insertUpdateActivity(nameActivity, editionActivity, statusActivity, dateStartActivity, dateEndActivity, placeActivity);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
-		    			"Invoice added correctly",
+		    			"Activity added correctly",
 		    			"This operation has been succesful",
 		    			JOptionPane.INFORMATION_MESSAGE
 		    	);
 		        this.restoreDetail();
 	        }
     	}
-    }*/
+    }
 }
