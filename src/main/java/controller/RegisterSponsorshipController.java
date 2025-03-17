@@ -130,7 +130,14 @@ public class RegisterSponsorshipController {
     
     public void initView()
     {
-    	this.restartView();
+    	this.getActivities();
+    	this.getSponsors();
+		this.getGBMembers();
+		
+		this.view.getButtonLowRight().setEnabled(false);
+		this.setInputsEnabled(false);
+		
+    	this.restoreDetail();
     	view.setVisible();
     }
         
@@ -146,8 +153,7 @@ public class RegisterSponsorshipController {
 		// If an activity is selected in the table do:
 		
 		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivityTable());
-		if("".equals(this.lastSelectedActivity)) {  restartView(); }
-		else
+		if(!"".equals(this.lastSelectedActivity))
 		{
 			String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
 			if (this.lastSelectedSponsor != selectedSponsor)
