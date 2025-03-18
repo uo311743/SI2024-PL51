@@ -214,7 +214,7 @@ public class GenerateInvoicesController {
         	return;
         }
         
-        int numOldInvoices = this.invoicesModel.getNumberOldInvoicesByActivityName(nameActivity);
+        int numOldInvoices = this.invoicesModel.getNumberInvoicesByActivityName(nameActivity);
     	
         if(numOldInvoices == 0) {
         	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));

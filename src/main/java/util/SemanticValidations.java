@@ -149,4 +149,34 @@ public class SemanticValidations
         for (String validValue : validValues) if (validValue.equals(value)) return;
         throw new ApplicationException(message);
     }
+    
+    public static void validateDateBeforeTo(String date, String dateFuture, boolean includeToday, String message) {
+    	Date tmp_future = Util.isoStringToDate(dateFuture);
+        Date tmp_date = null;
+        try {tmp_date = DATE_FORMAT.parse(date);}
+        catch (ParseException e) {
+        	throw new UnexpectedException("Invalid date");
+        }
+
+    	if(includeToday)
+    		if (tmp_date.after(tmp_future))
+        		throw new ApplicationException(message);
+    	else if (tmp_date.after(tmp_future) || tmp_date.equals(tmp_future))
+        		throw new ApplicationException(message);
+    }
+    
+    public static void validateDateAfterTo(String date, String datePast, boolean includeToday, String message) {
+    	Date tmp_past = Util.isoStringToDate(datePast);
+        Date tmp_date = null;
+        try {tmp_date = DATE_FORMAT.parse(date);}
+        catch (ParseException e) {
+        	throw new UnexpectedException("Invalid date for validateDateInPast");
+        }
+
+    	if(includeToday)
+    		if (tmp_date.before(tmp_past))
+        		throw new ApplicationException(message);
+    	else if (tmp_date.before(tmp_past) || tmp_date.equals(tmp_past))
+        		throw new ApplicationException(message);
+    }
 }

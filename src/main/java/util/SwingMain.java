@@ -23,23 +23,21 @@ import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterIncomesExpensesController;
 import model.InvoicesModel;
+import model.LevelsModel;
 import model.MovementsModel;
-<<<<<<< HEAD
-import view.InvoiceManagementView;
-import view.RegisterActivityView;
-=======
->>>>>>> refs/heads/2_DatabaseChanges
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
+import controller.RegisterActivityController;
 import view.IncomesExpensesReportView;
+import view.RegisterActivityView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
-import controller.ActivityFinancialReportController;
 import model.ActivitiesModel;
+import model.ActivityTemplatesModel;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -177,7 +175,7 @@ public class SwingMain {
 	    
 	    // US 29332
 	    addButtonToMain(buttonPanel, "Register Activity", () -> {
-	    	new RegisterActivityView().setVisible();
+	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
 	    });
 	    
 	    

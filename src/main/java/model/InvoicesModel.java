@@ -52,7 +52,7 @@ public class InvoicesModel {
 		}
 	}
     
-    public int getNumberOldInvoicesByActivityName(String nameActivity) {
+    public int getNumberInvoicesByActivityName(String nameActivity) {
 		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, nameActivity);
 		if (result == null || result.isEmpty()) {
 			return 0;
@@ -60,7 +60,7 @@ public class InvoicesModel {
 		return (int) result.get(0)[0];
 	}
     
-    public int getNumberOldInvoicesBySponsorshipAgreementsId(String idSA) {
+    public int getNumberInvoicesBySponsorshipAgreementsId(String idSA) {
 		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, idSA);
 		if (result == null || result.isEmpty()) {
 			return 0;
@@ -75,8 +75,8 @@ public class InvoicesModel {
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
-		if(getNumberOldInvoicesBySponsorshipAgreementsId(idSponsorshipAgreement) != 0)
-			throw new ApplicationException("Args are from an old sponsorship agreement");
+		if(getNumberInvoicesBySponsorshipAgreementsId(idSponsorshipAgreement) != 0)
+			throw new ApplicationException("ERROR");
 		
 		String sql = "INSERT INTO Invoices"
 				+ "(idSponsorshipAgreement, dateIssued, dateSent, dateExpiration, totalAmount, taxRate, status) VALUES "

@@ -10,14 +10,14 @@ public class RegisterActivityView extends AbstractView {
     private JComboBox<Object> templatesComboBox;
     private JTextField nameTextField;
     private JTextField editionTextField;
-    private JTextField statusTextField;
     private JTextField dateStartTextField;
     private JTextField dateEndTextField;
     private JTextField placeTextField;
+    private JButton addTemplatesButton;
     private JButton addSponsorshipLevelsButton;
 
     private JTextField levelNameTextField;
-    private JTextField levelAmountTextField;
+    private JTextField levelFeeTextField;
     private JTable levelTable;
     
     public RegisterActivityView() {
@@ -30,14 +30,14 @@ public class RegisterActivityView extends AbstractView {
         this.templatesComboBox = new JComboBox<>();
         this.nameTextField = new JTextField(10);
         this.editionTextField = new JTextField(10);
-        this.statusTextField = new JTextField(10);
         this.dateStartTextField = new JTextField(10);
         this.dateEndTextField = new JTextField(10);
         this.placeTextField = new JTextField(10);
+        this.addTemplatesButton = new JButton("Add Activity Templates");
         this.addSponsorshipLevelsButton = new JButton("Add Sponsorship Levels");
         
         this.levelNameTextField = new JTextField(10);
-        this.levelAmountTextField = new JTextField(10);
+        this.levelFeeTextField = new JTextField(10);
         this.levelTable = new JTable(new DefaultTableModel());
         
         super.createButtonLowLeft("Cancel");
@@ -59,14 +59,13 @@ public class RegisterActivityView extends AbstractView {
         activityPanel.add(nameTextField, "wrap");
         activityPanel.add(new JLabel("Edition: "));
         activityPanel.add(editionTextField, "wrap");
-        activityPanel.add(new JLabel("Status: "));
-        activityPanel.add(statusTextField, "wrap");
         activityPanel.add(new JLabel("Start Date: "));
         activityPanel.add(dateStartTextField, "wrap");
         activityPanel.add(new JLabel("End Date: "));
         activityPanel.add(dateEndTextField, "wrap");
         activityPanel.add(new JLabel("Place: "));
         activityPanel.add(placeTextField, "wrap");
+        activityPanel.add(addTemplatesButton, "span, grow");
         activityPanel.add(addSponsorshipLevelsButton, "span, grow");
         getMainPanel().add(activityPanel, "cell 0 0, grow");
         
@@ -77,7 +76,7 @@ public class RegisterActivityView extends AbstractView {
         levelPanel.add(new JLabel("Sponsorship Name: "));
         levelPanel.add(levelNameTextField);
         levelPanel.add(new JLabel("Amount: "));
-        levelPanel.add(levelAmountTextField);
+        levelPanel.add(levelFeeTextField);
         rightPanel.add(levelPanel, "grow");
         
         // Level Table
@@ -103,10 +102,6 @@ public class RegisterActivityView extends AbstractView {
         return editionTextField; 
     }
     
-    public JTextField getStatusTextField() { 
-        return statusTextField; 
-    }
-    
     public JTextField getDateStartTextField() { 
         return dateStartTextField; 
     }
@@ -119,6 +114,10 @@ public class RegisterActivityView extends AbstractView {
         return placeTextField; 
     }
     
+    public JButton getAddTemplatesButton() { 
+        return addTemplatesButton; 
+    }
+    
     public JButton getAddSponsorshipLevelsButton() { 
         return addSponsorshipLevelsButton; 
     }
@@ -127,8 +126,8 @@ public class RegisterActivityView extends AbstractView {
         return levelNameTextField; 
     }
     
-    public JTextField getLevelAmountTextField() { 
-        return levelAmountTextField; 
+    public JTextField getLevelFeeTextField() { 
+        return levelFeeTextField; 
     }
     
     public JTable getLevelTable() { 
