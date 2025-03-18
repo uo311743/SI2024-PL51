@@ -76,8 +76,8 @@ public class ActivitiesModel {
 		return (int) result.get(0)[0];
 	}
     
-    public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStatus, String dateEnd, String place) {
-		return db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED).get(0);
+    public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
+		return db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place).get(0);
 	}
    
 	// INSERTIONS

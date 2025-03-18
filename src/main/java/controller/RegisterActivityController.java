@@ -1,11 +1,16 @@
 package controller;
 
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.LevelsDTO;
 import model.ActivitiesModel;
@@ -66,13 +71,101 @@ public class RegisterActivityController {
             @Override
             public void mouseReleased(MouseEvent e) {
                 if (view.getNameCheckBox().isSelected()) {
-    				SwingUtil.exceptionWrapper(() -> restoreDetailEnable());
+    				SwingUtil.exceptionWrapper(() -> configTemplates());
                 }
                 else {
-    				SwingUtil.exceptionWrapper(() -> restoreDetailDisable());
+    				SwingUtil.exceptionWrapper(() -> configTextField());
                 }
             }
         });
+    	
+    	// Name ComboBox
+    	this.view.getTemplatesComboBox().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+		});
+    	
+    	// Name TextField
+    	this.view.getNameTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> unlockTemplates());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	// Edition TextField
+    	this.view.getEditionTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> unlockTemplates());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	// DateStart TextField
+    	this.view.getDateStartTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> unlockTemplates());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	// DateEnd TextField
+    	this.view.getDateEndTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> unlockTemplates());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	// Place TextField
+    	this.view.getPlaceTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> unlockTemplates());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> unlockTemplates());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
     	
     	// Add Templates Button
     	this.view.getAddTemplatesButton().addMouseListener(new MouseAdapter() {
@@ -93,9 +186,77 @@ public class RegisterActivityController {
     }
     
     public void initView() {
-    	this.restoreDetailDisable();
+    	this.restoreDetail();
     	this.loadTemplates();
     	view.setVisible();
+    }
+    
+    public void unlockTemplates() {
+		boolean valid = true;
+		
+		// Validate Name (and Edition)
+		if (view.getNameCheckBox().isSelected()) {
+			String name = String.valueOf(this.view.getTemplatesComboBox().getSelectedItem());
+    		if(!SyntacticValidations.isNotEmpty(name)) {
+    			this.view.getEditionTextField().setForeground(Color.RED);
+    			valid = false;
+    		} 
+    		else { 
+    			this.view.getEditionTextField().setForeground(Color.BLACK); 
+    		}
+    		
+    		String edition = this.view.getEditionTextField().getText();
+    		if(!SyntacticValidations.isNotEmpty(edition)) {
+    			this.view.getEditionTextField().setForeground(Color.RED);
+    			valid = false;
+    		} 
+    		else { 
+    			this.view.getEditionTextField().setForeground(Color.BLACK); 
+    		}
+    	}
+    	else {
+    		String name = this.view.getNameTextField().getText();
+    		if(!SyntacticValidations.isNotEmpty(name)) {
+    			this.view.getEditionTextField().setForeground(Color.RED);
+    			valid = false;
+    		} 
+    		else { 
+    			this.view.getEditionTextField().setForeground(Color.BLACK); 
+    		}
+    	}
+		
+		// Validate DateStart
+		String dateStart = this.view.getDateStartTextField().getText();
+		if(!SyntacticValidations.isDate(dateStart)) {
+			this.view.getDateStartTextField().setForeground(Color.RED);
+			valid = false;
+		} 
+		else { 
+			this.view.getDateStartTextField().setForeground(Color.BLACK); 
+		}
+		
+		// Validate DateEnd
+		String dateEnd = this.view.getDateEndTextField().getText();
+		if(!SyntacticValidations.isDate(dateEnd)) {
+			this.view.getDateEndTextField().setForeground(Color.RED);
+			valid = false;
+		} 
+		else { 
+			this.view.getDateEndTextField().setForeground(Color.BLACK); 
+		}
+		
+		// Validate Place
+		String place = this.view.getPlaceTextField().getText();
+		if(!SyntacticValidations.isNotEmpty(place)) {
+			this.view.getPlaceTextField().setForeground(Color.RED);
+			valid = false;
+		} 
+		else { 
+			this.view.getPlaceTextField().setForeground(Color.BLACK); 
+		}
+		
+		// Generate Invoice button
+    	this.setInputsEnabled(valid);
     }
     
     public void loadTemplates() {
@@ -143,13 +304,32 @@ public class RegisterActivityController {
 		SwingUtil.autoAdjustColumns(view.getLevelTable());
     }
 	
-	public void restoreDetailEnable() {
+	public void restoreDetail() {
+		this.view.getTemplatesComboBox().setEnabled(false);
+		this.view.getNameTextField().setEnabled(true);
+		this.view.getEditionTextField().setEnabled(false);
+		
+		this.view.getAddTemplatesButton().setEnabled(false);
+		this.view.getAddSponsorshipLevelsButton().setEnabled(false);
+		
+		this.view.getLevelNameTextField().setEnabled(false);
+		this.view.getLevelFeeTextField().setEnabled(false);
+		
+		this.view.getButtonLowRight().setEnabled(false);
+	}
+	
+	public void setInputsEnabled(boolean valid) {
+    	this.view.getAddTemplatesButton().setEnabled(valid);
+		this.view.getAddSponsorshipLevelsButton().setEnabled(valid);
+    }
+	
+	public void configTemplates() {
 		this.view.getTemplatesComboBox().setEnabled(true);
 		this.view.getNameTextField().setEnabled(false);
 		this.view.getEditionTextField().setEnabled(true);
     }
 	
-	public void restoreDetailDisable() {
+	public void configTextField() {
 		this.view.getTemplatesComboBox().setEnabled(false);
 		this.view.getNameTextField().setEnabled(true);
 		this.view.getEditionTextField().setEnabled(false);
@@ -201,6 +381,6 @@ public class RegisterActivityController {
 			"This operation has been succesful",
 			JOptionPane.INFORMATION_MESSAGE
 		);
-		this.restoreDetailDisable();
+		this.restoreDetail();
     }
 }
