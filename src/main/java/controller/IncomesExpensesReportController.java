@@ -15,17 +15,17 @@ import model.SponsorshipAgreementsModel;
 import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
-import view.ActivityFinancialReportView;
+import view.IncomesExpensesReportView;
 
-public class ActivityFinancialReportController {
+public class IncomesExpensesReportController {
     
     protected MovementsModel movementsModel;
     protected ActivitiesModel activitiesModel;
     protected SponsorshipAgreementsModel saModel;
     
-    protected ActivityFinancialReportView view; 
+    protected IncomesExpensesReportView view; 
         
-    public ActivityFinancialReportController(MovementsModel mm, ActivitiesModel am, SponsorshipAgreementsModel sam, ActivityFinancialReportView v) { 
+    public IncomesExpensesReportController(MovementsModel mm, ActivitiesModel am, SponsorshipAgreementsModel sam, IncomesExpensesReportView v) { 
         this.movementsModel = mm;
         this.activitiesModel = am;
         this.saModel = sam;

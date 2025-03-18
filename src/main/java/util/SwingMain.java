@@ -22,19 +22,24 @@ import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterIncomesExpensesController;
-import controller.InvoiceManagementController;
 import model.InvoicesModel;
 import model.MovementsModel;
+<<<<<<< HEAD
 import view.InvoiceManagementView;
 import view.RegisterActivityView;
+=======
+>>>>>>> refs/heads/2_DatabaseChanges
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.ConsultStatusActivityController;
+import controller.IncomesExpensesReportController;
+import view.IncomesExpensesReportView;
+import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.ConsultStatusActivityView;
+import view.GenerateInvoicesView;
 import controller.ActivityFinancialReportController;
 import model.ActivitiesModel;
-import view.ActivityFinancialReportView;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -146,8 +151,8 @@ public class SwingMain {
 	    });
 	    
 	    // US 29125
-	    addButtonToMain(buttonPanel, "Invoice Management", () -> {
-	    	new InvoiceManagementController(new SponsorOrganizationsModel(), new ActivitiesModel(), new InvoicesModel(), new InvoiceManagementView());
+	    addButtonToMain(buttonPanel, "Generate Invoices", () -> {
+	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
 	    });
 	    
 	 	// US 29126
@@ -166,8 +171,8 @@ public class SwingMain {
 	    });
 
 	    // US 29129
-	    addButtonToMain(buttonPanel, "Activity Financial Report", () -> {
-	    	new ActivityFinancialReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new ActivityFinancialReportView());
+	    addButtonToMain(buttonPanel, "Incomes/Expenses Report", () -> {
+	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
 	    // US 29332

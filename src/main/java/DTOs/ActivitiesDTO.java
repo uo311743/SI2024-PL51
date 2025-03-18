@@ -3,6 +3,7 @@ package DTOs;
 public class ActivitiesDTO {
     private String id;
     private String name;
+    private String edition;
     private String status;
     private String dateStart;
     private String dateEnd;
@@ -19,6 +20,12 @@ public class ActivitiesDTO {
 	}
 	public void setName(String name) {
 		this.name = name;
+	}
+	public String getEdition() {
+		return edition;
+	}
+	public void setEdition(String edition) {
+		this.name = edition;
 	}
 	public String getStatus() {
 		return status;

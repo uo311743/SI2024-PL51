@@ -4,7 +4,6 @@ public class InvoicesDTO {
     private String id;
     private String idSponsorshipAgreement;
     private String dateIssued;
-    private String dateSent;
     private String dateExpiration;
     private String totalAmount;
     private String taxRate;
@@ -27,12 +26,6 @@ public class InvoicesDTO {
 	}
 	public void setDateIssued(String dateIssued) {
 		this.dateIssued = dateIssued;
-	}
-	public String getDateSent() {
-		return dateSent;
-	}
-	public void setDateSent(String dateSent) {
-		this.dateSent = dateSent;
 	}
 	public String getDateExpiration() {
 		return dateExpiration;

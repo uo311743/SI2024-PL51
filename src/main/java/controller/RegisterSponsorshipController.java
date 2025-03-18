@@ -11,6 +11,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
+import DTOs.SponsorContactsDTO;
 import model.ActivitiesModel;
 import model.GBMembersModel;
 import model.SponsorContactsModel;
@@ -34,6 +35,8 @@ public class RegisterSponsorshipController {
 
     private String lastSelectedActivity;
     private String lastSelectedSponsor;
+    private String lastSelectedContact;
+    
 
     // ================================================================================
 
@@ -82,6 +85,12 @@ public class RegisterSponsorshipController {
 		});
     	
     	this.view.getSponsorComboBox().addItemListener(e -> {
+    	    if (e.getStateChange() == ItemEvent.SELECTED) {
+    	    	SwingUtil.exceptionWrapper(() -> updateDetail());
+    	    }
+    	});
+    	
+    	this.view.getContactComboBox().addItemListener(e -> {
     	    if (e.getStateChange() == ItemEvent.SELECTED) {
     	    	SwingUtil.exceptionWrapper(() -> updateDetail());
     	    }
@@ -144,9 +153,18 @@ public class RegisterSponsorshipController {
 			if (this.lastSelectedSponsor != selectedSponsor)
 			{
 				this.lastSelectedSponsor = selectedSponsor;
-				String id = SwingUtil.getKeyFromText(lastSelectedSponsor);
-				this.getContacts(id); // Populate ComboBox with contacts
+				String sponsorId = SwingUtil.getKeyFromText(this.lastSelectedSponsor);
+				this.getContacts(sponsorId); // Populate ComboBox with contacts
 			}
+			
+			String selectedContact = (String) view.getContactComboBox().getSelectedItem();
+			if (this.lastSelectedContact != selectedContact)
+			{
+				this.lastSelectedContact = selectedContact;
+				String contactId = SwingUtil.getKeyFromText(this.lastSelectedContact);
+				this.getContactEmail(contactId);
+			}
+			
 			
 			this.setInputsEnabled(true);
 		}
@@ -191,6 +209,9 @@ public class RegisterSponsorshipController {
     	this.view.getAgreementDateTextField().setText("");
     	this.view.getAmountTextField().setText("");
     	
+    	this.view.getContactEmailTextField().setText("");
+    	this.view.getContactEmailTextField().setEditable(false);
+    	
     	this.setInputsEnabled(false);
     }
     
@@ -213,12 +234,18 @@ public class RegisterSponsorshipController {
 		view.getSponsorComboBox().setEnabled(true);
     }
     
-    private void getContacts(String sponshor)
+    private void getContacts(String sponshorId)
     {
-    	List<Object[]> contacts = scModel.getContactsBySponshorArray(sponshor);
+    	List<Object[]> contacts = scModel.getContactsBySponshorArray(sponshorId);
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(contacts);
 		view.getContactComboBox().setModel(lmodel);
 		view.getContactComboBox().setEnabled(true);
+    }
+    
+    private void getContactEmail(String contactId)
+    {
+    	SponsorContactsDTO contact = this.scModel.getContactById(contactId);
+    	this.view.getContactEmailTextField().setText(contact.getEmail());;
     }
     
     private void getGBMembers()
@@ -292,15 +319,15 @@ public class RegisterSponsorshipController {
         	this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
 			
 	        JOptionPane.showMessageDialog(
-	    			this.view.getFrame(), "Sponshorship agreement añadido correctamente.",
-	    			"Operación realizada correctamente",
+	    			this.view.getFrame(), "Sponshorship agreement added successfully.",
+	    			"Operation completed successfully",
 	    			JOptionPane.INFORMATION_MESSAGE
 	    	);
 	        this.restartView();
         }
     	else
     	{
-    		message = "This action will modify " + numOldSponshorshipAgreements + " sponshorship agreements for that activity and sponshor.";
+    		message = "This action will modify " + numOldSponshorshipAgreements + " sponsorship agreements for that activity and sponsor.";
     		response = JOptionPane.showConfirmDialog(
     	            this.view.getFrame(), message,
     	            "Confirm modification of old Sponsorship Agreements",
@@ -312,8 +339,8 @@ public class RegisterSponsorshipController {
 	        	this.saModel.insertUpdateSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
-		    			"Sponshorship agreement añadido correctamente. Los antigos se han marcado como 'modificados'.",
-		    			"Operación realizada correctamente",
+		    			"Sponsorship agreement added successfully. The old ones have been marked as 'modified'.",
+		    			"Operation completed successfully",
 		    			JOptionPane.INFORMATION_MESSAGE
 		    	);
 		        this.restartView();

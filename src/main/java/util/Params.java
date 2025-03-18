@@ -38,6 +38,21 @@ public class Params {
     		throw new ApplicationException("Parameter taxinfo.address not found in file: " + CONFIG_FILE);
         return tmp;
     }
+    
+    public int getTaxExpDays() {
+        String tmp_str = properties.getProperty("taxinfo.expdays");
+    	if(tmp_str == null)
+    		throw new ApplicationException("Parameter taxinfo.expdays not found in file: " + CONFIG_FILE);
+        
+    	int tmp_int;
+    	try { tmp_int = Integer.parseInt(tmp_str); }
+    	catch (NumberFormatException e)
+    	{
+    		throw new ApplicationException("Parameter taxinfo.expdays must be an int in file: " + CONFIG_FILE);
+		}
+    	
+        return tmp_int;
+    }
 
     // Get email configuration
     public String getSmtpHost() {
