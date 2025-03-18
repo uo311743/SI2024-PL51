@@ -77,7 +77,13 @@ public class ActivitiesModel {
 	}
     
     public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
-		return db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place).get(0);
+    	SemanticValidations.validateName(name);
+    	SemanticValidations.validateName(edition);
+    	SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "ERROR");
+    	SemanticValidations.validateDateBeforeTo(dateEnd, dateStart, true, "ERROR");
+    	SemanticValidations.validateName(place);;
+    	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
+		return sol.get(0);
 	}
    
 	// INSERTIONS

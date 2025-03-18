@@ -39,18 +39,6 @@ public class RegisterActivityController {
     }
     
     public void initController() {
-    	String nameActivity;
-    	if (view.getNameCheckBox().isSelected()) {
-            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
-    	}
-    	else {
-            nameActivity = view.getNameTextField().getText();
-    	}
-    	String editionActivity = view.getEditionTextField().getText();
-        String dateStartActivity = view.getDateStartTextField().getText();
-        String dateEndActivity = view.getDateEndTextField().getText();
-        String placeActivity = view.getPlaceTextField().getText();
-		
     	// Low buttons
     	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
 			@Override
@@ -72,9 +60,11 @@ public class RegisterActivityController {
             public void mouseReleased(MouseEvent e) {
                 if (view.getNameCheckBox().isSelected()) {
     				SwingUtil.exceptionWrapper(() -> configTemplates());
+    				SwingUtil.exceptionWrapper(() -> unlockTemplates());
                 }
                 else {
     				SwingUtil.exceptionWrapper(() -> configTextField());
+    				SwingUtil.exceptionWrapper(() -> unlockTemplates());
                 }
             }
         });
@@ -171,7 +161,7 @@ public class RegisterActivityController {
     	this.view.getAddTemplatesButton().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> atModel.insertNewTemplate(nameActivity));
+				SwingUtil.exceptionWrapper(() -> insertTemplate());
 			}
 		});
     	
@@ -179,7 +169,7 @@ public class RegisterActivityController {
     	this.view.getAddSponsorshipLevelsButton().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> insertDefaultLevel(activitiesModel.getActivityByFilters(nameActivity, editionActivity, dateStartActivity, dateEndActivity, placeActivity).getId()));
+				SwingUtil.exceptionWrapper(() -> insertDefaultLevel());
 				SwingUtil.exceptionWrapper(() -> getLevels());
 			}
 		});
@@ -189,6 +179,34 @@ public class RegisterActivityController {
     	this.restoreDetail();
     	this.loadTemplates();
     	view.setVisible();
+    }
+    
+    public void insertTemplate() {
+    	String nameActivity;
+    	if (view.getNameCheckBox().isSelected()) {
+            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
+    	}
+    	else {
+            nameActivity = view.getNameTextField().getText();
+    	}
+    	
+    	atModel.insertNewTemplate(nameActivity);
+    }
+    
+    public void insertDefaultLevel() {
+    	String nameActivity;
+    	if (view.getNameCheckBox().isSelected()) {
+            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
+    	}
+    	else {
+            nameActivity = view.getNameTextField().getText();
+    	}
+    	String editionActivity = view.getEditionTextField().getText();
+        String dateStartActivity = view.getDateStartTextField().getText();
+        String dateEndActivity = view.getDateEndTextField().getText();
+        String placeActivity = view.getPlaceTextField().getText();
+        
+        insertDefaultLevel(activitiesModel.getActivityByFilters(nameActivity, editionActivity, dateStartActivity, dateEndActivity, placeActivity).getId());
     }
     
     public void unlockTemplates() {
