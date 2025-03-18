@@ -182,7 +182,7 @@ public class ConsultStatusActivityController {
 		);
 		
 		this.view.getTotalActualBalanceField().setText(
-				String.valueOf(this.actualSponsorship + this.estimatedIncome - this.estimatedExpenses)
+				String.valueOf(this.actualSponsorship + this.actualIncome - this.actualExpenses)
 		);
 	}
 }
