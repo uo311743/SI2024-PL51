@@ -169,7 +169,7 @@ public class RegisterActivityController {
     	this.view.getAddSponsorshipLevelsButton().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> insertDefaultLevel());
+				SwingUtil.exceptionWrapper(() -> insertDefaultLevelData());
 				SwingUtil.exceptionWrapper(() -> getLevels());
 			}
 		});
@@ -191,22 +191,6 @@ public class RegisterActivityController {
     	}
     	
     	atModel.insertNewTemplate(nameActivity);
-    }
-    
-    public void insertDefaultLevel() {
-    	String nameActivity;
-    	if (view.getNameCheckBox().isSelected()) {
-            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
-    	}
-    	else {
-            nameActivity = view.getNameTextField().getText();
-    	}
-    	String editionActivity = view.getEditionTextField().getText();
-        String dateStartActivity = view.getDateStartTextField().getText();
-        String dateEndActivity = view.getDateEndTextField().getText();
-        String placeActivity = view.getPlaceTextField().getText();
-        
-        insertDefaultLevel(activitiesModel.getActivityByFilters(nameActivity, editionActivity, dateStartActivity, dateEndActivity, placeActivity).getId());
     }
     
     public void unlockTemplates() {
@@ -283,30 +267,20 @@ public class RegisterActivityController {
         view.getTemplatesComboBox().setModel(lmodel);
     }
     
-    private void insertDefaultLevel(String activityId) {
+    private void insertDefaultLevelData() {
+    	this.view.getAddTemplatesButton().setEnabled(false);
+    	this.view.getAddSponsorshipLevelsButton().setEnabled(false);
+
     	this.view.getLevelNameTextField().setText("Default");
     	this.view.getLevelFeeTextField().setText("100.0");
     	
-		this.levelsModel.insertNewLevel(activityId, view.getLevelNameTextField().getText(), view.getLevelFeeTextField().getText());
+    	this.view.getButtonLowRight().setEnabled(true);
     }
         
 	private void getLevels() {
 		LinkedList<LevelsDTO> levels = new LinkedList<>();
 		LevelsDTO element = new LevelsDTO();
 		
-		String nameActivity;
-    	if (view.getNameCheckBox().isSelected()) {
-            nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
-    	}
-    	else {
-            nameActivity = view.getNameTextField().getText();
-    	}
-    	String editionActivity = view.getEditionTextField().getText();
-        String dateStartActivity = view.getDateStartTextField().getText();
-        String dateEndActivity = view.getDateEndTextField().getText();
-        String placeActivity = view.getPlaceTextField().getText();
-		
-		element.setIdActivity(activitiesModel.getActivityByFilters(nameActivity, editionActivity, dateStartActivity, dateEndActivity, placeActivity).getId());
 		element.setName(this.view.getLevelNameTextField().getText());
 		element.setFee(this.view.getLevelFeeTextField().getText());
 		levels.add(element);
@@ -337,7 +311,12 @@ public class RegisterActivityController {
 	}
 	
 	public void setInputsEnabled(boolean valid) {
-    	this.view.getAddTemplatesButton().setEnabled(valid);
+		if(this.view.getNameCheckBox().isSelected()) {
+	    	this.view.getAddTemplatesButton().setEnabled(false);
+		}
+		else {
+	    	this.view.getAddTemplatesButton().setEnabled(valid);
+		}
 		this.view.getAddSponsorshipLevelsButton().setEnabled(valid);
     }
 	
@@ -354,14 +333,15 @@ public class RegisterActivityController {
     }
     
     private void showSubmitDialog() {
-    	String nameActivity;
+    	String nameActivity, editionActivity;
     	if (view.getNameCheckBox().isSelected()) {
             nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
+        	editionActivity = view.getEditionTextField().getText();
     	}
     	else {
             nameActivity = view.getNameTextField().getText();
+        	editionActivity = "-";
     	}
-    	String editionActivity = view.getEditionTextField().getText();
         String dateStartActivity = view.getDateStartTextField().getText();
         String dateEndActivity = view.getDateEndTextField().getText();
         String placeActivity = view.getPlaceTextField().getText();
@@ -371,7 +351,7 @@ public class RegisterActivityController {
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
                 + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameActivity + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + editionActivity + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Edition:</b></td><td style='padding: 2px 5px;'>" + editionActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Date Start:</b></td><td style='padding: 2px 5px;'>" + dateStartActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Date End:</b></td><td style='padding: 2px 5px;'>" + dateEndActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Place:</b></td><td style='padding: 2px 5px;'>" + placeActivity + "</td></tr>"
@@ -400,5 +380,7 @@ public class RegisterActivityController {
 			JOptionPane.INFORMATION_MESSAGE
 		);
 		this.restoreDetail();
+		
+		// this.levelsModel.insertNewLevel(activityId, view.getLevelNameTextField().getText(), view.getLevelFeeTextField().getText())
     }
 }
