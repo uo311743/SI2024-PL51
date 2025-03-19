@@ -100,7 +100,7 @@ public class ConsultStatusActivityController {
 	private void getActivities()
     {
     	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
