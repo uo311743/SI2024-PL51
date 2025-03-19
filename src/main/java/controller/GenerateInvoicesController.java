@@ -110,7 +110,7 @@ public class GenerateInvoicesController {
     }
     
     private void getAgreements() {
-    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(String.valueOf(view.getActivityComboBox().getSelectedItem()));
+    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[0]);
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "Sponsor", "amount", "date", "status"}, 0);
         for (SponsorshipAgreementsDTO agreement : agreements) {
         	tableModel.addRow(new Object[] {
@@ -181,7 +181,6 @@ public class GenerateInvoicesController {
         int row = this.view.getAgreementsTable().getSelectedRow(); 
         
         String idAgreement = "";
-        String nameActivity = String.valueOf(view.getActivityComboBox().getSelectedItem());
         
         if (row >= 0) {
         	idAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 0);
@@ -214,9 +213,13 @@ public class GenerateInvoicesController {
         	return;
         }
         
-        int numOldInvoices = this.invoicesModel.getNumberInvoicesByActivityName(nameActivity);
+        String nameActivity = String.valueOf(view.getActivityComboBox().getSelectedItem());
+        String name = splitString(nameActivity)[0];
+        String edition = splitString(nameActivity)[1];
+        
+        int numInvoices = this.invoicesModel.getNumberInvoicesByActivityNameEdition(name, edition);
     	
-        if(numOldInvoices == 0) {
+        if(numInvoices == 0) {
         	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
         	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
         	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
@@ -231,7 +234,7 @@ public class GenerateInvoicesController {
 	        this.restoreDetail();
         }
     	else {
-    		message = "It will modify " + numOldInvoices + " invoices for that activity.";
+    		message = "It will modify " + numInvoices + " invoices for that activity.";
     		response = JOptionPane.showConfirmDialog(
     	            this.view.getFrame(), message,
     	            "Confirm modification of old invoices",
@@ -253,5 +256,10 @@ public class GenerateInvoicesController {
 		        this.restoreDetail();
 	        }
     	}
+    }
+    
+    public static String[] splitString(String input) {
+        String[] parts = input.split("-");
+        return parts;
     }
 }

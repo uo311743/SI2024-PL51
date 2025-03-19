@@ -18,6 +18,7 @@ public class RegisterActivityView extends AbstractView {
 
     private JTextField levelNameTextField;
     private JTextField levelFeeTextField;
+    private JButton backButton;
     private JTable levelTable;
     
     public RegisterActivityView() {
@@ -38,6 +39,7 @@ public class RegisterActivityView extends AbstractView {
         
         this.levelNameTextField = new JTextField(10);
         this.levelFeeTextField = new JTextField(10);
+        this.backButton = new JButton("Back");
         this.levelTable = new JTable(new DefaultTableModel());
         
         super.createButtonLowLeft("Cancel");
@@ -77,6 +79,7 @@ public class RegisterActivityView extends AbstractView {
         levelPanel.add(levelNameTextField);
         levelPanel.add(new JLabel("Amount: "));
         levelPanel.add(levelFeeTextField);
+        levelPanel.add(backButton);
         rightPanel.add(levelPanel, "grow");
         
         // Level Table
@@ -128,6 +131,10 @@ public class RegisterActivityView extends AbstractView {
     
     public JTextField getLevelFeeTextField() { 
         return levelFeeTextField; 
+    }
+    
+    public JButton getBackButton() { 
+        return backButton; 
     }
     
     public JTable getLevelTable() { 

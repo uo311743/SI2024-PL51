@@ -3,13 +3,19 @@ package model;
 import java.util.Collections;
 import java.util.List;
 import DTOs.ActivitiesDTO;
-import util.ApplicationException;
 import util.Database;
 import util.SemanticValidations;
 
 public class ActivitiesModel {
 
 	public static final String SQL_ACTIVITIES_FILTERED = "SELECT * FROM Activities "
+			+ "WHERE name == ? "
+			+ "AND edition == ? "
+			+ "AND dateStart == ? "
+			+ "AND dateEnd == ? "
+			+ "AND place == ?;";
+	
+	public static final String SQL_NUM_ACTIVITIES_FILTERED = "SELECT COUNT(id) FROM Activities "
 			+ "WHERE name == ? "
 			+ "AND edition == ? "
 			+ "AND dateStart == ? "
@@ -37,7 +43,7 @@ public class ActivitiesModel {
 
 	// getListActivities()
     public List<Object[]> getActiveActivityListArray() {
-		String sql = "SELECT name FROM Activities WHERE status IN ('planned', 'done');";
+    	String sql = "SELECT name || '-' || edition FROM Activities WHERE status IN ('planned', 'done');";
 		return db.executeQueryArray(sql);
 	}
     
@@ -67,36 +73,37 @@ public class ActivitiesModel {
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
     
-    public int getNumberActivities() {
-    	String sql = "SELECT COUNT(id) FROM Activities;";
-		List<Object[]> result = db.executeQueryArray(sql);
+    public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
+    	SemanticValidations.validateName(name);
+		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
+		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
+		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
+		SemanticValidations.validateName(place);
+    	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
+		return sol.get(0);
+	}
+    
+    public int getNumberActivitiesByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
+    	SemanticValidations.validateName(name);
+		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
+		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
+		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
+		SemanticValidations.validateName(place);
+		List<Object[]> result = db.executeQueryArray(SQL_NUM_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
 		return (int) result.get(0)[0];
-	}
-    
-    public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
-    	SemanticValidations.validateName(name);
-    	SemanticValidations.validateName(edition);
-    	SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "ERROR");
-    	SemanticValidations.validateDateBeforeTo(dateEnd, dateStart, true, "ERROR");
-    	SemanticValidations.validateName(place);;
-    	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
-		return sol.get(0);
 	}
    
 	// INSERTIONS
     
     public void insertNewActivity(String name, String edition, String dateStart, String dateEnd, String place) {
 		SemanticValidations.validateName(name);
-		SemanticValidations.validatePositiveNumber(edition, "It is not a valid number");
+		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
 		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
 		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
 		SemanticValidations.validateName(place);
-		
-		if(getNumberActivities() != 0)
-			throw new ApplicationException("ERROR");
 		
 		String sql = "INSERT INTO Activities"
 				+ "(name, edition, status, dateStart, dateEnd, place) VALUES "

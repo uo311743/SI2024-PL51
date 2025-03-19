@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+import DTOs.ActivitiesDTO;
 import DTOs.LevelsDTO;
 import model.ActivitiesModel;
 import model.ActivityTemplatesModel;
@@ -28,12 +29,15 @@ public class RegisterActivityController {
 		
 	protected RegisterActivityView view;
 	
+	protected LinkedList<LevelsDTO> levels;
+	
     public RegisterActivityController(ActivityTemplatesModel atm, LevelsModel lm, ActivitiesModel am, RegisterActivityView v) {
 		this.atModel = atm;
 		this.levelsModel = lm;
 		this.activitiesModel = am;
 		
 		this.view = v;
+		levels = new LinkedList<>();
         this.initView();
         this.initController();
     }
@@ -171,6 +175,15 @@ public class RegisterActivityController {
 			public void mouseReleased(MouseEvent e) {
 				SwingUtil.exceptionWrapper(() -> insertDefaultLevelData());
 				SwingUtil.exceptionWrapper(() -> getLevels());
+				SwingUtil.exceptionWrapper(() -> enableBackButton());
+			}
+		});
+    	
+    	// Back Button
+    	this.view.getBackButton().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> initViewBack());
 			}
 		});
     }
@@ -181,6 +194,16 @@ public class RegisterActivityController {
     	view.setVisible();
     }
     
+    public void initViewBack() {
+    	this.restoreDetailBack();
+    	this.loadTemplates();
+    	view.setVisible();
+    }
+    
+    public void enableBackButton() {
+    	this.view.getBackButton().setEnabled(true);
+    }
+    
     public void insertTemplate() {
     	String nameActivity;
     	if (view.getNameCheckBox().isSelected()) {
@@ -189,8 +212,45 @@ public class RegisterActivityController {
     	else {
             nameActivity = view.getNameTextField().getText();
     	}
-    	
-    	atModel.insertNewTemplate(nameActivity);
+    	    	
+    	String message = "<html><body>"
+                + "<p>Add an activity template: </p>"
+                + "<p><b>Details:</b></p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameActivity + "</td></tr>"
+                + "</table>"
+                + "<p><i>Proceed with these template?</i></p>"
+                + "</body></html>";
+
+        int response = JOptionPane.showConfirmDialog(
+            this.view.getFrame(),  message,
+            "Confirm Activity Template Details",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (response != JOptionPane.YES_OPTION) {
+        	return;
+        }
+        
+        //IF
+        int numTemplates = this.atModel.getNumberTemplatesByName(nameActivity);
+        
+        if (numTemplates == 0) {
+        	atModel.insertNewTemplate(nameActivity);
+        	
+    		JOptionPane.showMessageDialog(
+    			this.view.getFrame(), "Activity Template added correctly",
+    			"This operation has been succesful",
+    			JOptionPane.INFORMATION_MESSAGE
+    		);
+        }
+        else {
+        	JOptionPane.showMessageDialog(
+            	this.view.getFrame(), "This activity template already exists",
+            	"ERROR",
+            	JOptionPane.INFORMATION_MESSAGE
+            );
+        }
     }
     
     public void unlockTemplates() {
@@ -198,18 +258,9 @@ public class RegisterActivityController {
 		
 		// Validate Name (and Edition)
 		if (view.getNameCheckBox().isSelected()) {
-			String name = String.valueOf(this.view.getTemplatesComboBox().getSelectedItem());
-    		if(!SyntacticValidations.isNotEmpty(name)) {
-    			this.view.getEditionTextField().setForeground(Color.RED);
-    			valid = false;
-    		} 
-    		else { 
-    			this.view.getEditionTextField().setForeground(Color.BLACK); 
-    		}
-    		
-    		String edition = this.view.getEditionTextField().getText();
+			String edition = this.view.getEditionTextField().getText();
     		if(!SyntacticValidations.isNotEmpty(edition)) {
-    			this.view.getEditionTextField().setForeground(Color.RED);
+    			this.view.getEditionTextField().setForeground(Color.RED); 
     			valid = false;
     		} 
     		else { 
@@ -268,6 +319,13 @@ public class RegisterActivityController {
     }
     
     private void insertDefaultLevelData() {
+    	this.view.getNameCheckBox().setEnabled(false);
+    	this.view.getTemplatesComboBox().setEnabled(false);
+    	this.view.getNameTextField().setEnabled(false);
+    	this.view.getEditionTextField().setEnabled(false);
+    	this.view.getDateStartTextField().setEnabled(false);
+    	this.view.getDateEndTextField().setEnabled(false);
+    	this.view.getPlaceTextField().setEnabled(false);
     	this.view.getAddTemplatesButton().setEnabled(false);
     	this.view.getAddSponsorshipLevelsButton().setEnabled(false);
 
@@ -278,7 +336,6 @@ public class RegisterActivityController {
     }
         
 	private void getLevels() {
-		LinkedList<LevelsDTO> levels = new LinkedList<>();
 		LevelsDTO element = new LevelsDTO();
 		
 		element.setName(this.view.getLevelNameTextField().getText());
@@ -300,12 +357,46 @@ public class RegisterActivityController {
 		this.view.getTemplatesComboBox().setEnabled(false);
 		this.view.getNameTextField().setEnabled(true);
 		this.view.getEditionTextField().setEnabled(false);
+		this.view.getEditionTextField().setText("-");
 		
 		this.view.getAddTemplatesButton().setEnabled(false);
 		this.view.getAddSponsorshipLevelsButton().setEnabled(false);
 		
 		this.view.getLevelNameTextField().setEnabled(false);
 		this.view.getLevelFeeTextField().setEnabled(false);
+		
+		this.view.getBackButton().setEnabled(false);
+		
+		this.view.getButtonLowRight().setEnabled(false);
+	}
+	
+	public void restoreDetailBack() {
+		this.view.getNameCheckBox().setSelected(false);
+		this.view.getTemplatesComboBox().setEnabled(true);
+		this.view.getNameTextField().setEnabled(true);
+		this.view.getEditionTextField().setEnabled(false);
+		this.view.getDateStartTextField().setEnabled(true);
+		this.view.getDateEndTextField().setEnabled(true);
+		this.view.getPlaceTextField().setEnabled(true);
+		
+		this.view.getNameTextField().setText("");
+		this.view.getEditionTextField().setText("-");
+		this.view.getDateStartTextField().setText("");
+		this.view.getDateEndTextField().setText("");
+		this.view.getPlaceTextField().setText("");
+		
+		this.view.getAddTemplatesButton().setEnabled(false);
+		this.view.getAddSponsorshipLevelsButton().setEnabled(false);
+		
+		this.view.getLevelNameTextField().setEnabled(false);
+		this.view.getLevelFeeTextField().setEnabled(false);
+		this.view.getLevelNameTextField().setText("");
+		this.view.getLevelFeeTextField().setText("");
+		
+		levels.clear();
+		getLevels();
+		
+		this.view.getBackButton().setEnabled(false);
 		
 		this.view.getButtonLowRight().setEnabled(false);
 	}
@@ -317,6 +408,7 @@ public class RegisterActivityController {
 		else {
 	    	this.view.getAddTemplatesButton().setEnabled(valid);
 		}
+		
 		this.view.getAddSponsorshipLevelsButton().setEnabled(valid);
     }
 	
@@ -324,24 +416,25 @@ public class RegisterActivityController {
 		this.view.getTemplatesComboBox().setEnabled(true);
 		this.view.getNameTextField().setEnabled(false);
 		this.view.getEditionTextField().setEnabled(true);
+		this.view.getEditionTextField().setText("");
     }
 	
 	public void configTextField() {
 		this.view.getTemplatesComboBox().setEnabled(false);
 		this.view.getNameTextField().setEnabled(true);
 		this.view.getEditionTextField().setEnabled(false);
+		this.view.getEditionTextField().setText("-");
     }
     
     private void showSubmitDialog() {
-    	String nameActivity, editionActivity;
+    	String nameActivity;
     	if (view.getNameCheckBox().isSelected()) {
             nameActivity = String.valueOf(view.getTemplatesComboBox().getSelectedItem());
-        	editionActivity = view.getEditionTextField().getText();
     	}
     	else {
             nameActivity = view.getNameTextField().getText();
-        	editionActivity = "-";
     	}
+    	String editionActivity = view.getEditionTextField().getText();
         String dateStartActivity = view.getDateStartTextField().getText();
         String dateEndActivity = view.getDateEndTextField().getText();
         String placeActivity = view.getPlaceTextField().getText();
@@ -369,18 +462,39 @@ public class RegisterActivityController {
         	return;
         }
         
-        SyntacticValidations.isDate(dateStartActivity);
-        SyntacticValidations.isDate(dateEndActivity);
+        String ed = editionActivity.equals("-") ? "0" : editionActivity.trim();
+
+        int numActivities = this.activitiesModel.getNumberActivitiesByFilters(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
+        
+        if (numActivities == 0) {
+        	SyntacticValidations.isDate(dateStartActivity);
+            SyntacticValidations.isDate(dateEndActivity);
+            	
+            this.activitiesModel.insertNewActivity(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
+    		JOptionPane.showMessageDialog(
+    			this.view.getFrame(), "Activity added correctly",
+    			"This operation has been succesful",
+    			JOptionPane.INFORMATION_MESSAGE
+    		);
+    		
+    		ActivitiesDTO activity = activitiesModel.getActivityByFilters(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
+    		this.levelsModel.insertNewLevel(activity.getId(), view.getLevelNameTextField().getText(), view.getLevelFeeTextField().getText());
+    		JOptionPane.showMessageDialog(
+    			this.view.getFrame(), "Levels added correctly",
+    			"This operation has been succesful",
+    			JOptionPane.INFORMATION_MESSAGE
+    		);
+
+    		this.restoreDetailBack();
+        }
+        else {
+        	JOptionPane.showMessageDialog(
+        		this.view.getFrame(), "This activity already exists",
+        		"ERROR",
+        		JOptionPane.INFORMATION_MESSAGE
+        	);
         	
-        this.activitiesModel.insertNewActivity(nameActivity, editionActivity, dateStartActivity, dateEndActivity, placeActivity);
-	        
-		JOptionPane.showMessageDialog(
-			this.view.getFrame(), "Activity added correctly",
-			"This operation has been succesful",
-			JOptionPane.INFORMATION_MESSAGE
-		);
-		this.restoreDetail();
-		
-		// this.levelsModel.insertNewLevel(activityId, view.getLevelNameTextField().getText(), view.getLevelFeeTextField().getText())
+        	this.restoreDetailBack();
+        }
     }
 }

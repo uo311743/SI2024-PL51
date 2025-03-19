@@ -30,8 +30,8 @@ public class SemanticValidations
 	    if (name == null || name.trim().isEmpty()) {
 	        throw new IllegalArgumentException("Name cannot be null or empty");
 	    }
-	    if (name.matches("-")) {
-	        throw new IllegalArgumentException("No dash allowed");
+	    if (name.contains("-")) {
+	        throw new IllegalArgumentException("Name cannot contain '-'");
 	    }
 	}
 
@@ -152,31 +152,29 @@ public class SemanticValidations
     
     public static void validateDateBeforeTo(String date, String dateFuture, boolean includeToday, String message) {
     	Date tmp_future = Util.isoStringToDate(dateFuture);
-        Date tmp_date = null;
-        try {tmp_date = DATE_FORMAT.parse(date);}
-        catch (ParseException e) {
-        	throw new UnexpectedException("Invalid date");
-        }
+        Date tmp_date = Util.isoStringToDate(date);
 
-    	if(includeToday)
+    	if(includeToday) {
     		if (tmp_date.after(tmp_future))
         		throw new ApplicationException(message);
-    	else if (tmp_date.after(tmp_future) || tmp_date.equals(tmp_future))
+    	}
+    	else {
+    		if (tmp_date.after(tmp_future) || tmp_date.equals(tmp_future))
         		throw new ApplicationException(message);
+    	}
     }
     
     public static void validateDateAfterTo(String date, String datePast, boolean includeToday, String message) {
     	Date tmp_past = Util.isoStringToDate(datePast);
-        Date tmp_date = null;
-        try {tmp_date = DATE_FORMAT.parse(date);}
-        catch (ParseException e) {
-        	throw new UnexpectedException("Invalid date for validateDateInPast");
-        }
+        Date tmp_date = Util.isoStringToDate(date);
 
-    	if(includeToday)
+        if(includeToday) {
     		if (tmp_date.before(tmp_past))
         		throw new ApplicationException(message);
-    	else if (tmp_date.before(tmp_past) || tmp_date.equals(tmp_past))
+    	}
+    	else {
+    		if (tmp_date.before(tmp_past) || tmp_date.equals(tmp_past))
         		throw new ApplicationException(message);
+    	}
     }
 }

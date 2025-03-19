@@ -15,7 +15,7 @@ public class LevelsModel {
 	
 	public static final String SQL_NUMBER_LEVELS_ACTIVITY = "SELECT COUNT(L.id) FROM Levels L "
 			+ "JOIN Activities A "
-			+ "ON L.idActivities == A.id "
+			+ "ON L.idActivity == A.id "
 			+ "WHERE A.id == ?;";
 
     private Database db = new Database();
