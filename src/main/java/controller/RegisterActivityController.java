@@ -232,7 +232,6 @@ public class RegisterActivityController {
         	return;
         }
         
-        //IF
         int numTemplates = this.atModel.getNumberTemplatesByName(nameActivity);
         
         if (numTemplates == 0) {
@@ -464,7 +463,7 @@ public class RegisterActivityController {
         
         String ed = editionActivity.equals("-") ? "0" : editionActivity.trim();
 
-        int numActivities = this.activitiesModel.getNumberActivitiesByFilters(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
+        int numActivities = this.activitiesModel.getNumberActivitiesByFilters(nameActivity, ed);
         
         if (numActivities == 0) {
         	SyntacticValidations.isDate(dateStartActivity);

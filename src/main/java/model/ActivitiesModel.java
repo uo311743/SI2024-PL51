@@ -83,13 +83,10 @@ public class ActivitiesModel {
 		return sol.get(0);
 	}
     
-    public int getNumberActivitiesByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
+    public int getNumberActivitiesByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);
 		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
-		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
-		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
-		SemanticValidations.validateName(place);
-		List<Object[]> result = db.executeQueryArray(SQL_NUM_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
+		List<Object[]> result = db.executeQueryArray(SQL_NUM_ACTIVITIES_FILTERED, name, edition);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
