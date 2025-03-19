@@ -26,14 +26,15 @@ import model.InvoicesModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
+import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
 import view.IncomesExpensesReportView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
+import view.CloseActivityView;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
-import controller.ActivityFinancialReportController;
 import model.ActivitiesModel;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
@@ -168,6 +169,11 @@ public class SwingMain {
 	    // US 29129
 	    addButtonToMain(buttonPanel, "Incomes/Expenses Report", () -> {
 	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
+	    });
+	    
+	    // FIXME
+	    addButtonToMain(buttonPanel, "Close Activity", () -> {
+	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
 	    
 	    
