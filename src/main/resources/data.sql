@@ -1,7 +1,7 @@
 -- Insert SponsorOrganizations
-INSERT INTO SponsorOrganizations (name, type, address, nif, vat) VALUES
-('Tech Corp', 'private', '123 Tech Street', 'A12345678', 'VAT123'),
-('City Council', 'public', '456 Main Square', 'B87654321', 'VAT456');
+INSERT INTO SponsorOrganizations (name, address, nif, vat) VALUES
+('Tech Corp', '123 Tech Street', 'A12345678', 'VAT123'),
+('City Council', '456 Main Square', 'B87654321', 'VAT456');
 
 -- Insert GBMembers
 INSERT INTO GBMembers (name, role) VALUES
