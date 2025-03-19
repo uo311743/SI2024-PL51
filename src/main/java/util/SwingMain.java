@@ -173,7 +173,7 @@ public class SwingMain {
 	    
 	    // FIXME
 	    addButtonToMain(buttonPanel, "Close Activity", () -> {
-	    	new CloseActivityController(new ActivitiesModel(), new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
+	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
 	    
 	    

@@ -59,5 +59,28 @@ public class ActivitiesModel {
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
 
+	public void closeActivityById(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for closeActivityById does not exist.");
+		
+		String sql;
+		
+		sql = "UPDATE Activities SET status = 'closed' WHERE id = ?;";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE Movements SET status = 'cancelled' WHERE idActivity = ? AND status = 'estimated';";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE SponsorshipAgreements SET status = 'cancelled' WHERE idActivity = ? AND status = 'signed';";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE Invoices SET status = 'cancelled'"
+				+ "WHERE idSponsorshipAgreement IN ("
+				+ "    SELECT id "
+				+ "    FROM SponsorshipAgreements "
+				+ "    WHERE idActivity = ?"
+				+ ") AND status = 'signed';";
+		db.executeUpdate(sql, idActivity);
+	}
+
 	// INSERTIONS
 }
