@@ -9,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
@@ -173,9 +174,7 @@ public class RegisterActivityController {
     	this.view.getAddSponsorshipLevelsButton().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> insertDefaultLevelData());
-				SwingUtil.exceptionWrapper(() -> getLevels());
-				SwingUtil.exceptionWrapper(() -> enableBackButton());
+				SwingUtil.exceptionWrapper(() -> enableLevelInputs());
 			}
 		});
     	
@@ -184,6 +183,14 @@ public class RegisterActivityController {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				SwingUtil.exceptionWrapper(() -> initViewBack());
+			}
+		});
+    	
+    	// Add Button
+    	this.view.getAddButton().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> addLevel());
 			}
 		});
     }
@@ -200,8 +207,12 @@ public class RegisterActivityController {
     	view.setVisible();
     }
     
-    public void enableBackButton() {
+    public void enableLevelInputs() {
+    	this.view.getLevelNameTextField().setEnabled(true);
+    	this.view.getLevelFeeTextField().setEnabled(true);
+    	
     	this.view.getBackButton().setEnabled(true);
+    	this.view.getAddButton().setEnabled(true);
     }
     
     public void insertTemplate() {
@@ -317,42 +328,7 @@ public class RegisterActivityController {
         view.getTemplatesComboBox().setModel(lmodel);
     }
     
-    private void insertDefaultLevelData() {
-    	this.view.getNameCheckBox().setEnabled(false);
-    	this.view.getTemplatesComboBox().setEnabled(false);
-    	this.view.getNameTextField().setEnabled(false);
-    	this.view.getEditionTextField().setEnabled(false);
-    	this.view.getDateStartTextField().setEnabled(false);
-    	this.view.getDateEndTextField().setEnabled(false);
-    	this.view.getPlaceTextField().setEnabled(false);
-    	this.view.getAddTemplatesButton().setEnabled(false);
-    	this.view.getAddSponsorshipLevelsButton().setEnabled(false);
-
-    	this.view.getLevelNameTextField().setText("Default");
-    	this.view.getLevelFeeTextField().setText("100.0");
-    	
-    	this.view.getButtonLowRight().setEnabled(true);
-    }
-        
-	private void getLevels() {
-		LevelsDTO element = new LevelsDTO();
-		
-		element.setName(this.view.getLevelNameTextField().getText());
-		element.setFee(this.view.getLevelFeeTextField().getText());
-		levels.add(element);
-		
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"name", "fee"}, 0);
-        for (LevelsDTO level : levels) {
-        	tableModel.addRow(new Object[] {
-        			level.getName(),
-        			level.getFee()
-        	});
-        }
-		this.view.getLevelTable().setModel(tableModel);
-		SwingUtil.autoAdjustColumns(view.getLevelTable());
-    }
-	
-	public void restoreDetail() {
+    public void restoreDetail() {
 		this.view.getTemplatesComboBox().setEnabled(false);
 		this.view.getNameTextField().setEnabled(true);
 		this.view.getEditionTextField().setEnabled(false);
@@ -365,6 +341,7 @@ public class RegisterActivityController {
 		this.view.getLevelFeeTextField().setEnabled(false);
 		
 		this.view.getBackButton().setEnabled(false);
+		this.view.getAddButton().setEnabled(false);
 		
 		this.view.getButtonLowRight().setEnabled(false);
 	}
@@ -392,10 +369,11 @@ public class RegisterActivityController {
 		this.view.getLevelNameTextField().setText("");
 		this.view.getLevelFeeTextField().setText("");
 		
-		levels.clear();
-		getLevels();
+		levels = new LinkedList<>();
+		restoreLevelTable();
 		
 		this.view.getBackButton().setEnabled(false);
+		this.view.getAddButton().setEnabled(false);
 		
 		this.view.getButtonLowRight().setEnabled(false);
 	}
@@ -424,6 +402,27 @@ public class RegisterActivityController {
 		this.view.getEditionTextField().setEnabled(false);
 		this.view.getEditionTextField().setText("-");
     }
+	
+	public void addLevel() {
+		LevelsDTO element = new LevelsDTO();
+		
+		element.setName(this.view.getLevelNameTextField().getText());
+		element.setFee(this.view.getLevelFeeTextField().getText());
+		levels.add(element);
+		
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"name", "fee"}, 0);
+        for (LevelsDTO level : levels) {
+        	tableModel.addRow(new Object[] {
+        			level.getName(),
+        			level.getFee()
+        	});
+        }
+		this.view.getLevelTable().setModel(tableModel);
+		SwingUtil.autoAdjustColumns(view.getLevelTable());
+		
+		this.view.getLevelNameTextField().setText("");
+		this.view.getLevelFeeTextField().setText("");
+	}
     
     private void showSubmitDialog() {
     	String nameActivity;
