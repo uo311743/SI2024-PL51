@@ -50,13 +50,13 @@ INSERT INTO ActivityLevels (idActivity, idLevel) VALUES
 
 -- Insert Movements
 INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) VALUES
-(2, 'expense', 'Cleanup Supplies', 500.00, '2024-02-10', 'EXP-001', 'paid'),
+(2, 'expense', 'Cleanup Supplies', -500.00, '2024-02-10', 'EXP-001', 'paid'),
 (1, 'income', 'Ticket Sales', 3000.00, '2024-03-01', 'INV-002', 'paid'),
-(1, 'expense', 'Venue Rental', 1500.00, '2024-03-05', 'EXP-002', 'paid'),
+(1, 'expense', 'Venue Rental', -1500.00, '2024-03-05', 'EXP-002', 'paid'),
 (1, 'income', 'Merchandise Sales', 800.00, '2024-03-10', 'INV-003', 'paid'),
-(2, 'expense', 'Marketing Campaign', 1200.00, '2024-02-01', 'EXP-003', 'paid'),
+(2, 'expense', 'Marketing Campaign', -1200.00, '2024-02-01', 'EXP-003', 'paid'),
 (2, 'income', 'Donations', 1000.00, '2024-02-12', 'INV-004', 'paid'),
-(2, 'expense', 'Event Catering', 700.00, '2024-02-15', 'EXP-004', 'paid'),
-(1, 'expense', 'Security Services', 600.00, '2024-03-09', 'EXP-005', 'paid'),
-(1, 'expense', 'Marketing Campaign', 2000.00, '2024-04-01', 'EXP-006', 'estimated'),
+(2, 'expense', 'Event Catering', -700.00, '2024-02-15', 'EXP-004', 'paid'),
+(1, 'expense', 'Security Services', -600.00, '2024-03-09', 'EXP-005', 'paid'),
+(1, 'expense', 'Marketing Campaign', -2000.00, '2024-04-01', 'EXP-006', 'estimated'),
 (2, 'income', 'Ticket Sales', 4000.00, '2024-04-10', 'INV-005', 'estimated');

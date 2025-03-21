@@ -9,9 +9,12 @@ import java.awt.event.FocusListener;
 
 public class RegisterPaymentView extends AbstractView {
 	private JTable invoicesTable;
-	private JTable sponsorsTable;
+	private JTable paymentsTable;
     private JTextField amountTextField;
     private JTextField dateTextField;
+    private JLabel totalInvoiceLabel;
+    private JLabel totalPaymentsLabel;
+    private JLabel remainingBalanceLabel;
     
     public RegisterPaymentView() { super("Register Payment"); }
     
@@ -19,9 +22,12 @@ public class RegisterPaymentView extends AbstractView {
     protected void initialize()
     {
     	this.invoicesTable = new JTable();
-    	this.sponsorsTable = new JTable();
+    	this.paymentsTable = new JTable();
     	this.amountTextField = new JTextField("");
     	this.dateTextField = new JTextField("");
+    	this.totalInvoiceLabel = new JLabel("");
+    	this.totalPaymentsLabel = new JLabel("");
+    	this.remainingBalanceLabel = new JLabel("");
     	
     	super.createButtonLowLeft("Cancel");
     	super.createButtonLowMiddle("Clear");
@@ -88,40 +94,81 @@ public class RegisterPaymentView extends AbstractView {
     private JPanel createLeftPanel()
 	{
     	// Labels
-        JLabel activityLabel = new JLabel("Select a Sponsor to see the Invoices");
         JLabel invoicesTableLabel = new JLabel("Select an Invoice to Register a Payment");
+        JLabel paymentsTableLabel = new JLabel("Payments registered for the invoice");
+        
+        // Create a panel with GridLayout to align labels properly
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
+
+        // Create title labels with bold text
+        JLabel totalInvoiceTitle = new JLabel("Total Invoice Amount (euro): ");
+        totalInvoiceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel totalPaymentsTitle = new JLabel("Total Payments (euro): ");
+        totalPaymentsTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (euro): ");
+        remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Create value labels (dynamic data placeholders)
+        this.totalInvoiceLabel = new JLabel("0.00");
+        totalInvoiceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        totalInvoiceLabel.setForeground(Color.BLUE); // Highlight in blue
+
+        this.totalPaymentsLabel = new JLabel("0.00");
+        this.totalPaymentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.totalPaymentsLabel.setForeground(Color.GREEN); // Highlight in green
+
+        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.remainingBalanceLabel.setForeground(Color.RED); // Highlight in red
+
+        // Add elements to the panel
+        summaryPanel.add(totalInvoiceTitle);
+        summaryPanel.add(this.totalInvoiceLabel);
+        summaryPanel.add(totalPaymentsTitle);
+        summaryPanel.add(this.totalPaymentsLabel);
+        summaryPanel.add(remainingBalanceTitle);
+        summaryPanel.add(this.remainingBalanceLabel);
+
+        // Wrap it in a titled border for a professional look
+        JPanel borderedPanel = new JPanel(new BorderLayout());
+        borderedPanel.setBorder(BorderFactory.createTitledBorder("Payment Summary"));
+        borderedPanel.add(summaryPanel);
 
         // Set table properties
-        sponsorsTable.setName("Sponsors");
-        sponsorsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-        sponsorsTable.setDefaultEditor(Object.class, null);
-        JScrollPane activitiesTableScroll = new JScrollPane(sponsorsTable);
-
         invoicesTable.setName("Invoices");
         invoicesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         invoicesTable.setDefaultEditor(Object.class, null);
         JScrollPane invoicesTableScroll = new JScrollPane(invoicesTable);
+        
+        paymentsTable.setName("Payments");
+        paymentsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        paymentsTable.setDefaultEditor(Object.class, null);
+        JScrollPane paymentsTableScroll = new JScrollPane(paymentsTable);
 
         // Main panel with vertical layout
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-
-        // Activity Panel
-        JPanel activitiesPanel = new JPanel(new BorderLayout());
-        activitiesPanel.add(activityLabel, BorderLayout.NORTH);
-        activitiesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
-        activitiesPanel.add(activitiesTableScroll, BorderLayout.CENTER);
 
         // Invoices Panel
         JPanel invoicesPanel = new JPanel(new BorderLayout());
         invoicesPanel.add(invoicesTableLabel, BorderLayout.NORTH);
         invoicesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
         invoicesPanel.add(invoicesTableScroll, BorderLayout.CENTER);
+        
+        // Payments Panel
+        JPanel paymentsPanel = new JPanel(new BorderLayout());
+        paymentsPanel.add(paymentsTableLabel, BorderLayout.NORTH);
+        paymentsPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        paymentsPanel.add(paymentsTableScroll, BorderLayout.CENTER);
 
         // Add panels in correct order
-        panel.add(activitiesPanel);
-        panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(invoicesPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(paymentsPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(summaryPanel); // Adds spacing
 	
 		return panel;
 	}
@@ -186,8 +233,11 @@ public class RegisterPaymentView extends AbstractView {
 	public JTable getInvoicesTable() {
 		return invoicesTable;
 	}
-
-	public JTable getSponsorsTable() {
-		return sponsorsTable;
+	
+	public JTable getPaymentsTable() {
+		return paymentsTable;
 	}
+	public JLabel getTotalInvoiceLabel() { return totalInvoiceLabel; }
+	public JLabel getTotalPaymentsLabel() { return totalPaymentsLabel; }
+	public JLabel getRemainingBalanceLabel() { return remainingBalanceLabel; }
 }

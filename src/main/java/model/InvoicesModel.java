@@ -42,6 +42,23 @@ public class InvoicesModel {
 			throw new ApplicationException("Unexpected error while retrieving Invoice ID: " + e.getMessage());
 		}
 	}
+    
+    // SETTERS - UPDATES
+    public void setInvoiceStatus(String invoiceId, String status)
+    {
+    	// List of allowed status
+        String[] validStatus = { "draft", "issued", "paid", "rectified", "cancelled" };
+        
+        String sql = "UPDATE Invoices SET status = ? WHERE id = ?";
+        
+    	try {
+    		SemanticValidations.validateStatus(status);
+    		SemanticValidations.validateAllowedValues(status, validStatus, "Not a valid status");
+    		db.executeUpdate(sql, status, Integer.parseInt(invoiceId));
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 
 	// INSERTIONS
     

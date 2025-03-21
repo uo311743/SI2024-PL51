@@ -10,7 +10,13 @@ public class MovementsModel {
 	private Database db = new Database();
 
 	// GETTERS
-
+	public List<MovementsDTO> getMovementsByActivity(String idActivity)
+	{
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getMovementsByActivity does not exist.");
+		String sql = "SELECT * FROM Movements WHERE idActivity = ?;";
+	    return db.executeQueryPojo(MovementsDTO.class, sql, idActivity);
+	}
+	
     public List<MovementsDTO> getIncomeByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getIncomeByActivity does not exist.");
 		String sql = "SELECT * FROM Movements WHERE type = 'income' AND idActivity = ?;";

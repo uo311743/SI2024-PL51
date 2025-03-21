@@ -48,7 +48,7 @@ public class ActivitiesModel {
 
     public ActivitiesDTO getActivityByName(String nameActivity) {
 		SemanticValidations.validateName(nameActivity);
-		String sql = "SELECT id FROM Activities WHERE name == ?;";
+		String sql = "SELECT * FROM Activities WHERE name == ?;";
 		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}
@@ -58,6 +58,16 @@ public class ActivitiesModel {
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
+    
+    public ActivitiesDTO getActivityByInvoice(String idInvoice) {
+    	String sql = "SELECT a.* FROM Invoices i "
+    			+ "JOIN SponsorshipAgreements sa ON i.idSponsorshipAgreement = sa.id "
+    			+ "JOIN Activities a ON a.id = sa.idActivity "
+    			+ "WHERE i.id = ?";
+    	List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, idInvoice);
+    	
+    	return activities.get(0);
+    }
 
 	// INSERTIONS
 }

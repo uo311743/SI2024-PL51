@@ -13,6 +13,9 @@ public class RegisterMovementsView extends AbstractView {
     private JTextField amountTextField;
     private JTextField dateTextField;
     private JTextField conceptTextField;
+    private JLabel totalIncomesLabel;
+    private JLabel totalExpensesLabel;
+    private JLabel remainingBalanceLabel;
     
     public RegisterMovementsView() { super("Register Movement"); }
     
@@ -26,6 +29,9 @@ public class RegisterMovementsView extends AbstractView {
     	this.amountTextField = new JTextField("");
     	this.dateTextField = new JTextField("");
     	this.conceptTextField = new JTextField("");
+    	this.totalIncomesLabel = new JLabel("");
+    	this.totalExpensesLabel = new JLabel("");
+    	this.remainingBalanceLabel = new JLabel("");
     	
     	super.createButtonLowLeft("Cancel");
     	super.createButtonLowMiddle("Clear");
@@ -47,9 +53,48 @@ public class RegisterMovementsView extends AbstractView {
 	{
     	// Labels
         JLabel activityLabel = new JLabel("Select an Activity to register a Movement");
-        JLabel movementLabel = new JLabel("Select a Movement to register");
+        JLabel movementLabel = new JLabel("Movements registered for the selected Activity");
         JLabel typeLabel = new JLabel("Type:");
         JLabel statusLabel = new JLabel("Status:");
+        
+        // Create title labels with bold text
+        JLabel totalIncomesTitle = new JLabel("Total Income (euro): ");
+        totalIncomesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel totalExpensesTitle = new JLabel("Total Expense (euro): ");
+        totalExpensesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (euro): ");
+        remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Create a panel with GridLayout to align labels properly
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
+        
+        // Create value labels (dynamic data placeholders)
+        this.totalIncomesLabel = new JLabel("0.00");
+        totalIncomesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        totalIncomesLabel.setForeground(Color.BLUE); // Highlight in blue
+
+        this.totalExpensesLabel = new JLabel("0.00");
+        this.totalExpensesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.totalExpensesLabel.setForeground(Color.GREEN); // Highlight in green
+
+        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.remainingBalanceLabel.setForeground(Color.RED); // Highlight in red
+
+        // Add elements to the panel
+        summaryPanel.add(totalIncomesTitle);
+        summaryPanel.add(this.totalIncomesLabel);
+        summaryPanel.add(totalExpensesTitle);
+        summaryPanel.add(this.totalExpensesLabel);
+        summaryPanel.add(remainingBalanceTitle);
+        summaryPanel.add(this.remainingBalanceLabel);
+
+        // Wrap it in a titled border for a professional look
+        JPanel borderedPanel = new JPanel(new BorderLayout());
+        borderedPanel.setBorder(BorderFactory.createTitledBorder("Movement Summary"));
+        borderedPanel.add(summaryPanel);
 
         // Set table properties
         activitiesTable.setName("Activites");
@@ -99,6 +144,7 @@ public class RegisterMovementsView extends AbstractView {
         panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(movementPanel);
         panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(summaryPanel); // Adds spacing
 	
 		return panel;
 	}
@@ -164,6 +210,18 @@ public class RegisterMovementsView extends AbstractView {
     
     public JTextField getConceptTextField() {
     	return conceptTextField;
+    }
+    
+    public JLabel getTotalIncomesLabel() {
+    	return totalIncomesLabel;
+    }
+    
+    public JLabel getTotalExpensesLabel() {
+    	return totalExpensesLabel;
+    }
+    
+    public JLabel getRemainingBalanceLabel() {
+    	return remainingBalanceLabel;
     }
 
 	public JComboBox<Object> getType() {
