@@ -10,6 +10,12 @@ public class MovementsModel {
 	private Database db = new Database();
 
 	// GETTERS
+	public List<MovementsDTO> getMovementsByActivity(String idActivity)
+	{
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getMovementsByActivity does not exist.");
+		String sql = "SELECT * FROM Movements WHERE idActivity = ?;";
+	    return db.executeQueryPojo(MovementsDTO.class, sql, idActivity);
+	}
 
     public List<MovementsDTO> getIncomeByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getIncomeByActivity does not exist.");
@@ -62,11 +68,25 @@ public class MovementsModel {
 		}
 		return (double) result;
 	}
+	
+	// Function to get unique 'type' values from Movements table
+    public List<Object[]> getUniqueTypes() {
+        String query = "SELECT DISTINCT type FROM Movements";
+
+        return db.executeQueryArray(query);
+    }
+    
+    // Function to get unique 'type' values from Movements table
+    public List<Object[]> getUniqueStatus() {
+        String query = "SELECT DISTINCT status FROM Movements WHERE status != 'cancelled'";
+
+        return db.executeQueryArray(query);
+    }
 
 	// INSERTIONS
 
-	public void registerMovement(String idActivity, String amount, String date, String type, String concept, String receipt, String status) {
-    	String sql = "INSERT INTO Movements (idActivity, type, concept, amount, date, receiptNumber, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    	db.executeUpdate(sql, idActivity, amount, date, type, concept, receipt, status);
+	public void registerMovement(String idActivity, String amount, String date, String type, String concept, String status) {
+    	String sql = "INSERT INTO Movements (idActivity, type, concept, amount, date, status) VALUES (?, ?, ?, ?, ?, ?)";
+    	db.executeUpdate(sql, idActivity, amount, date, type, concept, status);
     }
 }

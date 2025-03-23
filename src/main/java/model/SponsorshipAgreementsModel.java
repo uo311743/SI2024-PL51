@@ -2,6 +2,8 @@ package model;
 
 import java.util.Date;
 import java.util.List;
+
+import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
 import util.Database;

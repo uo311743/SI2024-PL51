@@ -21,7 +21,7 @@ import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
-import controller.RegisterIncomesExpensesController;
+import controller.RegisterMovementsController;
 import model.InvoicesModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
@@ -30,13 +30,13 @@ import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
 import view.IncomesExpensesReportView;
+import view.RegisterMovementsView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.CloseActivityView;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
 import model.ActivitiesModel;
-import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -151,14 +151,15 @@ public class SwingMain {
 	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
 	    });
 	    
-	 	// US 29126
+	    // US 29126
         addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new ActivitiesModel(), new InvoicesModel(), new RegisterPaymentView());
+        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new InvoicesModel(), 
+        			new ActivitiesModel(), new SponsorOrganizationsModel(), new RegisterPaymentView());
         });
         
-        // US 29127
-        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
-        	new RegisterIncomesExpensesController(new ActivitiesModel(), new MovementsModel(), new RegisterIncomesExpensesView());
+        // US 29535
+        addButtonToMain(buttonPanel, "Register Other Movements", () -> {
+        	new RegisterMovementsController(new ActivitiesModel(), new MovementsModel(), new RegisterMovementsView());
 	    });
         
         // US 29128

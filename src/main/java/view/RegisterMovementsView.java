@@ -1,55 +1,37 @@
 package view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.GridLayout;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-
-import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-public class RegisterIncomesExpensesView extends AbstractView{
-	private JComboBox<Object> activityComboBox;
-    private JComboBox<String> typeComboBox;
-    private JComboBox<String> statusComboBox;
-    private JTextField conceptField;
-    private JTextField dateField;
-    private JTextField amountField;
-    private JTextField receiptField;
+import java.awt.*;
+
+public class RegisterMovementsView extends AbstractView {
+	private JComboBox<Object> type;
+	private JComboBox<Object> status;
+	private JTable activitiesTable;
+	private JTable movementsTable;
+    private JTextField amountTextField;
+    private JTextField dateTextField;
+    private JTextField conceptTextField;
+    private JLabel totalIncomesLabel;
+    private JLabel totalExpensesLabel;
+    private JLabel remainingBalanceLabel;
     
-    private JLabel receiptLabel;
-    
-    private JPanel formPanel;
-    private JPanel summaryPanel;
-    private JPanel errorPanel;
-    
-    public RegisterIncomesExpensesView()
-    {
-    	super("Register Income/Expense");
-    }
+    public RegisterMovementsView() { super("Register Movement"); }
     
     @Override
     protected void initialize()
     {
-    	activityComboBox = new JComboBox<>();
-    	typeComboBox = new JComboBox<>(new String[]{"Expense", "Income"});
-    	statusComboBox = new JComboBox<>(new String[]{"Paid", "Estimated"});
-    	conceptField = new JTextField("", 1);
-    	receiptField = new JTextField("", 1);
-    	amountField = new JTextField("0.00", 1);
-    	dateField = new JTextField("YYYY-MM-DD", 1);
-    	formPanel = new JPanel();
-    	summaryPanel = new JPanel();
-    	errorPanel = new JPanel();
-    	receiptLabel = new JLabel();
+    	this.setType(new JComboBox<>());
+    	this.setStatus(new JComboBox<>());
+    	this.setMovementsTable(new JTable());
+    	this.setActivitiesTable(new JTable());
+    	this.amountTextField = new JTextField("");
+    	this.dateTextField = new JTextField("");
+    	this.conceptTextField = new JTextField("");
+    	this.totalIncomesLabel = new JLabel("");
+    	this.totalExpensesLabel = new JLabel("");
+    	this.remainingBalanceLabel = new JLabel("");
     	
     	super.createButtonLowLeft("Cancel");
     	super.createButtonLowMiddle("Clear");
@@ -59,266 +41,218 @@ public class RegisterIncomesExpensesView extends AbstractView{
     @Override
     protected void configMainPanel()
     {
-    	super.getMainPanel().setLayout(new GridLayout(2, 1));
-    	
-    	super.setFrameTitle("Register " + getType());
-    	
-    	receiptLabel.setText("Receipt Number:");
-    	
-    	amountField.setForeground(Color.GRAY); // Set placeholder color initially
-    	amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
-    	
-    	amountField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (amountField.getText().equals("0.00")) {
-                    amountField.setText("");
-                    amountField.setForeground(Color.BLACK); // Normal text color
-                    amountField.setFont(amountField.getFont().deriveFont(Font.PLAIN));
-                }
-            }
+    	super.getMainPanel().setLayout(new BorderLayout());
+		super.getMainPanel().setBorder(new EmptyBorder(10, 20, 10, 20));
 
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (amountField.getText().isEmpty()) {
-                    amountField.setText("0.00");
-                    amountField.setForeground(Color.GRAY); // Placeholder color
-                    amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
-                }
-            }
-        });
-    	
-    	dateField.setForeground(Color.GRAY); // Set placeholder color initially
-    	dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
 
-    	dateField.addFocusListener(new FocusListener() {
-            @Override
-            public void focusGained(FocusEvent e) {
-                if (dateField.getText().equals("YYYY-MM-DD")) {
-                	dateField.setText("");
-                	dateField.setForeground(Color.BLACK); // Normal text color
-                	dateField.setFont(dateField.getFont().deriveFont(Font.PLAIN));
-                }
-            }
-
-            @Override
-            public void focusLost(FocusEvent e) {
-                if (dateField.getText().isEmpty()) {
-                	dateField.setText("YYYY-MM-DD");
-                	dateField.setForeground(Color.GRAY); // Placeholder color
-                	dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
-                }
-            }
-        });
-    	
-    	configureFormPanel();
-    }
-
-    private void configureFormPanel()
-    {
-    	// Set layout for the form panel
-    	formPanel.setLayout(new GridLayout(0, 2)); // 0 rows means "as many as needed", 2 columns
-    	formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-               
-        // Add components to the main panel
-    	formPanel.add(new JLabel("Type:"));
-    	formPanel.add(typeComboBox);
-    	
-    	formPanel.add(new JLabel("Status:"));
-    	formPanel.add(statusComboBox);
-    	
-    	formPanel.add(new JLabel("Activity:"));
-    	formPanel.add(activityComboBox);
-    	
-    	formPanel.add(new JLabel("Date:"));
-    	formPanel.add(dateField);
-
-    	formPanel.add(new JLabel("Amount (EUR):"));
-    	formPanel.add(amountField);
-    	
-    	formPanel.add(new JLabel("Concept:"));
-    	formPanel.add(conceptField);
-    	
-    	formPanel.add(receiptLabel);
-    	formPanel.add(receiptField);
-    	
-    	super.getMainPanel().add(formPanel, BorderLayout.CENTER);
+		super.getMainPanel().add(createLeftPanel(), BorderLayout.WEST);
+		super.getMainPanel().add(createRightPanel(), BorderLayout.EAST);
     }
     
-    public void configureSummaryPanel()
-    {
-    	JLabel headerLabel = new JLabel("<html><div style='font-size:14px; font-weight:bold;'>Summary of " + getType() + " Registered</div></html>", SwingConstants.CENTER);
-    	headerLabel.setFont(new Font("Arial", Font.BOLD, 11));
-    	headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-    	JLabel summaryLabel = new JLabel("<html><div style='font-size:11px; padding:2px 5px;'>" +
-    		    "<b>Type:</b> " + getType() + "<br>" +
-    		    "<b>Status:</b> " + getStatus() + "<br>" +
-    		    "<b>Activity:</b> " + getActivity() + "<br>" +
-    		    "<b>Date:</b> " + getDate() + "<br>" +
-    		    "<b>Amount (EUR):</b> " + getAmount() + "<br>" +
-    		    "<b>Concept:</b> " + getConcept() + "<br>" +
-    		    "<b>Receipt Number:</b> " + getReceipt() + "<br>" +
-    		    "</div></html>", SwingConstants.CENTER);
-
-    	summaryLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-    	summaryLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    	
-    	clearFields();
-    	summaryPanel.removeAll();
-    	summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
-    	summaryPanel.add(headerLabel, BorderLayout.NORTH);
-    	summaryPanel.add(summaryLabel, BorderLayout.CENTER);
-    	summaryPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-    	
-    	super.getMainPanel().add(summaryPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
-    
-    public void showError(String errorMessage) {
-    	clearFields();
-
-    	errorPanel.setLayout(new BorderLayout());
-    	errorPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
-        // Error header
-        JLabel errorHeader = new JLabel("<html><div style='color:red; font-size:14px; font-weight:bold;'>Error</div></html>", SwingConstants.CENTER);
-        errorHeader.setFont(new Font("Arial", Font.BOLD, 11));
-        errorHeader.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Error message
-        JLabel errorLabel = new JLabel("<html><div style='color:red; font-size:11px; padding:2px 5px;'>" + errorMessage + "</div></html>", SwingConstants.CENTER);
+    private JPanel createLeftPanel()
+	{
+    	// Labels
+        JLabel activityLabel = new JLabel("Select an Activity to register a Movement");
+        JLabel movementLabel = new JLabel("Movements registered for the selected Activity");
+        JLabel typeLabel = new JLabel("Type:");
+        JLabel statusLabel = new JLabel("Status:");
         
-        errorLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-        errorLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    	
-        errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.Y_AXIS));
-        errorPanel.add(errorHeader, BorderLayout.NORTH); // Add header
-        errorPanel.add(errorLabel, BorderLayout.CENTER); // Add error message
+        // Create title labels with bold text
+        JLabel totalIncomesTitle = new JLabel("Total Income (euro): ");
+        totalIncomesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel totalExpensesTitle = new JLabel("Total Expense (euro): ");
+        totalExpensesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (euro): ");
+        remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Create a panel with GridLayout to align labels properly
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
         
-        super.getMainPanel().add(errorPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
+        // Create value labels (dynamic data placeholders)
+        this.totalIncomesLabel = new JLabel("0.00");
+        totalIncomesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        totalIncomesLabel.setForeground(Color.BLUE); // Highlight in blue
 
-    public void clearFields() {
-    	super.getMainPanel().remove(summaryPanel);
-    	super.getMainPanel().remove(errorPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    	summaryPanel.removeAll();
-    	errorPanel.removeAll();
-    	
-    	// Reset JComboBox to first item or empty selection
-        activityComboBox.setSelectedIndex(0);
+        this.totalExpensesLabel = new JLabel("0.00");
+        this.totalExpensesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.totalExpensesLabel.setForeground(Color.GREEN); // Highlight in green
 
-        // Reset amount field with placeholder effect
-        amountField.setText("0.00");
-        amountField.setForeground(Color.GRAY);
-        amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
+        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.remainingBalanceLabel.setForeground(Color.RED); // Highlight in red
 
-        // Reset Concept field
-        conceptField.setText("");
+        // Add elements to the panel
+        summaryPanel.add(totalIncomesTitle);
+        summaryPanel.add(this.totalIncomesLabel);
+        summaryPanel.add(totalExpensesTitle);
+        summaryPanel.add(this.totalExpensesLabel);
+        summaryPanel.add(remainingBalanceTitle);
+        summaryPanel.add(this.remainingBalanceLabel);
+
+        // Wrap it in a titled border for a professional look
+        JPanel borderedPanel = new JPanel(new BorderLayout());
+        borderedPanel.setBorder(BorderFactory.createTitledBorder("Movement Summary"));
+        borderedPanel.add(summaryPanel);
+
+        // Set table properties
+        activitiesTable.setName("Activites");
+        activitiesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        activitiesTable.setDefaultEditor(Object.class, null);
+        JScrollPane activitiesTableScroll = new JScrollPane(activitiesTable);
         
-        // Reset Receipt field
-        receiptField.setText("");
+        movementsTable.setName("Movements");
+        movementsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        movementsTable.setDefaultEditor(Object.class, null);
+        JScrollPane movementsTableScroll = new JScrollPane(movementsTable);
 
-        // Reset date field with placeholder effect
-        dateField.setText("YYYY-MM-DD");
-        dateField.setForeground(Color.GRAY);
-        dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
-    }
-    
-    public void changeTitlePanel(String title) {
-    	super.setFrameTitle(title);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
-    
-    public void concealReceiptField() {
-    	formPanel.remove(receiptLabel);
-    	formPanel.remove(receiptField);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
-    
-    public void showReceiptField() {
-    	formPanel.add(receiptLabel);
-    	formPanel.add(receiptField);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
-    
-    public String getActivity() {
-        return (String) activityComboBox.getSelectedItem();
-    }
-    
-    public String getType() {
-    	return (String) typeComboBox.getSelectedItem();
-    }
-    
-    public String getStatus() {
-    	return (String) statusComboBox.getSelectedItem();
-    }
-    
-    public JComboBox<Object> getActivities() {
-    	return activityComboBox;
-    }
+        // Main panel with vertical layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-    public String getAmount() {
-    	if (amountField.getText().equals("0.00")) {
-    		return "";
-    	}
-    	
-        return amountField.getText();
-    }
+        // Activity Panel
+        JPanel activitiesPanel = new JPanel(new BorderLayout());
+        activitiesPanel.add(activityLabel, BorderLayout.NORTH);
+        activitiesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        activitiesPanel.add(activitiesTableScroll, BorderLayout.CENTER);
+        
+        // Movement Panel
+        JPanel movementPanel = new JPanel(new BorderLayout());
+        movementPanel.add(movementLabel, BorderLayout.NORTH);
+        movementPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        movementPanel.add(movementsTableScroll, BorderLayout.CENTER);
 
-    public String getDate() {
-    	if (dateField.getText().equals("YYYY-MM-DD")) {
-    		return "";
-    	}
-    	
-        return dateField.getText();
-    }
-    
-    public String getConcept() {
-    	return conceptField.getText();
-    }
-    
-    public String getReceipt() {
-    	return receiptField.getText();
-    }
+        // Type Panel
+        JPanel typePanel = new JPanel(new BorderLayout());
+        typePanel.add(typeLabel, BorderLayout.NORTH);
+        typePanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        typePanel.add(type, BorderLayout.CENTER);
+        
+        // Status Panel
+        JPanel satusPanel = new JPanel(new BorderLayout());
+        satusPanel.add(statusLabel, BorderLayout.NORTH);
+        satusPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        satusPanel.add(status, BorderLayout.CENTER);
 
-	public JComboBox<String> getTypeComboBox() {
-		return typeComboBox;
+        // Add panels in correct order
+        panel.add(typePanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(satusPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(activitiesPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(movementPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(summaryPanel); // Adds spacing
+	
+		return panel;
 	}
 
-	public void setTypeComboBox(JComboBox<String> typeComboBox) {
-		this.typeComboBox = typeComboBox;
+    private JPanel createRightPanel()
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(30, 30, 30, 30);
+		gbc.anchor = GridBagConstraints.WEST;
+
+		// Fields Panel with Border
+		JPanel fieldsPanel = new JPanel(new GridBagLayout());
+		fieldsPanel.setBorder(BorderFactory.createTitledBorder("Movement Details"));
+		GridBagConstraints fieldsGbc = new GridBagConstraints();
+		fieldsGbc.insets = new Insets(30, 30, 30, 30);
+		fieldsGbc.anchor = GridBagConstraints.WEST;
+
+		// Labels
+		JLabel amountLabel = new JLabel("Amount (euro):");
+		JLabel dateLabel = new JLabel("Date:");
+		JLabel conceptLabel = new JLabel("Concept:");
+
+		// Fields
+		JComponent[][] fields = {
+		    {amountLabel, amountTextField},
+		    {dateLabel, dateTextField},
+		    {conceptLabel, conceptTextField}
+		};
+
+		// Add labels above inputs
+		for (int i = 0; i < fields.length; i++) {
+		    // Set label in the first row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2; // position label in even rows
+		    fieldsPanel.add(fields[i][0], fieldsGbc);
+
+		    // Set input field in the second row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
+		    fieldsGbc.gridwidth = 2; // input spans two columns
+		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
+		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
+		    fieldsPanel.add(fields[i][1], fieldsGbc);
+		}
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		panel.add(fieldsPanel, gbc);
+
+        return panel;
 	}
 
-	public JComboBox<String> getStatusComboBox() {
-		return statusComboBox;
+    public JTextField getAmountTextField() {
+    	return amountTextField;
+    }
+
+    public JTextField getDateTextField() {
+    	return dateTextField;
+    }
+    
+    public JTextField getConceptTextField() {
+    	return conceptTextField;
+    }
+    
+    public JLabel getTotalIncomesLabel() {
+    	return totalIncomesLabel;
+    }
+    
+    public JLabel getTotalExpensesLabel() {
+    	return totalExpensesLabel;
+    }
+    
+    public JLabel getRemainingBalanceLabel() {
+    	return remainingBalanceLabel;
+    }
+
+	public JComboBox<Object> getType() {
+		return type;
 	}
 
-	public void setStatusComboBox(JComboBox<String> statusComboBox) {
-		this.statusComboBox = statusComboBox;
+	public void setType(JComboBox<Object> type) {
+		this.type = type;
 	}
 
-	public JTextField getConceptField() {
-		return conceptField;
+	public JComboBox<Object> getStatus() {
+		return status;
 	}
 
-	public void setConceptField(JTextField conceptField) {
-		this.conceptField = conceptField;
+	public void setStatus(JComboBox<Object> status) {
+		this.status = status;
 	}
 
-	public JTextField getReceiptField() {
-		return receiptField;
+	public JTable getActivitiesTable() {
+		return activitiesTable;
 	}
 
-	public void setReceiptField(JTextField receiptField) {
-		this.receiptField = receiptField;
+	public void setActivitiesTable(JTable activitiesTable) {
+		this.activitiesTable = activitiesTable;
+	}
+
+	public JTable getMovementsTable() {
+		return movementsTable;
+	}
+
+	public void setMovementsTable(JTable movementsTable) {
+		this.movementsTable = movementsTable;
 	}
 }

@@ -11,6 +11,15 @@ public class ActivitiesModel {
     private Database db = new Database();
 
 	// GETTERS
+    public ActivitiesDTO getActivityByInvoice(String idInvoice) {
+    	String sql = "SELECT a.* FROM Invoices i "
+    			+ "JOIN SponsorshipAgreements sa ON i.idSponsorshipAgreement = sa.id "
+    			+ "JOIN Activities a ON a.id = sa.idActivity "
+    			+ "WHERE i.id = ?";
+    	List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, idInvoice);
+    	
+    	return activities.get(0);
+    }
 
     public List<ActivitiesDTO> getActivitiesFromCurrentYear(String startDate, String endDate) {
 		String sql ="SELECT id, name, status, dateStart, dateEnd FROM Activities WHERE dateStart >= ? AND dateEnd <= ?;";

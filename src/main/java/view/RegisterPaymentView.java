@@ -8,32 +8,26 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
 public class RegisterPaymentView extends AbstractView {
-    private JComboBox<Object> activityComboBox;
-    private JTextField amountField;
-    private JTextField nifField;
-    private JTextField dateField;
-    private JTextField invoiceIdField;
+	private JTable invoicesTable;
+	private JTable paymentsTable;
+    private JTextField amountTextField;
+    private JTextField dateTextField;
+    private JLabel totalInvoiceLabel;
+    private JLabel totalPaymentsLabel;
+    private JLabel remainingBalanceLabel;
     
-    private JPanel formPanel;
-    private JPanel summaryPanel;
-    private JPanel errorPanel;
-    
-    public RegisterPaymentView()
-    {
-    	super("Register Payment");
-    }
+    public RegisterPaymentView() { super("Register Payment"); }
     
     @Override
     protected void initialize()
     {
-    	activityComboBox = new JComboBox<>();
-    	amountField = new JTextField("0.00", 1);
-    	nifField = new JTextField("", 1);
-    	dateField = new JTextField("YYYY-MM-DD", 1);
-    	invoiceIdField = new JTextField("", 1);
-    	formPanel = new JPanel();
-    	summaryPanel = new JPanel();
-    	errorPanel = new JPanel();
+    	this.invoicesTable = new JTable();
+    	this.paymentsTable = new JTable();
+    	this.amountTextField = new JTextField("");
+    	this.dateTextField = new JTextField("");
+    	this.totalInvoiceLabel = new JLabel("");
+    	this.totalPaymentsLabel = new JLabel("");
+    	this.remainingBalanceLabel = new JLabel("");
     	
     	super.createButtonLowLeft("Cancel");
     	super.createButtonLowMiddle("Clear");
@@ -43,200 +37,207 @@ public class RegisterPaymentView extends AbstractView {
     @Override
     protected void configMainPanel()
     {
-    	super.getMainPanel().setLayout(new GridLayout(2, 1));
+    	super.getMainPanel().setLayout(new BorderLayout());
+		super.getMainPanel().setBorder(new EmptyBorder(10, 20, 10, 20));
+
+
+		super.getMainPanel().add(createLeftPanel(), BorderLayout.WEST);
+		super.getMainPanel().add(createRightPanel(), BorderLayout.EAST);
     	
-    	amountField.setForeground(Color.GRAY); // Set placeholder color initially
-    	amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
+		amountTextField.setForeground(Color.GRAY); // Set placeholder color initially
+		amountTextField.setFont(amountTextField.getFont().deriveFont(Font.ITALIC));
     	
-    	amountField.addFocusListener(new FocusListener() {
+		amountTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (amountField.getText().equals("0.00")) {
-                    amountField.setText("");
-                    amountField.setForeground(Color.BLACK); // Normal text color
-                    amountField.setFont(amountField.getFont().deriveFont(Font.PLAIN));
+                if (amountTextField.getText().equals("0.00")) {
+                	amountTextField.setText("");
+                	amountTextField.setForeground(Color.BLACK); // Normal text color
+                	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.PLAIN));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (amountField.getText().isEmpty()) {
-                    amountField.setText("0.00");
-                    amountField.setForeground(Color.GRAY); // Placeholder color
-                    amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
+                if (amountTextField.getText().isEmpty()) {
+                	amountTextField.setText("0.00");
+                	amountTextField.setForeground(Color.GRAY); // Placeholder color
+                	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.ITALIC));
                 }
             }
         });
     	
-    	dateField.setForeground(Color.GRAY); // Set placeholder color initially
-    	dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
+		dateTextField.setForeground(Color.GRAY); // Set placeholder color initially
+		dateTextField.setFont(dateTextField.getFont().deriveFont(Font.ITALIC));
 
-    	dateField.addFocusListener(new FocusListener() {
+    	dateTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (dateField.getText().equals("YYYY-MM-DD")) {
-                	dateField.setText("");
-                	dateField.setForeground(Color.BLACK); // Normal text color
-                	dateField.setFont(dateField.getFont().deriveFont(Font.PLAIN));
+                if (dateTextField.getText().equals("YYYY-MM-DD")) {
+                	dateTextField.setText("");
+                	dateTextField.setForeground(Color.BLACK); // Normal text color
+                	dateTextField.setFont(dateTextField.getFont().deriveFont(Font.PLAIN));
                 }
             }
 
             @Override
             public void focusLost(FocusEvent e) {
-                if (dateField.getText().isEmpty()) {
-                	dateField.setText("YYYY-MM-DD");
-                	dateField.setForeground(Color.GRAY); // Placeholder color
-                	dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
+                if (dateTextField.getText().isEmpty()) {
+                	dateTextField.setText("YYYY-MM-DD");
+                	dateTextField.setForeground(Color.GRAY); // Placeholder color
+                	dateTextField.setFont(dateTextField.getFont().deriveFont(Font.ITALIC));
                 }
             }
         });
-    	
-    	configureFormPanel();
     }
     
-    /*public void setActionRegisterButton(ActionListener a) {
-    	super.getButtonLowRight().addActionListener(a);
-    }*/
-
-    private void configureFormPanel()
-    {
-    	// Set layout for the form panel
-    	formPanel.setLayout(new GridLayout(0, 2)); // 0 rows means "as many as needed", 2 columns
-    	formPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
-               
-        // Add components to the main panel
-    	formPanel.add(new JLabel("Activity:"));
-    	formPanel.add(activityComboBox);
-
-    	formPanel.add(new JLabel("Amount (EUR):"));
-    	formPanel.add(amountField);
-
-    	formPanel.add(new JLabel("NIF:"));
-    	formPanel.add(nifField);
-
-    	formPanel.add(new JLabel("Date:"));
-    	formPanel.add(dateField);
-
-    	formPanel.add(new JLabel("Invoice ID:"));
-    	formPanel.add(invoiceIdField);
-    	
-    	super.getMainPanel().add(formPanel, BorderLayout.CENTER);
-    }
-    
-    public void configureSummaryPanel()
-    {
-    	JLabel headerLabel = new JLabel("<html><div style='font-size:14px; font-weight:bold;'>Summary of Payment Registered</div></html>", SwingConstants.CENTER);
-    	headerLabel.setFont(new Font("Arial", Font.BOLD, 11));
-    	headerLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-    	JLabel summaryLabel = new JLabel("<html><div style='font-size:11px; padding:2px 5px;'>" +
-    		    "<b>Activity:</b> " + getActivity() + "<br>" +
-    		    "<b>Amount (EUR):</b> " + getAmount() + "<br>" +
-    		    "<b>NIF:</b> " + getNIF() + "<br>" +
-    		    "<b>Date:</b> " + getDate() + "<br>" +
-    		    "<b>Invoice ID:</b> " + getInvoiceId() +
-    		    "</div></html>", SwingConstants.CENTER);
-
-    	summaryLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-    	summaryLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    	
-    	clearFields();
-    	summaryPanel.removeAll();
-    	summaryPanel.setLayout(new BoxLayout(summaryPanel, BoxLayout.Y_AXIS));
-    	summaryPanel.add(headerLabel, BorderLayout.NORTH);
-    	summaryPanel.add(summaryLabel, BorderLayout.CENTER);
-    	summaryPanel.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 1));
-    	
-    	super.getMainPanel().add(summaryPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    }
-    
-    public void showError(String errorMessage) {
-    	clearFields();
-
-    	errorPanel.setLayout(new BorderLayout());
-    	errorPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
-
-        // Error header
-        JLabel errorHeader = new JLabel("<html><div style='color:red; font-size:14px; font-weight:bold;'>Error</div></html>", SwingConstants.CENTER);
-        errorHeader.setFont(new Font("Arial", Font.BOLD, 11));
-        errorHeader.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Error message
-        JLabel errorLabel = new JLabel("<html><div style='color:red; font-size:11px; padding:2px 5px;'>" + errorMessage + "</div></html>", SwingConstants.CENTER);
+    private JPanel createLeftPanel()
+	{
+    	// Labels
+        JLabel invoicesTableLabel = new JLabel("Select an Invoice to Register a Payment");
+        JLabel paymentsTableLabel = new JLabel("Payments registered for the invoice");
         
-        errorLabel.setFont(new Font("Arial", Font.PLAIN, 11));
-        errorLabel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    	
-        errorPanel.setLayout(new BoxLayout(errorPanel, BoxLayout.Y_AXIS));
-        errorPanel.add(errorHeader, BorderLayout.NORTH); // Add header
-        errorPanel.add(errorLabel, BorderLayout.CENTER); // Add error message
+        // Create a panel with GridLayout to align labels properly
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
+
+        // Create title labels with bold text
+        JLabel totalInvoiceTitle = new JLabel("Total Invoice Amount (euro): ");
+        totalInvoiceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel totalPaymentsTitle = new JLabel("Total Payments (euro): ");
+        totalPaymentsTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (euro): ");
+        remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        // Create value labels (dynamic data placeholders)
+        this.totalInvoiceLabel = new JLabel("0.00");
+        totalInvoiceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        totalInvoiceLabel.setForeground(Color.BLUE); // Highlight in blue
+
+        this.totalPaymentsLabel = new JLabel("0.00");
+        this.totalPaymentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.totalPaymentsLabel.setForeground(Color.GREEN); // Highlight in green
+
+        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.remainingBalanceLabel.setForeground(Color.RED); // Highlight in red
+
+        // Add elements to the panel
+        summaryPanel.add(totalInvoiceTitle);
+        summaryPanel.add(this.totalInvoiceLabel);
+        summaryPanel.add(totalPaymentsTitle);
+        summaryPanel.add(this.totalPaymentsLabel);
+        summaryPanel.add(remainingBalanceTitle);
+        summaryPanel.add(this.remainingBalanceLabel);
+
+        // Wrap it in a titled border for a professional look
+        JPanel borderedPanel = new JPanel(new BorderLayout());
+        borderedPanel.setBorder(BorderFactory.createTitledBorder("Payment Summary"));
+        borderedPanel.add(summaryPanel);
+
+        // Set table properties
+        invoicesTable.setName("Invoices");
+        invoicesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        invoicesTable.setDefaultEditor(Object.class, null);
+        JScrollPane invoicesTableScroll = new JScrollPane(invoicesTable);
         
-        super.getMainPanel().add(errorPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
+        paymentsTable.setName("Payments");
+        paymentsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        paymentsTable.setDefaultEditor(Object.class, null);
+        JScrollPane paymentsTableScroll = new JScrollPane(paymentsTable);
+
+        // Main panel with vertical layout
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+
+        // Invoices Panel
+        JPanel invoicesPanel = new JPanel(new BorderLayout());
+        invoicesPanel.add(invoicesTableLabel, BorderLayout.NORTH);
+        invoicesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        invoicesPanel.add(invoicesTableScroll, BorderLayout.CENTER);
+        
+        // Payments Panel
+        JPanel paymentsPanel = new JPanel(new BorderLayout());
+        paymentsPanel.add(paymentsTableLabel, BorderLayout.NORTH);
+        paymentsPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        paymentsPanel.add(paymentsTableScroll, BorderLayout.CENTER);
+
+        // Add panels in correct order
+        panel.add(invoicesPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(paymentsPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
+        panel.add(summaryPanel); // Adds spacing
+	
+		return panel;
+	}
+
+    private JPanel createRightPanel()
+	{
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.insets = new Insets(30, 30, 30, 30);
+		gbc.anchor = GridBagConstraints.WEST;
+
+		// Fields Panel with Border
+		JPanel fieldsPanel = new JPanel(new GridBagLayout());
+		fieldsPanel.setBorder(BorderFactory.createTitledBorder("Payment Details"));
+		GridBagConstraints fieldsGbc = new GridBagConstraints();
+		fieldsGbc.insets = new Insets(30, 30, 30, 30);
+		fieldsGbc.anchor = GridBagConstraints.WEST;
+
+		// Labels
+		JLabel amountLabel = new JLabel("Amount (euro):");
+		JLabel paymentDateLabel = new JLabel("Date Received:");
+
+		// Fields
+		JComponent[][] fields = {
+		    {amountLabel, amountTextField},
+		    {paymentDateLabel, dateTextField}
+		};
+
+		// Add labels above inputs
+		for (int i = 0; i < fields.length; i++) {
+		    // Set label in the first row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2; // position label in even rows
+		    fieldsPanel.add(fields[i][0], fieldsGbc);
+
+		    // Set input field in the second row
+		    fieldsGbc.gridx = 0;
+		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
+		    fieldsGbc.gridwidth = 2; // input spans two columns
+		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
+		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
+		    fieldsPanel.add(fields[i][1], fieldsGbc);
+		}
+
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 2;
+		panel.add(fieldsPanel, gbc);
+
+        return panel;
+	}
+
+    public JTextField getAmountTextField() {
+    	return amountTextField;
     }
 
-    public void clearFields() {
-    	super.getMainPanel().remove(summaryPanel);
-    	super.getMainPanel().remove(errorPanel);
-    	super.getMainPanel().revalidate();
-    	super.getMainPanel().repaint();
-    	summaryPanel.removeAll();
-    	errorPanel.removeAll();
-    	
-    	// Reset JComboBox to first item or empty selection
-        activityComboBox.setSelectedIndex(0);
-
-        // Reset amount field with placeholder effect
-        amountField.setText("0.00");
-        amountField.setForeground(Color.GRAY);
-        amountField.setFont(amountField.getFont().deriveFont(Font.ITALIC));
-
-        // Reset NIF field
-        nifField.setText("");
-
-        // Reset date field with placeholder effect
-        dateField.setText("YYYY-MM-DD");
-        dateField.setForeground(Color.GRAY);
-        dateField.setFont(dateField.getFont().deriveFont(Font.ITALIC));
-
-        // Reset Invoice ID field
-        invoiceIdField.setText("");
-    }
-    
-    public String getActivity() {
-        return (String) activityComboBox.getSelectedItem();
-    }
-    
-    public JComboBox<Object> getActivities() {
-    	return activityComboBox;
+    public JTextField getDateTextField() {
+    	return dateTextField;
     }
 
-    public String getAmount() {
-    	if (amountField.getText().equals("0.00")) {
-    		return "";
-    	}
-        return amountField.getText();
-    }
-
-    public String getNIF() {
-        return nifField.getText();
-    }
-
-    public String getDate() {
-    	if (dateField.getText().equals("YYYY-MM-DD")) {
-    		return "";
-    	}
-        return dateField.getText();
-    }
-
-    public String getInvoiceId() {
-        return invoiceIdField.getText();
-    }
-
-    public void setInvoiceId(String id) {
-        invoiceIdField.setText(id);
-    }
+	public JTable getInvoicesTable() {
+		return invoicesTable;
+	}
+	
+	public JTable getPaymentsTable() {
+		return paymentsTable;
+	}
+	public JLabel getTotalInvoiceLabel() { return totalInvoiceLabel; }
+	public JLabel getTotalPaymentsLabel() { return totalPaymentsLabel; }
+	public JLabel getRemainingBalanceLabel() { return remainingBalanceLabel; }
 }

@@ -13,6 +13,10 @@ public class InvoicesModel {
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
+	public static final String SQL_FILTERED_INVOICES_BY_SPONSOR = "SELECT I.* FROM Invoices I "
+			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
+			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
+			+ "WHERE SC.idSponsorOrganization == ?;";
 	
 	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
@@ -67,6 +71,11 @@ public class InvoicesModel {
 		}
 		return (int) result.get(0)[0];
 	}
+    
+    public List<InvoicesDTO> getInvoicesBySponsor(String sponsorId) {
+		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
+        return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
+    }
     
     // SETTERS - UPDATES
     public void setInvoiceStatus(String invoiceId, String status)

@@ -35,6 +35,17 @@ public class SponsorOrganizationsModel {
 		String sql = "SELECT name FROM SponsorOrganizations;";
 		return db.executeQueryArray(sql);
 	}
+	
+	public List<SponsorOrganizationsDTO> getSponsorOrganizations() {
+		String sql = "SELECT * FROM SponsorOrganizations;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql);
+	}
+	
+	public SponsorOrganizationsDTO getSOByInvoiceId(String invoiceId) {
+		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
+		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, invoiceId);
+		return data.get(0);
+	}
     
 	public SponsorOrganizationsDTO getSponsorOrganizationByInvoiceId(String invoiceId) {
 		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
