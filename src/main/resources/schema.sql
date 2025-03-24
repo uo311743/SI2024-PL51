@@ -16,7 +16,6 @@ CREATE TABLE SponsorOrganizations (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     
     name TEXT NOT NULL,
-    type TEXT NOT NULL CHECK(lower(type) IN ('private', 'public')),
     address TEXT,
     nif TEXT,
     vat TEXT

@@ -27,6 +27,7 @@ import model.LevelsModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
+import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
 import controller.RegisterActivityController;
@@ -34,6 +35,7 @@ import view.IncomesExpensesReportView;
 import view.RegisterActivityView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
+import view.CloseActivityView;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
 import model.ActivitiesModel;
@@ -176,6 +178,10 @@ public class SwingMain {
 	    // US 29332
 	    addButtonToMain(buttonPanel, "Register Activity", () -> {
 	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
+	    
+      // US Jala
+	    addButtonToMain(buttonPanel, "Close Activity", () -> {
+	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
 	    
 	    

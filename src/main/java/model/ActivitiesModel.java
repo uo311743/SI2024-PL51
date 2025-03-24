@@ -72,7 +72,7 @@ public class ActivitiesModel {
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
-    
+  
     public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
     	SemanticValidations.validateName(name);
 		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
@@ -93,6 +93,29 @@ public class ActivitiesModel {
 		return (int) result.get(0)[0];
 	}
    
+	public void closeActivityById(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for closeActivityById does not exist.");
+		
+		String sql;
+		
+		sql = "UPDATE Activities SET status = 'closed' WHERE id = ?;";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE Movements SET status = 'cancelled' WHERE idActivity = ? AND status = 'estimated';";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE SponsorshipAgreements SET status = 'cancelled' WHERE idActivity = ? AND status = 'signed';";
+		db.executeUpdate(sql, idActivity);
+		
+		sql = "UPDATE Invoices SET status = 'cancelled'"
+				+ "WHERE idSponsorshipAgreement IN ("
+				+ "    SELECT id "
+				+ "    FROM SponsorshipAgreements "
+				+ "    WHERE idActivity = ?"
+				+ ") AND status = 'signed';";
+		db.executeUpdate(sql, idActivity);
+	}
+
 	// INSERTIONS
     
     public void insertNewActivity(String name, String edition, String dateStart, String dateEnd, String place) {

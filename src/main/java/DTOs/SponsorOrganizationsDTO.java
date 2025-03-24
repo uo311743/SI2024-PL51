@@ -3,7 +3,6 @@ package DTOs;
 public class SponsorOrganizationsDTO {
     private String id;
     private String name;
-    private String type;
     private String address;
     private String nif;
     private String vat;
@@ -19,12 +18,6 @@ public class SponsorOrganizationsDTO {
 	}
 	public void setId(String id) {
 		this.id = id;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
 	}
 	public String getAddress() {
 		return address;

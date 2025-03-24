@@ -1,6 +1,8 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -56,23 +58,23 @@ public class RegisterSponsorshipController {
 
     public void initController()
     {
-    	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowLeft().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
 			}
 		});
     	
-    	this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowMiddle().addActionListener(new ActionListener() {
     		@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
     			SwingUtil.exceptionWrapper(() -> restartView());
     		}
 		});
     	
-    	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowRight().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
 			}
 		});
@@ -130,7 +132,14 @@ public class RegisterSponsorshipController {
     
     public void initView()
     {
-    	this.restartView();
+    	this.getActivities();
+    	this.getSponsors();
+		this.getGBMembers();
+		
+		this.view.getButtonLowRight().setEnabled(false);
+		this.setInputsEnabled(false);
+		
+    	this.restoreDetail();
     	view.setVisible();
     }
         
@@ -146,8 +155,7 @@ public class RegisterSponsorshipController {
 		// If an activity is selected in the table do:
 		
 		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivityTable());
-		if("".equals(this.lastSelectedActivity)) {  restartView(); }
-		else
+		if(!"".equals(this.lastSelectedActivity))
 		{
 			String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
 			if (this.lastSelectedSponsor != selectedSponsor)
@@ -221,7 +229,7 @@ public class RegisterSponsorshipController {
     private void getActivities()
     {
     	List<ActivitiesDTO> activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }

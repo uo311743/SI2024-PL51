@@ -1,5 +1,7 @@
 package controller;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -49,9 +51,9 @@ public class ConsultStatusActivityController {
 
     public void initController()
     {
-    	this.view.getButtonLowLeft().addMouseListener(new MouseAdapter() {
+    	this.view.getButtonLowLeft().addActionListener(new ActionListener() {
 			@Override
-			public void mouseReleased(MouseEvent e) {
+			public void actionPerformed(ActionEvent  e) {
 				SwingUtil.exceptionWrapper(() -> { view.disposeView(); });
 			}
 		});
@@ -100,7 +102,7 @@ public class ConsultStatusActivityController {
 	private void getActivities()
     {
     	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
@@ -180,7 +182,7 @@ public class ConsultStatusActivityController {
 		);
 		
 		this.view.getTotalActualBalanceField().setText(
-				String.valueOf(this.actualSponsorship + this.estimatedIncome - this.estimatedExpenses)
+				String.valueOf(this.actualSponsorship + this.actualIncome - this.actualExpenses)
 		);
 	}
 }

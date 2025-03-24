@@ -25,7 +25,7 @@ public class ActivitiesDTO {
 		return edition;
 	}
 	public void setEdition(String edition) {
-		this.name = edition;
+		this.edition = edition;
 	}
 	public String getStatus() {
 		return status;
