@@ -178,6 +178,7 @@ public class SwingMain {
 	    // US 29332
 	    addButtonToMain(buttonPanel, "Register Activity", () -> {
 	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
+	    });
 	    
       // US Jala
 	    addButtonToMain(buttonPanel, "Close Activity", () -> {
