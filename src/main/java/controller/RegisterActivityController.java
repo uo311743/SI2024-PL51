@@ -244,7 +244,6 @@ public class RegisterActivityController {
     	this.view.getLevelFeeTextField().setEnabled(true);
     	
     	this.view.getBackButton().setEnabled(true);
-    	this.view.getAddButton().setEnabled(true);
     }
     
     public void insertTemplate() {
