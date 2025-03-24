@@ -23,19 +23,23 @@ import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterIncomesExpensesController;
 import model.InvoicesModel;
+import model.LevelsModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
 import view.RegisterPaymentView;
 import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
+import controller.RegisterActivityController;
 import view.IncomesExpensesReportView;
+import view.RegisterActivityView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.CloseActivityView;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
 import model.ActivitiesModel;
+import model.ActivityTemplatesModel;
 import view.RegisterIncomesExpensesView;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -171,7 +175,11 @@ public class SwingMain {
 	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
-	    // FIXME
+	    // US 29332
+	    addButtonToMain(buttonPanel, "Register Activity", () -> {
+	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
+	    
+      // US Jala
 	    addButtonToMain(buttonPanel, "Close Activity", () -> {
 	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
