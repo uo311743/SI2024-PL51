@@ -2,7 +2,6 @@ package model;
 
 import java.util.List;
 import DTOs.LevelsDTO;
-import util.ApplicationException;
 import util.Database;
 import util.SemanticValidations;
 
@@ -37,17 +36,14 @@ public class LevelsModel {
 
     // INSERTIONS
     
-    public void insertNewLevel(String idActivity, String name, String amount) {
+    public void insertNewLevel(String idActivity, String name, String fee) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "Not valid ID");
 		SemanticValidations.validateName(name);
-		SemanticValidations.validatePositiveNumberOrZero(amount, "Not valid number");
-		
-		if(getNumberLevelsByActivityId(idActivity) != 0)
-			throw new ApplicationException("ERROR");
+		SemanticValidations.validatePositiveNumberOrZero(fee, "Not valid number");
 		
 		String sql = "INSERT INTO Levels"
 				+ "(idActivity, name, fee) VALUES "
 				+ "(?, ?, ?)";
-		db.executeUpdate(sql, idActivity, name, amount);
+		db.executeUpdate(sql, idActivity, name, fee);
 	}
 }

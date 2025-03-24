@@ -544,7 +544,9 @@ public class RegisterActivityController {
     		);
     		
     		ActivitiesDTO activity = activitiesModel.getActivityByFilters(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
-    		this.levelsModel.insertNewLevel(activity.getId(), view.getLevelNameTextField().getText(), view.getLevelFeeTextField().getText());
+    		for (LevelsDTO level : levels) {
+        		this.levelsModel.insertNewLevel(activity.getId(), level.getName(), level.getFee());
+    		}
     		JOptionPane.showMessageDialog(
     			this.view.getFrame(), "Levels added correctly",
     			"This operation has been succesful",

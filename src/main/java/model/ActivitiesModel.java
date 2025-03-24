@@ -17,10 +17,7 @@ public class ActivitiesModel {
 	
 	public static final String SQL_NUM_ACTIVITIES_FILTERED = "SELECT COUNT(id) FROM Activities "
 			+ "WHERE name == ? "
-			+ "AND edition == ? "
-			+ "AND dateStart == ? "
-			+ "AND dateEnd == ? "
-			+ "AND place == ?;";
+			+ "AND edition == ?;";
 	
     private Database db = new Database();
 
