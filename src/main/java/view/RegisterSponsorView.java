@@ -16,18 +16,21 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
 
 public class RegisterSponsorView extends AbstractView {
 	
-	JTextField sponsorNameField;
-    JTextField sponsorAddressField;
-    JTextField sponsorVatField;
+	private JTextField sponsorNameField;
+	private JTextField sponsorAddressField;
+	private JTextField sponsorVatField;
     
-    JTable contactsTable;
+	private JTable contactsTable;
     
-    JTextField contactNameField;
-    JTextField contactEmailField;
-    JTextField contactPhoneField;
+	private JTextField contactNameField;
+	private JTextField contactEmailField;
+	private JTextField contactPhoneField;
+    
+	private JButton buttonAddContact;
 	
 	
 	public RegisterSponsorView() { super("Register Sponsor"); }
@@ -44,8 +47,10 @@ public class RegisterSponsorView extends AbstractView {
 	    this.contactPhoneField = new JTextField(30);
 
 	    String[] columnNames = {"Name", "Email", "Phone"};
-	    Object[][] data = {};
-	    this.contactsTable = new JTable(data, columnNames);
+	    DefaultTableModel contactsTableModel = new DefaultTableModel(columnNames, 0);
+        contactsTable = new JTable(contactsTableModel);
+	    
+	    this.buttonAddContact = new JButton("Add Contact");
 		
 		super.createButtonLowLeft("Go Back");
 		super.createButtonLowRight("Register");
@@ -125,8 +130,7 @@ public class RegisterSponsorView extends AbstractView {
 	    gbc.gridy++;
 	    gbc.weighty = 0;
 	    gbc.anchor = GridBagConstraints.CENTER;
-	    JButton addButton = new JButton("Add Contact");
-	    formPanel.add(addButton, gbc);
+	    formPanel.add(this.buttonAddContact, gbc);
 
 	    // Container for table and form to balance sizes
 	    JPanel contentPanel = new JPanel(new GridLayout(1, 2, 10, 10));
@@ -138,5 +142,37 @@ public class RegisterSponsorView extends AbstractView {
 
 	    return panel;
 	}
+	
+	
+    public JTextField getSponsorNameField() {
+        return this.sponsorNameField;
+    }
 
+    public JTextField getSponsorAddressField() {
+        return this.sponsorAddressField;
+    }
+
+    public JTextField getSponsorVatField() {
+        return this.sponsorVatField;
+    }
+
+    public JTable getContactsTable() {
+        return this.contactsTable;
+    }
+
+    public JTextField getContactNameField() {
+        return this.contactNameField;
+    }
+
+    public JTextField getContactEmailField() {
+        return this.contactEmailField;
+    }
+
+    public JTextField getContactPhoneField() {
+        return this.contactPhoneField;
+    }
+    
+    public JButton getButtonAddContact() {
+        return this.buttonAddContact;
+    }
 }

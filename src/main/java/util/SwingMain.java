@@ -26,6 +26,7 @@ import model.InvoicesModel;
 import model.LevelsModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
+import controller.RegisterSponsorController;
 import view.RegisterPaymentView;
 import view.RegisterSponsorView;
 import controller.CloseActivityController;
@@ -188,7 +189,7 @@ public class SwingMain {
 	    
 	    // US 29329
 	    addButtonToMain(buttonPanel, "Register Sponsor", () -> {
-	    	new RegisterSponsorView().setVisible();
+	    	new RegisterSponsorController(new SponsorContactsModel(), new SponsorOrganizationsModel(), new RegisterSponsorView());
 	    });
 	    
 	    
