@@ -53,7 +53,7 @@ public class RegisterSponsorView extends AbstractView {
 	    this.buttonAddContact = new JButton("Add Contact");
 		
 		super.createButtonLowLeft("Cancel");
-		super.createButtonLowLeft("Reset");
+		super.createButtonLowMiddle("Reset");
 		super.createButtonLowRight("Register");
 	}
 
