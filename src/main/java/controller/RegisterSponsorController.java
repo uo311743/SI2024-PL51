@@ -54,6 +54,13 @@ public class RegisterSponsorController {
 			}
 		});
     	
+    	this.view.getButtonLowMiddle().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent  e) {
+				SwingUtil.exceptionWrapper(() -> { restoreDetail(); });
+			}
+		});
+    	
     	
     	this.view.getButtonLowRight().addActionListener(new ActionListener() {
 			@Override
