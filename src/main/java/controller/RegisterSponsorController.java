@@ -222,6 +222,13 @@ public class RegisterSponsorController {
     	
 	    for(SponsorContactsDTO contact : contacts)
 	    	this.contactModel.insertContact(sponsorId, contact.getName(), contact.getEmail(), contact.getPhone());
+	    
+	    JOptionPane.showMessageDialog(
+    			this.view.getFrame(),
+    			"Sponsor organization " + sponsorName + " with " + contacts.size() + " contacts added successfully.",
+    			"Operation completed successfully",
+    			JOptionPane.INFORMATION_MESSAGE
+    	);
     	    	
     	this.restoreDetail();
     	return;
