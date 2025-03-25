@@ -147,7 +147,7 @@ public class SwingMain {
 	     */	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
+	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new LevelsModel(), new RegisterSponsorshipView());
 	    });
 	    
 	    // US 29125

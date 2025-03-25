@@ -543,7 +543,7 @@ public class RegisterActivityController {
     			JOptionPane.INFORMATION_MESSAGE
     		);
     		
-    		ActivitiesDTO activity = activitiesModel.getActivityByFilters(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
+    		ActivitiesDTO activity = activitiesModel.getActivityByFilters(nameActivity, ed);
     		for (LevelsDTO level : levels) {
         		this.levelsModel.insertNewLevel(activity.getId(), level.getName(), level.getFee());
     		}

@@ -10,10 +10,7 @@ public class ActivitiesModel {
 
 	public static final String SQL_ACTIVITIES_FILTERED = "SELECT * FROM Activities "
 			+ "WHERE name == ? "
-			+ "AND edition == ? "
-			+ "AND dateStart == ? "
-			+ "AND dateEnd == ? "
-			+ "AND place == ?;";
+			+ "AND edition == ?;";
 	
 	public static final String SQL_NUM_ACTIVITIES_FILTERED = "SELECT COUNT(id) FROM Activities "
 			+ "WHERE name == ? "
@@ -70,13 +67,10 @@ public class ActivitiesModel {
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
   
-    public ActivitiesDTO getActivityByFilters(String name, String edition, String dateStart, String dateEnd, String place) {
+    public ActivitiesDTO getActivityByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);
 		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
-		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
-		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
-		SemanticValidations.validateName(place);
-    	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition, dateStart, dateEnd, place);
+    	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition);
 		return sol.get(0);
 	}
     

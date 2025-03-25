@@ -33,6 +33,19 @@ public class LevelsModel {
 		}
 		return (int) result.get(0)[0];
 	}
+    
+    public List<Object[]> getLevelsListArray(String activity) {
+    	String sql = "SELECT name FROM Levels;";
+		return db.executeQueryArray(sql);
+	}
+    
+    public LevelsDTO getLevelsByActivityIdAndLevelName(String activityId, String levelName) {
+    	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
+    	SemanticValidations.validateName(levelName);
+    	String sql = "SELECT * FROM Levels WHERE idActivity = ? AND name = ?;";
+    	List<LevelsDTO> level = db.executeQueryPojo(LevelsDTO.class, sql, activityId, levelName);
+    	return level.get(0);
+    }
 
     // INSERTIONS
     
