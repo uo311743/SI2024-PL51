@@ -17,6 +17,7 @@ import org.apache.commons.dbutils.QueryRunner;
 import org.apache.commons.dbutils.handlers.ArrayListHandler;
 import org.apache.commons.dbutils.handlers.BeanListHandler;
 import org.apache.commons.dbutils.handlers.MapListHandler;
+import org.apache.commons.dbutils.handlers.ScalarHandler;
 
 /**
  * Metodos de utilidad para simplificar las queries realizadas en las clases 
@@ -108,6 +109,32 @@ public abstract class DbUtil {
 		} finally {
 			DbUtils.closeQuietly(conn);
 		}
+	}
+	
+	/**
+	 * Executes an SQL INSERT statement with the given parameters.
+	 * It returns the generated key as a String.
+	 *
+	 * @param sql    The SQL query to execute (typically an INSERT, UPDATE, or DELETE).
+	 * @param params The parameters to be inserted into the query.
+	 * @return The generated key (if applicable) as a String. Returns null if no key is generated.
+	 * @throws UnexpectedException If an SQL exception occurs.
+	 */
+	public String executeInsertion(String sql, Object... params) {
+	    Connection conn = null;
+	    try {
+	        conn = this.getConnection();
+	        QueryRunner runner = new QueryRunner();
+	        
+	        // Execute insert and retrieve generated key as a String
+	        return runner.insert(conn, sql, new ScalarHandler<Number>(), params).toString();
+	        
+	    } catch (SQLException e) {
+	        throw new UnexpectedException(e);
+	    } finally {
+	    	
+	        DbUtils.closeQuietly(conn);
+	    }
 	}
 	
 	/**
