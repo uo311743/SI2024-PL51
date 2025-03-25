@@ -24,6 +24,7 @@ public class RegisterSponsorshipView extends AbstractView {
 	private JComboBox<Object> contactComboBox;
 	private JComboBox<Object> gbMemberComboBox;
 	private JComboBox<Object> levelsComboBox;
+	private JLabel amountLabel;
 	private JTextField amountTextField;
 	private JTextField agreementDateTextField;
 	private JTextField contactEmailTextField;
@@ -38,6 +39,7 @@ public class RegisterSponsorshipView extends AbstractView {
         this.contactComboBox = new JComboBox<>();
         this.gbMemberComboBox = new JComboBox<>();
         this.levelsComboBox = new JComboBox<>();
+        this.amountLabel = new JLabel("Amount (euro):");
         this.amountTextField = new JTextField(10);
         this.agreementDateTextField = new JTextField(10);
 		this.contactEmailTextField = new JTextField(10);
@@ -100,7 +102,6 @@ public class RegisterSponsorshipView extends AbstractView {
 		JLabel contactLabel = new JLabel("Select a contact:");
 		JLabel gbMemberLabel = new JLabel("Select a GB member:");
 		JLabel levelsLabel = new JLabel("Select a level:");
-		JLabel amountLabel = new JLabel("Amount (euro):");
 		JLabel agreementDateLabel = new JLabel("Agreement Date (yyyy-MM-dd):");
 		JLabel contactEmailLabel = new JLabel("Contact Email:");
 
@@ -159,6 +160,10 @@ public class RegisterSponsorshipView extends AbstractView {
 	
 	public JComboBox<Object> getLevelsComboBox() {
 		return levelsComboBox;
+	}
+	
+	public JLabel getAmountLabel() {
+		return amountLabel;
 	}
 
 	public JTextField getAmountTextField() {

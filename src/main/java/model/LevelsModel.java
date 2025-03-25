@@ -34,9 +34,9 @@ public class LevelsModel {
 		return (int) result.get(0)[0];
 	}
     
-    public List<Object[]> getLevelsListArray(String activity) {
-    	String sql = "SELECT name FROM Levels;";
-		return db.executeQueryArray(sql);
+    public List<Object[]> getLevelsListArray(String activityId) {
+    	String sql = "SELECT name FROM Levels WHERE idActivity = ?;";
+		return db.executeQueryArray(sql, activityId);
 	}
     
     public LevelsDTO getLevelsByActivityIdAndLevelName(String activityId, String levelName) {

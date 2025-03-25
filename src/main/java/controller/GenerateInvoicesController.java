@@ -221,10 +221,15 @@ public class GenerateInvoicesController {
     	
         if(numInvoices == 0) {
         	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        
-			this.invoicesModel.insertNewInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), totalAmount, taxRate);
+        	String today = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3);
+	        Date date = Util.isoStringToDate(today);
+	        Calendar calendar = Calendar.getInstance();
+	        calendar.setTime(date);
+			Params params = new Params();
+			calendar.add(Calendar.DAY_OF_MONTH, params.getTaxExpDays());
+	        String expDate = Util.dateToIsoString(calendar.getTime());
+						
+			this.invoicesModel.insertNewInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), expDate, totalAmount, taxRate);
 	        
 			JOptionPane.showMessageDialog(
 	    			this.view.getFrame(), "Invoice added correctly",
@@ -243,10 +248,15 @@ public class GenerateInvoicesController {
 	        
 	        if (response == JOptionPane.YES_OPTION) {
 	        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        		SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        		SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
+	        	String today = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3);
+		        Date date = Util.isoStringToDate(today);
+		        Calendar calendar = Calendar.getInstance();
+		        calendar.setTime(date);
+				Params params = new Params();
+				calendar.add(Calendar.DAY_OF_MONTH, params.getTaxExpDays());
+		        String expDate = Util.dateToIsoString(calendar.getTime());
         		
-	        	this.invoicesModel.insertUpdateInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), Util.dateToIsoString(SwingMain.getTodayDate()), totalAmount, taxRate);
+	        	this.invoicesModel.insertUpdateInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), expDate, totalAmount, taxRate);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
 		    			"Invoice added correctly",

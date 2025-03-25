@@ -2,7 +2,6 @@ package model;
 
 import java.util.Date;
 import java.util.List;
-
 import DTOs.LevelsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
@@ -88,6 +87,9 @@ public class SponsorshipAgreementsModel {
 		SemanticValidations.validatePositiveNumber(feeLevelSelected, "Not valid fee");
 		String sql = "SELECT * FROM Levels WHERE fee > ? ORDER BY fee ASC;";
 		List<LevelsDTO> max = db.executeQueryPojo(LevelsDTO.class, sql, feeLevelSelected);
+		if (max.size() == 0) {
+			return "isTheMax";
+		}
 		return max.get(0).getFee();
 	}
 
