@@ -2,7 +2,6 @@ package model;
 
 import java.util.List;
 import DTOs.LevelsDTO;
-import util.ApplicationException;
 import util.Database;
 import util.SemanticValidations;
 
@@ -34,20 +33,30 @@ public class LevelsModel {
 		}
 		return (int) result.get(0)[0];
 	}
+    
+    public List<Object[]> getLevelsListArray(String activityId) {
+    	String sql = "SELECT name FROM Levels WHERE idActivity = ?;";
+		return db.executeQueryArray(sql, activityId);
+	}
+    
+    public LevelsDTO getLevelsByActivityIdAndLevelName(String activityId, String levelName) {
+    	SemanticValidations.validateIdForTable(activityId, "Activities", "Not valid ID");
+    	SemanticValidations.validateName(levelName);
+    	String sql = "SELECT * FROM Levels WHERE idActivity = ? AND name = ?;";
+    	List<LevelsDTO> level = db.executeQueryPojo(LevelsDTO.class, sql, activityId, levelName);
+    	return level.get(0);
+    }
 
     // INSERTIONS
     
-    public void insertNewLevel(String idActivity, String name, String amount) {
+    public void insertNewLevel(String idActivity, String name, String fee) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "Not valid ID");
 		SemanticValidations.validateName(name);
-		SemanticValidations.validatePositiveNumberOrZero(amount, "Not valid number");
-		
-		if(getNumberLevelsByActivityId(idActivity) != 0)
-			throw new ApplicationException("ERROR");
+		SemanticValidations.validatePositiveNumberOrZero(fee, "Not valid number");
 		
 		String sql = "INSERT INTO Levels"
 				+ "(idActivity, name, fee) VALUES "
 				+ "(?, ?, ?)";
-		db.executeUpdate(sql, idActivity, name, amount);
+		db.executeUpdate(sql, idActivity, name, fee);
 	}
 }

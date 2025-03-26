@@ -19,6 +19,7 @@ public class RegisterActivityView extends AbstractView {
     private JTextField levelNameTextField;
     private JTextField levelFeeTextField;
     private JButton backButton;
+    private JButton addButton;
     private JTable levelTable;
     
     public RegisterActivityView() {
@@ -40,6 +41,7 @@ public class RegisterActivityView extends AbstractView {
         this.levelNameTextField = new JTextField(10);
         this.levelFeeTextField = new JTextField(10);
         this.backButton = new JButton("Back");
+        this.addButton = new JButton("Add");
         this.levelTable = new JTable(new DefaultTableModel());
         
         super.createButtonLowLeft("Cancel");
@@ -75,11 +77,12 @@ public class RegisterActivityView extends AbstractView {
         JPanel rightPanel = new JPanel(new MigLayout("wrap", "[grow]", "[grow 40][grow 60]"));
         JPanel levelPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
         levelPanel.setBorder(BorderFactory.createTitledBorder("Sponsorship Level"));
-        levelPanel.add(new JLabel("Sponsorship Name: "));
+        levelPanel.add(new JLabel("Sponsorship Level Name: "));
         levelPanel.add(levelNameTextField);
-        levelPanel.add(new JLabel("Amount: "));
+        levelPanel.add(new JLabel("Fee: "));
         levelPanel.add(levelFeeTextField);
-        levelPanel.add(backButton);
+        levelPanel.add(backButton, "split 2, align left");
+        levelPanel.add(addButton, "align right, wrap");
         rightPanel.add(levelPanel, "grow");
         
         // Level Table
@@ -135,6 +138,10 @@ public class RegisterActivityView extends AbstractView {
     
     public JButton getBackButton() { 
         return backButton; 
+    }
+    
+    public JButton getAddButton() { 
+        return addButton; 
     }
     
     public JTable getLevelTable() { 

@@ -77,7 +77,7 @@ public class IncomesExpensesReportController {
     }
     
     public void initView() {
-    	view.getFilterButton().setEnabled(false);
+    	view.getFilterButton().setEnabled(true);
     	showCurrentData();
         view.setVisible();
     }
