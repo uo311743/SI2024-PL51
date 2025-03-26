@@ -183,7 +183,7 @@ public class SwingMain {
 	    // US 29332
 	    addButtonToMain(buttonPanel, "Register Activity", () -> {
 	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
-	    });
+      });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
