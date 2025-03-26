@@ -147,7 +147,7 @@ public class SwingMain {
 	     */	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
+	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new LevelsModel(), new RegisterSponsorshipView());
 	    });
 	    
 	    // US 29125
@@ -175,16 +175,15 @@ public class SwingMain {
 	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
-	    // US 29332
-	    addButtonToMain(buttonPanel, "Register Activity", () -> {
-	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
-	    });
-	    
-      // US Jala
+	    // US29331
 	    addButtonToMain(buttonPanel, "Close Activity", () -> {
 	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
-	    
+
+	    // US 29332
+	    addButtonToMain(buttonPanel, "Register Activity", () -> {
+	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
+      });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
