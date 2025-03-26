@@ -61,4 +61,23 @@ public class SponsorOrganizationsModel {
 	}
 
 	// INSERTIONS
+	
+	public String insertSponsorOrganizationAndGetID(String name, String address, String nif, String vat)
+	{
+		String sql = "INSERT INTO SponsorOrganizations"
+				+ "(name, address, nif, vat) VALUES "
+				+ "(?, ?, ?, ?)";
+		return db.executeInsertion(sql, name, address, nif, vat);
+	}
+	
+	
+	public boolean existsSponsorByName(String nameSponsor) {
+		String sql = "SELECT * FROM SponsorOrganizations WHERE name == ?;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nameSponsor).size() != 0;
+	}
+	
+	public boolean existsSponsorByVat(String nifSponsor) {
+		String sql = "SELECT * FROM SponsorOrganizations WHERE nif == ?;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nifSponsor).size() != 0;
+	}
 }

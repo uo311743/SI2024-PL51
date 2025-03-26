@@ -26,7 +26,9 @@ import model.InvoicesModel;
 import model.LevelsModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
+import controller.RegisterSponsorController;
 import view.RegisterPaymentView;
+import view.RegisterSponsorView;
 import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
@@ -175,15 +177,20 @@ public class SwingMain {
 	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
-	    // US29331
-	    addButtonToMain(buttonPanel, "Close Activity", () -> {
-	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
-	    });
-
 	    // US 29332
 	    addButtonToMain(buttonPanel, "Register Activity", () -> {
 	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
-      });
+	    });
+	    
+	    // US 29331
+	    addButtonToMain(buttonPanel, "Close Activity", () -> {
+	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
+	    });
+	    
+	    // US 29329
+	    addButtonToMain(buttonPanel, "Register Sponsor", () -> {
+	    	new RegisterSponsorController(new SponsorContactsModel(), new SponsorOrganizationsModel(), new RegisterSponsorView());
+	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
