@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
+import DTOs.IncomesExpensesDTO;
 import DTOs.MovementsDTO;
 import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
@@ -135,8 +136,8 @@ public class ConsultStatusActivityController {
 	
 	private void getIncome(String idActivity)
 	{
-		List<MovementsDTO> income = movementsModel.getIncomeByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"amount", "concept", "status", "date"});
+		List<IncomesExpensesDTO> income = movementsModel.getIncomeByActivity(idActivity);
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
 		this.view.getIncomeTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getIncomeTable());
 		
@@ -148,8 +149,8 @@ public class ConsultStatusActivityController {
 	
 	private void getExpenses(String idActivity)
 	{
-		List<MovementsDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"amount", "concept", "status", "date"});
+		List<IncomesExpensesDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
 		this.view.getExpensesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getExpensesTable());
 		

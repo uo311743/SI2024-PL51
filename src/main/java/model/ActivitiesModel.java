@@ -116,8 +116,8 @@ public class ActivitiesModel {
 		sql = "UPDATE Activities SET status = 'closed' WHERE id = ?;";
 		db.executeUpdate(sql, idActivity);
 		
-		sql = "UPDATE Movements SET status = 'cancelled' WHERE idActivity = ? AND status = 'estimated';";
-		db.executeUpdate(sql, idActivity);
+		//sql = "UPDATE Movements SET status = 'cancelled' WHERE idActivity = ? AND status = 'estimated';";
+		//db.executeUpdate(sql, idActivity);
 		
 		sql = "UPDATE SponsorshipAgreements SET status = 'cancelled' WHERE idActivity = ? AND status = 'signed';";
 		db.executeUpdate(sql, idActivity);
