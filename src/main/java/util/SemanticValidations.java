@@ -126,6 +126,19 @@ public class SemanticValidations
     }
     
     /**
+     * Validates that a value is negative.
+     *
+     * @param number  the number to validate
+     * @param message the exception message if validation fails
+     */
+    public static void validateNegativeNumber(String number, String message)
+    {
+        double tmp_number = Double.parseDouble(number);
+    	if (tmp_number >= 0)
+    		throw new ApplicationException(message);
+    }
+    
+    /**
      * Validates that a value is positive or zero.
      *
      * @param number  the number to validate

@@ -1,4 +1,5 @@
 DROP TABLE IF EXISTS Movements;
+DROP TABLE IF EXISTS IncomesExpenses;
 DROP TABLE IF EXISTS ActivityLevels;
 DROP TABLE IF EXISTS Activities;
 DROP TABLE IF EXISTS Levels;
@@ -98,17 +99,28 @@ CREATE TABLE Levels (
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
 );
 
-CREATE TABLE Movements (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
+CREATE TABLE IncomesExpenses (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
     idActivity INTEGER NOT NULL,
     
-    type TEXT NOT NULL CHECK (lower(type) IN ('income', 'expense')),
+    type TEXT NOT NULL CHECK(lower(type) IN ('income', 'expense')),
+    
+    amountEstimated REAL,
+    dateEstimated TEXT,
     concept TEXT NOT NULL,
-    amount REAL NOT NULL,
-    date TEXT,
-    status TEXT NOT NULL CHECK(lower(status) IN ('estimated', 'cancelled', 'paid')),
     
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
+);
+
+CREATE TABLE Movements (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    idType INTEGER NULL,
+    
+    concept TEXT NOT NULL,
+    amount REAL NOT NULL,
+    date TEXT NOT NULL,
+    
+    FOREIGN KEY (idType) REFERENCES IncomesExpenses(id) ON DELETE CASCADE
 );
 
 CREATE TABLE ActivityTemplates (

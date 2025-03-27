@@ -1,6 +1,8 @@
 package model;
 
 import java.util.List;
+
+import DTOs.IncomesExpensesDTO;
 import DTOs.MovementsDTO;
 import util.Database;
 import util.SemanticValidations;
@@ -10,83 +12,104 @@ public class MovementsModel {
 	private Database db = new Database();
 
 	// GETTERS
-	public List<MovementsDTO> getMovementsByActivity(String idActivity)
-	{
+	public List<MovementsDTO> getMovementsByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getMovementsByActivity does not exist.");
-		String sql = "SELECT * FROM Movements WHERE idActivity = ?;";
-	    return db.executeQueryPojo(MovementsDTO.class, sql, idActivity);
-	}
-
-    public List<MovementsDTO> getIncomeByActivity(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getIncomeByActivity does not exist.");
-		String sql = "SELECT * FROM Movements WHERE type = 'income' AND idActivity = ?;";
+		String sql = " SELECT m.* FROM Movements m " +
+			"JOIN IncomesExpenses ie ON m.idType = ie.id " +
+			"WHERE ie.idActivity = ?;";
 	    return db.executeQueryPojo(MovementsDTO.class, sql, idActivity);
 	}
 	
-	public List<MovementsDTO> getExpensesByActivity(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getExpensesByActivity does not exist.");
-		String sql = "SELECT * FROM Movements WHERE type = 'expense' AND idActivity = ?;";
-	    return db.executeQueryPojo(MovementsDTO.class, sql, idActivity);
+	public List<MovementsDTO> getMovementsByIncomeExpense(String idType) {
+		SemanticValidations.validateIdForTable(idType, "IncomesExpenses", "ERROR. Provided idType for getMovementsByIncomeExpense does not exist.");
+		String sql = " SELECT * FROM Movements WHERE idType = ?";
+	    return db.executeQueryPojo(MovementsDTO.class, sql, idType);
+	}
+	
+	public List<MovementsDTO> getMovementsByTypeAndActivity(String type, String idActivity) {
+		String sql = " SELECT mo.* FROM Movements mo "
+				+ "JOIN IncomesExpenses ie ON ie.id = mo.idType AND ie.type = ? AND ie.idActivity = ?;";
+	    return db.executeQueryPojo(MovementsDTO.class, sql, type, idActivity);
 	}
 
-    public double getEstimatedIncome(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Movements", "ERROR. Provided idActivity for getEstimatedIncome does not exist.");
-		String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'income' AND status IN ('estimated', 'paid') AND idActivity = ?;";
+	public List<IncomesExpensesDTO> getIncomeByActivity(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getIncomeByActivity does not exist.");
+		String sql = "SELECT ie.* FROM IncomesExpenses ie " +
+			"WHERE ie.type = 'income' AND ie.idActivity = ?;";
+	    return db.executeQueryPojo(IncomesExpensesDTO.class, sql, idActivity);
+	}
+	
+	public IncomesExpensesDTO getLastRegisteredIncomeExpense() {
+		String sql = "SELECT * FROM IncomesExpenses ORDER BY id DESC LIMIT 1;";
+        List<IncomesExpensesDTO> result = db.executeQueryPojo(IncomesExpensesDTO.class, sql);
+        
+        return result.isEmpty() ? null : result.get(0);
+	}
+	
+	public List<IncomesExpensesDTO> getExpensesByActivity(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getExpensesByActivity does not exist.");
+		String sql = "SELECT ie.* FROM IncomesExpenses ie " +
+			"WHERE ie.type = 'expense' AND ie.idActivity = ?;";
+	    return db.executeQueryPojo(IncomesExpensesDTO.class, sql, idActivity);
+	}
+
+	public double getEstimatedIncome(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "IncomesExpenses", "ERROR. Provided idActivity for getEstimatedIncome does not exist.");
+		String sql = "SELECT SUM(amountEstimated) FROM IncomesExpenses " +
+			"WHERE type = 'income' AND idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		if (result == null) {
-			return 0.0;
-		}
-		return (double) result;
+		return (result == null) ? 0.0 : (double) result;
 	}
 	
 	public double getActualIncome(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Movements", "ERROR. Provided idActivity for getEstimatedIncome does not exist.");
-		String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'income' AND status = 'paid' AND idActivity = ?;";
+		SemanticValidations.validateIdForTable(idActivity, "IncomesExpenses", "ERROR. Provided idActivity for getActualIncome does not exist.");
+		String sql = "SELECT SUM(m.amount) FROM Movements m " +
+			"JOIN IncomesExpenses ie ON m.idType = ie.id " +
+			"WHERE ie.type = 'income' AND ie.idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		if (result == null) {
-			return 0.0;
-		}
-		return (double) result;
+		return (result == null) ? 0.0 : (double) result;
+	}
+	
+	public double getTotalAmountPaid(String idType) {
+		SemanticValidations.validateIdForTable(idType, "IncomesExpenses", "ERROR. Provided idType for getTotalAmountPaid does not exist.");
+		String sql = "SELECT SUM(m.amount) FROM Movements m WHERE m.idType = ?;";
+	    Object result = db.executeQueryArray(sql, idType).get(0)[0];
+		return (result == null) ? 0.0 : (double) result;
 	}
 
-    public double getEstimatedExpenses(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Movements", "ERROR. Provided idActivity for getEstimatedIncome does not exist.");
-		String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'expense' AND status IN ('estimated', 'paid') AND idActivity = ?;";
+	public double getEstimatedExpenses(String idActivity) {
+		SemanticValidations.validateIdForTable(idActivity, "IncomesExpenses", "ERROR. Provided idActivity for getEstimatedExpenses does not exist.");
+		String sql = "SELECT SUM(amountEstimated) FROM IncomesExpenses " +
+			"WHERE type = 'expense' AND idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		if (result == null) {
-			return 0.0;
-		}
-		return (double) result;
+		return (result == null) ? 0.0 : (double) result;
 	}
 	
 	public double getActualExpenses(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Movements", "ERROR. Provided idActivity for getEstimatedIncome does not exist.");
-		String sql = "SELECT SUM(amount) FROM Movements WHERE type = 'expense' AND status = 'paid' AND idActivity = ?;";
+		SemanticValidations.validateIdForTable(idActivity, "IncomesExpenses", "ERROR. Provided idActivity for getActualExpenses does not exist.");
+		String sql = "SELECT SUM(m.amount) FROM Movements m " +
+			"JOIN IncomesExpenses ie ON m.idType = ie.id " +
+			"WHERE ie.type = 'expense' AND ie.idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		if (result == null) {
-			return 0.0;
-		}
-		return (double) result;
+		return (result == null) ? 0.0 : (double) result;
 	}
 	
-	// Function to get unique 'type' values from Movements table
+	// Function to get unique 'type' values from IncomesExpenses table
     public List<Object[]> getUniqueTypes() {
-        String query = "SELECT DISTINCT type FROM Movements";
-
-        return db.executeQueryArray(query);
-    }
-    
-    // Function to get unique 'type' values from Movements table
-    public List<Object[]> getUniqueStatus() {
-        String query = "SELECT DISTINCT status FROM Movements WHERE status != 'cancelled'";
-
+        String query = "SELECT DISTINCT type FROM IncomesExpenses;";
         return db.executeQueryArray(query);
     }
 
 	// INSERTIONS
+    public void registerIncomeExpense(String idActivity, String type, String amountEstimated, String dateEstimated, String concept) {
+    	String sql = "INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) " +
+			"VALUES (?, ?, ?, ?, ?);";
+    	db.executeUpdate(sql, idActivity, type, amountEstimated, dateEstimated, concept);
+    }
 
-	public void registerMovement(String idActivity, String amount, String date, String type, String concept, String status) {
-    	String sql = "INSERT INTO Movements (idActivity, type, concept, amount, date, status) VALUES (?, ?, ?, ?, ?, ?)";
-    	db.executeUpdate(sql, idActivity, amount, date, type, concept, status);
+	public void registerMovement(String idType, String amount, String date, String concept) {
+    	String sql = "INSERT INTO Movements (idType, concept, amount, date) " +
+			"VALUES (?, ?, ?, ?);";
+    	db.executeUpdate(sql, idType, concept, amount, date);
     }
 }

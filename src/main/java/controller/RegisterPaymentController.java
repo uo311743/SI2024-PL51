@@ -330,14 +330,21 @@ public class RegisterPaymentController {
 
 		if (response == 1)
 			return;
+		
+		Boolean compensationPayment = this.view.getCompensationCheckBox().isSelected() ? true : false;
 
 		try {
-			SemanticValidations.validatePositiveNumber(amount, "Payments must be of positive amounts");
+			if (compensationPayment) {
+				SemanticValidations.validateNegativeNumber(amount, "Compensation Payments must be of negative amounts");
+			} else {
+				SemanticValidations.validatePositiveNumber(amount, "Payments must be of positive amounts");
+			}
 			SemanticValidations.validateAllowedValues(this.activitiesModel.getActivityByName(activity).getStatus(), new String[] { "planned" }, "Activity not open");
-			SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future");
-			this.invoicesModel.validatePaymentDate(date, Integer.parseInt(idInvoice));
-			this.paymentsModel.registerPayment(Integer.parseInt(idInvoice), date, Double.parseDouble(amount));
-			if (Double.parseDouble(this.view.getTotalInvoiceLabel().getText()) == this.computeTotalPayments(idInvoice))
+			SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future");
+			this.invoicesModel.validatePaymentDate(date, idInvoice);
+			this.paymentsModel.registerPayment(idInvoice, date, Double.parseDouble(amount));
+			Double updatedBalance = Double.parseDouble(this.view.getRemainingBalanceLabel().getText()) - Double.parseDouble(amount);
+			if (updatedBalance == 0 )
 		    {
 		    	this.invoicesModel.setInvoiceStatus(idInvoice, "paid");
 		    } else

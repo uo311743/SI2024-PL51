@@ -42,18 +42,38 @@ INSERT INTO Levels (idActivity, name, fee) VALUES
 (1, 'Basic', 50.00),
 (2, 'Basic', 100.00);
 
--- Insert Movements
-INSERT INTO Movements (idActivity, type, concept, amount, date, status) VALUES
-(2, 'expense', 'Cleanup Supplies', -500.00, '2024-02-10', 'paid'),
-(1, 'income', 'Ticket Sales', 3000.00, '2024-03-01', 'paid'),
-(1, 'expense', 'Venue Rental', -1500.00, '2024-03-05', 'paid'),
-(1, 'income', 'Merchandise Sales', 800.00, '2024-03-10', 'paid'),
-(2, 'expense', 'Marketing Campaign', -1200.00, '2024-02-01', 'paid'),
-(2, 'income', 'Donations', 1000.00, '2024-02-12', 'paid'),
-(2, 'expense', 'Event Catering', -700.00, '2024-02-15', 'paid'),
-(1, 'expense', 'Security Services', -600.00, '2024-03-09', 'paid'),
-(1, 'expense', 'Marketing Campaign', -2000.00, '2024-04-01', 'estimated'),
-(2, 'income', 'Ticket Sales', 4000.00, '2024-04-10', 'estimated');
+-- Insert sample data into IncomesExpenses (ensuring all have at least one movement)
+INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) 
+VALUES 
+(1, 'income', 5000.00, '2024-03-01', 'Sponsorship from Company A'),  -- id = 1
+(1, 'income', 2000.00, '2024-03-05', 'Ticket Sales'),  -- id = 2
+(2, 'income', 3500.00, '2024-03-10', 'Donations'),  -- id = 3
+
+(1, 'expense', -1500.00, '2024-03-02', 'Venue Rental'),  -- id = 4
+(1, 'expense', -800.00, '2024-03-06', 'Catering'),  -- id = 5
+(2, 'expense', -1200.00, '2024-03-12', 'Equipment Rental');  -- id = 6
+
+-- Insert sample data into Movements (ensuring all incomes/expenses have at least one movement)
+INSERT INTO Movements (idType, concept, amount, date) 
+VALUES 
+-- Income Movements
+(1, 'First payment from Company A', 2500.00, '2024-03-01'),
+(1, 'Final payment from Company A', 2500.00, '2024-03-02'),
+
+(2, 'Online ticket sales', 1200.00, '2024-03-05'),
+(2, 'On-site ticket sales', 800.00, '2024-03-06'),
+
+(3, 'Donation from John Doe', 2000.00, '2024-03-10'),
+(3, 'Donation from Jane Smith', 1500.00, '2024-03-11'),
+
+-- Expense Movements (ensuring negative values)
+(4, 'Venue deposit', -750.00, '2024-03-02'),
+(4, 'Final venue payment', -750.00, '2024-03-03'),
+
+(5, 'Catering initial payment', -400.00, '2024-03-06'),
+(5, 'Catering final payment', -400.00, '2024-03-07'),
+
+(6, 'Equipment rental fee', -1200.00, '2024-03-12');
 
 -- Insert ActivityTemplates
 INSERT INTO ActivityTemplates (name) VALUES

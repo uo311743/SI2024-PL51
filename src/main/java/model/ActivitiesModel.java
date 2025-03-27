@@ -57,7 +57,7 @@ public class ActivitiesModel {
 
     public ActivitiesDTO getActivityByName(String nameActivity) {
 		SemanticValidations.validateName(nameActivity);
-		String sql = "SELECT id FROM Activities WHERE name == ?;";
+		String sql = "SELECT * FROM Activities WHERE name == ?;";
 		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}

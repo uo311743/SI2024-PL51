@@ -81,14 +81,14 @@ public class InvoicesModel {
     public void setInvoiceStatus(String invoiceId, String status)
     {
     	// List of allowed status
-        String[] validStatus = { "draft", "issued", "paid", "rectified", "cancelled" };
+        String[] validStatus = { "issued", "paid", "rectified", "cancelled" };
         
         String sql = "UPDATE Invoices SET status = ? WHERE id = ?";
         
     	try {
     		SemanticValidations.validateStatus(status);
     		SemanticValidations.validateAllowedValues(status, validStatus, "Not a valid status");
-    		db.executeUpdate(sql, status, Integer.parseInt(invoiceId));
+    		db.executeUpdate(sql, status, invoiceId);
     	} catch (Exception e) {
     		e.printStackTrace();
     	}
@@ -130,7 +130,7 @@ public class InvoicesModel {
     
     // SPECIFIC VALIDATIONS
     
-    public void validatePaymentDate(String date, Integer invoiceId) {
+    public void validatePaymentDate(String date, String invoiceId) {
         String query = "SELECT i.dateIssued FROM Invoices i WHERE i.id = ?;";
         try {
         	List<Object[]> result = db.executeQueryArray(query, invoiceId);

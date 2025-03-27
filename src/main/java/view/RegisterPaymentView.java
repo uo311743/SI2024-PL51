@@ -15,6 +15,7 @@ public class RegisterPaymentView extends AbstractView {
     private JLabel totalInvoiceLabel;
     private JLabel totalPaymentsLabel;
     private JLabel remainingBalanceLabel;
+    private JCheckBox compensationCheckBox;
     
     public RegisterPaymentView() { super("Register Payment"); }
     
@@ -28,9 +29,10 @@ public class RegisterPaymentView extends AbstractView {
     	this.totalInvoiceLabel = new JLabel("");
     	this.totalPaymentsLabel = new JLabel("");
     	this.remainingBalanceLabel = new JLabel("");
+    	this.compensationCheckBox = new JCheckBox("Register Compensation Payment");
     	
     	super.createButtonLowLeft("Cancel");
-    	super.createButtonLowMiddle("Clear");
+    	super.createButtonLowMiddle("Reset");
         super.createButtonLowRight("Register");
     }
     
@@ -117,7 +119,7 @@ public class RegisterPaymentView extends AbstractView {
 
         this.totalPaymentsLabel = new JLabel("0.00");
         this.totalPaymentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        this.totalPaymentsLabel.setForeground(Color.GREEN); // Highlight in green
+        this.totalPaymentsLabel.setForeground(Color.GREEN.darker()); // Highlight in green
 
         this.remainingBalanceLabel = new JLabel("0.00");
         this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
@@ -162,8 +164,15 @@ public class RegisterPaymentView extends AbstractView {
         paymentsPanel.add(paymentsTableLabel, BorderLayout.NORTH);
         paymentsPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
         paymentsPanel.add(paymentsTableScroll, BorderLayout.CENTER);
+        
+        // Compensation Payment Check Panel
+        JPanel compensationCheckPanel = new JPanel(new BorderLayout());
+        compensationCheckPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        compensationCheckPanel.add(compensationCheckBox);
 
         // Add panels in correct order
+        panel.add(compensationCheckPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(invoicesPanel);
         panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(paymentsPanel);
@@ -240,4 +249,8 @@ public class RegisterPaymentView extends AbstractView {
 	public JLabel getTotalInvoiceLabel() { return totalInvoiceLabel; }
 	public JLabel getTotalPaymentsLabel() { return totalPaymentsLabel; }
 	public JLabel getRemainingBalanceLabel() { return remainingBalanceLabel; }
+
+	public JCheckBox getCompensationCheckBox() {
+		return compensationCheckBox;
+	}
 }

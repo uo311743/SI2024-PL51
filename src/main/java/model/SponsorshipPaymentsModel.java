@@ -18,8 +18,8 @@ public class SponsorshipPaymentsModel {
     
     // INSERTIONS
 
-    public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
+    public void registerPayment(String idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
         String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
-		db.executeUpdate(query, idInvoice, dateSponsorshipPayment);
+		db.executeUpdate(query, idInvoice, dateSponsorshipPayment, amountSponsorshipPayments);
     }
 }
