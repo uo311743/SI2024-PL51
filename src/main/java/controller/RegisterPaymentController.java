@@ -5,6 +5,7 @@ import model.InvoicesModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
+import util.ModelManager;
 import util.SemanticValidations;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -39,13 +40,12 @@ public class RegisterPaymentController {
 
 	private String lastSelectedInvoice;
 
-	public RegisterPaymentController(SponsorshipAgreementsModel sam, SponsorshipPaymentsModel spm, InvoicesModel im,
-			ActivitiesModel am, SponsorOrganizationsModel som, RegisterPaymentView view) {
-		this.agreementsModel = sam;
-		this.paymentsModel = spm;
-		this.invoicesModel = im;
-		this.activitiesModel = am;
-		this.sponsorsModel = som;
+	public RegisterPaymentController(RegisterPaymentView view) {
+		this.agreementsModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+		this.paymentsModel = ModelManager.getInstance().getSponsorshipPaymentsModel();
+		this.invoicesModel = ModelManager.getInstance().getInvoicesModel();
+		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+		this.sponsorsModel = ModelManager.getInstance().getSponsorOrganizationsModel();
 
 		this.view = view;
 

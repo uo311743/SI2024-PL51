@@ -138,7 +138,9 @@ public class SwingMain {
 		    });
 	    	
 	    	// US 29126
-	    	menu.addButton("Register Payment", () -> {}, false);
+	    	menu.addButton("Register Payment", () -> {
+	    		new RegisterPaymentController(new RegisterPaymentView());
+	    	});
 	    	
 	    	// US 29331
 	    	menu.addButton("Close Activity", () -> {
@@ -159,7 +161,9 @@ public class SwingMain {
 	    	SubmenuView menu = new SubmenuView("Activity Management");
 	    	
 	        // US 29127
-	    	menu.addButton("Register Income/Expense", () -> {}, false);
+	    	menu.addButton("Register Income/Expense", () -> {
+	    		new RegisterMovementsController(new RegisterMovementsView());
+	    	});
 	    	
 	    	// US 29128
 	    	menu.addButton("Consult Status Activity", () -> {

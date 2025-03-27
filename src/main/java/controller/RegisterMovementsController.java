@@ -2,6 +2,7 @@ package controller;
 
 import model.ActivitiesModel;
 import model.MovementsModel;
+import util.ModelManager;
 import util.SemanticValidations;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -23,7 +24,6 @@ import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
 import DTOs.IncomesExpensesDTO;
 import DTOs.MovementsDTO;
-import DTOs.SponsorshipPaymentsDTO;
 
 public class RegisterMovementsController {
 	private static Object DEFAULT_VALUE_COMBOBOX = "--------";
@@ -34,9 +34,9 @@ public class RegisterMovementsController {
 	
     private String lastSelectedActivity;
 	
-	public RegisterMovementsController(ActivitiesModel am, MovementsModel mm, RegisterMovementsView view) {
-		this.activitiesModel = am;
-		this.movementsModel = mm;
+	public RegisterMovementsController(RegisterMovementsView view) {
+		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+		this.movementsModel = ModelManager.getInstance().getMovementsModel();
 		
 		this.view = view;
 		
