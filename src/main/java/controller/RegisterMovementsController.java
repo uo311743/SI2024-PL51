@@ -342,7 +342,7 @@ public class RegisterMovementsController {
 	    
 	    double totalEstimated = 0.0;
 	    for (IncomesExpensesDTO income : incomes) {
-	        totalEstimated += income.getAmountEstimated(); // Accumulate payment total
+	        totalEstimated += Double.parseDouble(income.getAmountEstimated()); // Accumulate payment total
 	    }
 	    
 	    return totalEstimated;
@@ -366,7 +366,7 @@ public class RegisterMovementsController {
 	    
 	    double totalEstimated = 0.0;
 	    for (IncomesExpensesDTO expense : expenses) {
-	        totalEstimated += expense.getAmountEstimated(); // Accumulate payment total
+	        totalEstimated += Double.parseDouble(expense.getAmountEstimated()); // Accumulate payment total
 	    }
 	    
 	    return totalEstimated;
