@@ -16,6 +16,7 @@ import model.ActivitiesModel;
 import model.MovementsModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import view.ConsultStatusActivityView;
 
@@ -36,12 +37,12 @@ public class ConsultStatusActivityController {
 
     // ================================================================================
 
-    public ConsultStatusActivityController(ActivitiesModel am, SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, MovementsModel mm, ConsultStatusActivityView v)
+    public ConsultStatusActivityController(ConsultStatusActivityView v)
     { 
-        this.activitiesModel = am;
-        this.soModel = som;
-        this.saModel = sam;
-        this.movementsModel = mm;
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+        this.movementsModel = ModelManager.getInstance().getMovementsModel();
         
         this.view = v;
         this.initView();

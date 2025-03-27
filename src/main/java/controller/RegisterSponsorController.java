@@ -15,6 +15,7 @@ import javax.swing.table.DefaultTableModel;
 import DTOs.SponsorContactsDTO;
 import model.SponsorContactsModel;
 import model.SponsorOrganizationsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterSponsorView;
@@ -31,10 +32,10 @@ public class RegisterSponsorController {
 
     // ================================================================================
 
-    public RegisterSponsorController(SponsorContactsModel scm, SponsorOrganizationsModel som, RegisterSponsorView v)
+    public RegisterSponsorController(RegisterSponsorView v)
     { 
-        this.contactModel = scm;
-        this.sponsorModel = som;
+        this.contactModel = ModelManager.getInstance().getSponsorContactsModel();
+        this.sponsorModel = ModelManager.getInstance().getSponsorOrganizationsModel();
         
         contacts = new LinkedList<SponsorContactsDTO>();
         
