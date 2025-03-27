@@ -50,7 +50,10 @@ public class SponsorshipAgreementsModel {
 	
 	public double getActualSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActualSponshorships does not exist.");
-		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status = 'closed' AND idActivity = ?;";
+		String sql = "SELECT SUM(SP.amount) FROM SponsorshipAgreements SA "
+				+ "JOIN Invoices I ON SA.id = I.idSponsorshipAgreement "
+				+ "JOIN SponsorshipPayments SP ON I.id = SP.idInvoice "
+				+ "WHERE idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
 		if (result == null) {
 			return 0.0;
