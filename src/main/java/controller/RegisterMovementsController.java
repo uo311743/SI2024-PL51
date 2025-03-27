@@ -547,10 +547,10 @@ public class RegisterMovementsController {
         try {
         	if ("".equals(idType) && status.equals("paid")) { 
         		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future");
-        		idLastIncomeExpense = this.movementsModel.registerIncomeExpense(idActivity, type, amount, date, concept);
+        		idLastIncomeExpense = this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
         		this.movementsModel.registerMovement(idLastIncomeExpense, amount, date, concept);
         	} else if ("".equals(idType) && status.equals("estimated")) {
-        		this.movementsModel.registerIncomeExpense(idActivity, type, amount, date, concept);
+        		this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
         	} else if (status.equals("paid")) { 
         		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future"); 
         		String incomeExpenseDate = this.movementsModel.getIncomeExpenseById(idType).getDateEstimated();

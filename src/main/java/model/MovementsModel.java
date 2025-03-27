@@ -117,10 +117,10 @@ public class MovementsModel {
     }
 
 	// INSERTIONS
-    public String registerIncomeExpense(String idActivity, String type, String amountEstimated, String dateEstimated, String concept) {
-    	String sql = "INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) " +
-			"VALUES (?, ?, ?, ?, ?);";
-    	return db.executeInsertion(sql, idActivity, type, amountEstimated, dateEstimated, concept);
+    public String registerIncomeExpense(String idActivity, String type, String status, String amountEstimated, String dateEstimated, String concept) {
+    	String sql = "INSERT INTO IncomesExpenses (idActivity, type, status, amountEstimated, dateEstimated, concept) " +
+			"VALUES (?, ?, ?, ?, ?, ?);";
+    	return db.executeInsertion(sql, idActivity, type, status, amountEstimated, dateEstimated, concept);
     }
 
 	public void registerMovement(String idType, String amount, String date, String concept) {
