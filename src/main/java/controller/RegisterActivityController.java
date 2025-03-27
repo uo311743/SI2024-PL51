@@ -17,6 +17,7 @@ import DTOs.LevelsDTO;
 import model.ActivitiesModel;
 import model.ActivityTemplatesModel;
 import model.LevelsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterActivityView;
@@ -31,10 +32,10 @@ public class RegisterActivityController {
 	
 	protected LinkedList<LevelsDTO> levels;
 	
-    public RegisterActivityController(ActivityTemplatesModel atm, LevelsModel lm, ActivitiesModel am, RegisterActivityView v) {
-		this.atModel = atm;
-		this.levelsModel = lm;
-		this.activitiesModel = am;
+    public RegisterActivityController(RegisterActivityView v) {
+		this.atModel = ModelManager.getInstance().getActivityTemplatesModel();
+		this.levelsModel = ModelManager.getInstance().getLevelsModel();
+		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
 		
 		this.view = v;
 		levels = new LinkedList<>();

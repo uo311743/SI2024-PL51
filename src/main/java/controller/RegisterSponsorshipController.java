@@ -21,6 +21,7 @@ import model.LevelsModel;
 import model.SponsorContactsModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterSponsorshipView;
@@ -45,13 +46,13 @@ public class RegisterSponsorshipController {
 
     // ================================================================================
 
-    public RegisterSponsorshipController(SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, SponsorContactsModel scm, GBMembersModel gbmm, ActivitiesModel am, LevelsModel lm, RegisterSponsorshipView v) { 
-        this.soModel = som;
-        this.saModel = sam;
-        this.scModel = scm;
-        this.gbmModel = gbmm;
-        this.activitiesModel = am;
-        this.levelsModel = lm;
+    public RegisterSponsorshipController(RegisterSponsorshipView v) { 
+        this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+        this.scModel = ModelManager.getInstance().getSponsorContactsModel();
+        this.gbmModel = ModelManager.getInstance().getGBMembersModel();
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.levelsModel = ModelManager.getInstance().getLevelsModel();
         
         this.view = v;
         this.initView();

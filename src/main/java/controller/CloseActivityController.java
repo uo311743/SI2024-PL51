@@ -12,6 +12,7 @@ import DTOs.ActivitiesDTO;
 import model.ActivitiesModel;
 import model.MovementsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import view.CloseActivityView;
 
@@ -38,11 +39,11 @@ public class CloseActivityController {
 
     // ================================================================================
 
-    public CloseActivityController(ActivitiesModel am, SponsorshipAgreementsModel sam, MovementsModel mm, CloseActivityView v)
+    public CloseActivityController(CloseActivityView v)
     { 
-        this.activitiesModel = am;
-        this.saModel = sam;
-        this.movementsModel = mm;
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+        this.movementsModel = ModelManager.getInstance().getMovementsModel();
         
         this.view = v;
         this.initView();

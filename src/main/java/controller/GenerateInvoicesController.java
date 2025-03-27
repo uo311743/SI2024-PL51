@@ -18,6 +18,7 @@ import model.ActivitiesModel;
 import model.InvoicesModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.Params;
 import util.SwingMain;
 import util.SwingUtil;
@@ -36,11 +37,11 @@ public class GenerateInvoicesController {
 	
     private String lastSelectedAgreement;
 	
-	public GenerateInvoicesController(SponsorshipAgreementsModel sam, InvoicesModel im, ActivitiesModel am, SponsorOrganizationsModel som, GenerateInvoicesView v) {
-		this.saModel = sam;
-		this.invoicesModel = im;
-		this.activitiesModel = am;
-		this.soModel = som;
+	public GenerateInvoicesController(GenerateInvoicesView v) {
+		this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+		this.invoicesModel = ModelManager.getInstance().getInvoicesModel();
+		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
 		
         this.view = v;
         this.initView();
