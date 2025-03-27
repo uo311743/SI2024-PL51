@@ -99,6 +99,22 @@ public class MovementsModel {
         String query = "SELECT DISTINCT type FROM IncomesExpenses;";
         return db.executeQueryArray(query);
     }
+    
+    // SETTERS
+    public void setIncomeExpenseStatus(String id, String newStatus) {
+        // Validate that the ID exists in the table
+        SemanticValidations.validateIdForTable(id, "IncomesExpenses", 
+            "ERROR: Provided id for updateStatus does not exist.");
+
+        // Validate that the new status is one of the allowed values
+        if (!newStatus.equalsIgnoreCase("estimated") && !newStatus.equalsIgnoreCase("paid")) {
+            throw new IllegalArgumentException("ERROR: Invalid status. Allowed values: 'estimated', 'paid'.");
+        }
+
+        // Update the status in the database
+        String sql = "UPDATE IncomesExpenses SET status = ? WHERE id = ?";
+        db.executeUpdate(sql, newStatus.toLowerCase(), id);
+    }
 
 	// INSERTIONS
     public String registerIncomeExpense(String idActivity, String type, String amountEstimated, String dateEstimated, String concept) {

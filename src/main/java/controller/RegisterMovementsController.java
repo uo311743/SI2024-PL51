@@ -251,7 +251,7 @@ public class RegisterMovementsController {
     	
     	incomesExpenses.sort(Comparator.comparing(IncomesExpensesDTO::getDateEstimated, Comparator.nullsLast(Comparator.naturalOrder())));
 		
-		String[] columnNames = {"id", "dateEstimated", "concept", "amountEstimated"};
+		String[] columnNames = {"id", "dateEstimated", "concept", "status", "amountEstimated"};
 		
 		// Create table model
 	    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
@@ -261,6 +261,7 @@ public class RegisterMovementsController {
 	        	incomeExpense.getId(),
 	        	incomeExpense.getDateEstimated(),
 	        	incomeExpense.getConcept(),
+	        	incomeExpense.getStatus(),
 	       		incomeExpense.getAmountEstimated()
 	        };
 	        model.addRow(rowData);
@@ -376,7 +377,7 @@ public class RegisterMovementsController {
 		int row = this.view.getIncomesExpensesTable().getSelectedRow();
 		
 		// Fill Default values in the UI
-		this.view.getAmountTextField().setText(String.valueOf(this.view.getIncomesExpensesTable().getValueAt(row, 3)));
+		this.view.getAmountTextField().setText(String.valueOf(this.view.getIncomesExpensesTable().getValueAt(row, 4)));
 		this.view.getConceptTextField().setText((String) this.view.getIncomesExpensesTable().getValueAt(row, 2));
 	    
 		getMovements(); 
@@ -467,6 +468,8 @@ public class RegisterMovementsController {
         String status = this.view.getStatus().getSelectedItem().toString();
         
         boolean compensationMovement = this.view.getCompensationCheckBox().isSelected() ? true : false;
+        Double estimated = Double.parseDouble(this.view.getEstimatedLabel().getText());
+        Double paid = Double.parseDouble(this.view.getPaidLabel().getText());
         
         try {
         	if ("expense".equals(type))
@@ -484,6 +487,11 @@ public class RegisterMovementsController {
     				SemanticValidations.validatePositiveNumber(amount, "Incomes must be of positive amounts");
     			}
     		}
+        	if (paid >= estimated) { 
+        		this.movementsModel.setIncomeExpenseStatus(idType, "paid"); 
+        	} else {
+        		this.movementsModel.setIncomeExpenseStatus(idType, "estimated"); 
+        	}
         } catch (Exception e) {
         	e.printStackTrace();
         	// Show an error dialog

@@ -104,6 +104,7 @@ CREATE TABLE IncomesExpenses (
     idActivity INTEGER NOT NULL,
     
     type TEXT NOT NULL CHECK(lower(type) IN ('income', 'expense')),
+    status TEXT NOT NULL CHECK(lower(status) IN ('estimated', 'paid')),
     
     amountEstimated REAL,
     dateEstimated TEXT,

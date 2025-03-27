@@ -43,14 +43,14 @@ INSERT INTO Levels (idActivity, name, fee) VALUES
 (2, 'Basic', 100.00);
 
 -- Insert sample data into IncomesExpenses (ensuring all have at least one movement)
-INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) 
+INSERT INTO IncomesExpenses (idActivity, type, status, amountEstimated, dateEstimated, concept) 
 VALUES 
-(1, 'income', 5000.00, '2024-03-01', 'Sponsorship from Company A'),
-(1, 'income', 2000.00, '2024-03-05', 'Ticket Sales'),
-(2, 'income', 3500.00, NULL, 'Donations'),
-(1, 'expense', -1500.00, '2024-03-02', 'Venue Rental'),
-(1, 'expense', -800.00, '2024-03-06', 'Catering'),
-(2, 'expense', -1200.00, '2024-03-12', 'Equipment Rental');
+(1, 'income', 'estimated', 5000.00, '2024-03-01', 'Sponsorship from Company A'),
+(1, 'income', 'estimated', 2000.00, '2024-03-05', 'Ticket Sales'),
+(2, 'income', 'estimated', 3500.00, NULL, 'Donations'),
+(1, 'expense', 'estimated', -1500.00, '2024-03-02', 'Venue Rental'),
+(1, 'expense', 'estimated', -800.00, '2024-03-06', 'Catering'),
+(2, 'expense', 'estimated', -1200.00, '2024-03-12', 'Equipment Rental');
 
 -- Insert sample data into Movements (ensuring all incomes/expenses have at least one movement)
 INSERT INTO Movements (idType, concept, amount, date) 
