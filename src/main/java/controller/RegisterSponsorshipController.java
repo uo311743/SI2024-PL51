@@ -187,47 +187,48 @@ public class RegisterSponsorshipController {
 			this.updateRange();
 			
 			this.setInputsEnabled(true);
-		}
 		
-		// ------------------------------------------------------------
-		// Check JTextField inputs:
-		boolean valid = true;
-		
-		// Validate amount
-		String amount = this.view.getAmountTextField().getText();	
-		
-		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
-		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
-		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
-		
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
-		String amountMin = levelSelected.getFee();
-		
-		if (amountMax == "isTheMax") {
-			if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
+			// ------------------------------------------------------------
+			// Check JTextField inputs:
+			boolean valid = true;
+			
+			// Validate amount
+			String amount = this.view.getAmountTextField().getText();	
+			
+			String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
+			String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
+			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+			
+			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+			String amountMin = levelSelected.getFee();
+			
+			if (amountMax == "isTheMax") {
+				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
+				{
+					this.view.getAmountTextField().setForeground(Color.RED);
+					valid = false;
+				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			}
+			else {
+				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) >= Double.valueOf(amountMax) || Double.valueOf(amount) < Double.valueOf(amountMin))
+				{
+					this.view.getAmountTextField().setForeground(Color.RED);
+					valid = false;
+				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			}
+			
+			// Validate agreement date
+			String agreementDate = this.view.getAgreementDateTextField().getText();
+			if(!SyntacticValidations.isDate(agreementDate))
 			{
-				this.view.getAmountTextField().setForeground(Color.RED);
+				this.view.getAgreementDateTextField().setForeground(Color.RED);
 				valid = false;
-			} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
-		}
-		else {
-			if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) >= Double.valueOf(amountMax) || Double.valueOf(amount) < Double.valueOf(amountMin))
-			{
-				this.view.getAmountTextField().setForeground(Color.RED);
-				valid = false;
-			} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			} else { this.view.getAgreementDateTextField().setForeground(Color.BLACK); }
+			
+			// Activate/Deactivate the submit button
+			this.view.getButtonLowRight().setEnabled(valid);
 		}
 		
-		// Validate agreement date
-		String agreementDate = this.view.getAgreementDateTextField().getText();
-		if(!SyntacticValidations.isDate(agreementDate))
-		{
-			this.view.getAgreementDateTextField().setForeground(Color.RED);
-			valid = false;
-		} else { this.view.getAgreementDateTextField().setForeground(Color.BLACK); }
-		
-		// Activate/Deactivate the submit button
-		this.view.getButtonLowRight().setEnabled(valid);
 	}
 	
 	public void updateDetailTable()
