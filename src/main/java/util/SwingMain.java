@@ -228,13 +228,23 @@ public class SwingMain {
 	 * @param text to be displied inside the button
 	 * @param action to be performed by the button on-click
 	 */
-	private void addButtonToMain(JPanel panel, String text, Runnable action) {
+	private void addButtonToMain(JPanel panel, String text, Runnable action, boolean enabled) {
 	    JButton button = new JButton(text);
 	    button.addActionListener(e -> action.run());
 	    button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
 	    button.setAlignmentX(Component.CENTER_ALIGNMENT);
+	    button.setEnabled(enabled);
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
+	}
+	
+	/**
+	 * Creates a button in the main frame
+	 * @param text to be displied inside the button
+	 * @param action to be performed by the button on-click
+	 */
+	private void addButtonToMain(JPanel panel, String text, Runnable action) {
+		addButtonToMain(panel, text, action, true);
 	}
 
 
