@@ -141,8 +141,15 @@ public class RegisterMovementsView extends AbstractView {
         satusPanel.add(statusLabel, BorderLayout.NORTH);
         satusPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
         satusPanel.add(status, BorderLayout.CENTER);
+        
+        // Compensation Movement Check Panel
+        JPanel compensationCheckPanel = new JPanel(new BorderLayout());
+        compensationCheckPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        compensationCheckPanel.add(compensationCheckBox);
 
         // Add panels in correct order
+        panel.add(compensationCheckPanel);
+        panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(typePanel);
         panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(satusPanel);

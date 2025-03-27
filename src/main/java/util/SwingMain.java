@@ -23,20 +23,26 @@ import model.SponsorshipPaymentsModel;
 import view.RegisterSponsorshipView;
 import controller.RegisterMovementsController;
 import model.InvoicesModel;
+import model.LevelsModel;
 import model.MovementsModel;
 import controller.RegisterPaymentController;
+import controller.RegisterSponsorController;
 import view.RegisterPaymentView;
+import view.RegisterSponsorView;
 import controller.CloseActivityController;
 import controller.ConsultStatusActivityController;
 import controller.IncomesExpensesReportController;
+import controller.RegisterActivityController;
 import view.IncomesExpensesReportView;
 import view.RegisterMovementsView;
+import view.RegisterActivityView;
 import controller.GenerateInvoicesController;
 import model.GBMembersModel;
 import view.CloseActivityView;
 import view.ConsultStatusActivityView;
 import view.GenerateInvoicesView;
 import model.ActivitiesModel;
+import model.ActivityTemplatesModel;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -143,7 +149,7 @@ public class SwingMain {
 	     */	    
 	    // US 29124
 	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
+	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new LevelsModel(), new RegisterSponsorshipView());
 	    });
 	    
 	    // US 29125
@@ -172,11 +178,20 @@ public class SwingMain {
 	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
 	    });
 	    
-	    // FIXME
+	    // US 29332
+	    addButtonToMain(buttonPanel, "Register Activity", () -> {
+	    	new RegisterActivityController(new ActivityTemplatesModel(), new LevelsModel(), new ActivitiesModel(), new RegisterActivityView());
+	    });
+	    
+	    // US 29331
 	    addButtonToMain(buttonPanel, "Close Activity", () -> {
 	    	new CloseActivityController(new ActivitiesModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new CloseActivityView());
 	    });
 	    
+	    // US 29329
+	    addButtonToMain(buttonPanel, "Register Sponsor", () -> {
+	    	new RegisterSponsorController(new SponsorContactsModel(), new SponsorOrganizationsModel(), new RegisterSponsorView());
+	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);

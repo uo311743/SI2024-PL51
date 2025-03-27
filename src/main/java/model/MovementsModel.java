@@ -39,11 +39,11 @@ public class MovementsModel {
 	    return db.executeQueryPojo(IncomesExpensesDTO.class, sql, idActivity);
 	}
 	
-	public IncomesExpensesDTO getLastRegisteredIncomeExpense() {
-		String sql = "SELECT * FROM IncomesExpenses ORDER BY id DESC LIMIT 1;";
-        List<IncomesExpensesDTO> result = db.executeQueryPojo(IncomesExpensesDTO.class, sql);
+	public IncomesExpensesDTO getIncomeExpenseById(String id) {
+		String sql = "SELECT * FROM IncomesExpenses WHERE id = ?;";
+        List<IncomesExpensesDTO> result = db.executeQueryPojo(IncomesExpensesDTO.class, sql, id);
         
-        return result.isEmpty() ? null : result.get(0);
+        return result.get(0);
 	}
 	
 	public List<IncomesExpensesDTO> getExpensesByActivity(String idActivity) {
@@ -101,10 +101,10 @@ public class MovementsModel {
     }
 
 	// INSERTIONS
-    public void registerIncomeExpense(String idActivity, String type, String amountEstimated, String dateEstimated, String concept) {
+    public String registerIncomeExpense(String idActivity, String type, String amountEstimated, String dateEstimated, String concept) {
     	String sql = "INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) " +
 			"VALUES (?, ?, ?, ?, ?);";
-    	db.executeUpdate(sql, idActivity, type, amountEstimated, dateEstimated, concept);
+    	return db.executeInsertion(sql, idActivity, type, amountEstimated, dateEstimated, concept);
     }
 
 	public void registerMovement(String idType, String amount, String date, String concept) {

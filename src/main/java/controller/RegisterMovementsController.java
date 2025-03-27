@@ -181,6 +181,7 @@ public class RegisterMovementsController {
 	public void clear() {
 		restartView();
 		
+		this.view.getCompensationCheckBox().setSelected(false);
 		this.view.getType().setSelectedIndex(0);
 		this.view.getStatus().setSelectedIndex(0);
 	}
@@ -193,6 +194,7 @@ public class RegisterMovementsController {
 			this.view.getMovementLabel().setText("Movements registered for the " + type);
 		}
 		restartView();
+		updateDetail();
 	}
 	
 	private void getActivities()
@@ -247,7 +249,7 @@ public class RegisterMovementsController {
     		incomesExpenses = this.movementsModel.getExpensesByActivity(idActivity);
     	}
     	
-    	incomesExpenses.sort(Comparator.comparing(IncomesExpensesDTO::getDateEstimated));
+    	incomesExpenses.sort(Comparator.comparing(IncomesExpensesDTO::getDateEstimated, Comparator.nullsLast(Comparator.naturalOrder())));
 		
 		String[] columnNames = {"id", "dateEstimated", "concept", "amountEstimated"};
 		
@@ -267,6 +269,9 @@ public class RegisterMovementsController {
 	    // Set the model in the JTable
 	    this.view.getIncomesExpensesTable().setModel(model);
 	    SwingUtil.autoAdjustColumns(this.view.getIncomesExpensesTable());
+	    this.view.getMovementsTable().clearSelection();
+		DefaultTableModel movModel = (DefaultTableModel) this.view.getMovementsTable().getModel();
+		movModel.setRowCount(0); // Clears the table
 	}
 	
 	private void getMovements()
@@ -280,7 +285,7 @@ public class RegisterMovementsController {
         	idType = String.valueOf(this.view.getIncomesExpensesTable().getModel().getValueAt(row, 0));
         }
         
-    	List<MovementsDTO> movements = this.movementsModel.getMovementsByActivity(idType);
+    	List<MovementsDTO> movements = this.movementsModel.getMovementsByIncomeExpense(idType);
     	
     	movements.sort(Comparator.comparing(MovementsDTO::getDate));
 		
@@ -322,7 +327,11 @@ public class RegisterMovementsController {
 	    }
 	    this.view.getEstimatedLabel().setText(String.valueOf(estimatedAmount));
 	    
-	    if (this.view.getStatus().getSelectedItem().toString().equals("paid")) { getIncomesExpenses(); }; 
+	    if (this.view.getStatus().getSelectedItem().toString().equals("paid")) { 
+	    	getIncomesExpenses(); 
+	    } else {
+	    	restartView();
+	    }
 		updateDetail();
 	}
 	
@@ -463,16 +472,16 @@ public class RegisterMovementsController {
         	if ("expense".equals(type))
     		{
             	if (compensationMovement) {
-            		SemanticValidations.validateNegativeNumber(amount, "Compensation Movements for Expenses must be of positive amounts");
+            		SemanticValidations.validatePositiveNumber(amount, "Compensation Movements for Expenses must be of positive amounts");
     			} else {
-    				SemanticValidations.validatePositiveNumber(amount, "Expenses must be of negative amounts");
+    				SemanticValidations.validateNegativeNumber(amount, "Expenses must be of negative amounts");
     			}
     		} else if ("income".equals(type))
     		{
             	if (compensationMovement) {
-            		SemanticValidations.validatePositiveNumber(amount, "Compensation Movements for Expenses must be of negative amounts");
+            		SemanticValidations.validateNegativeNumber(amount, "Compensation Movements for Incomes must be of negative amounts");
     			} else {
-    				SemanticValidations.validateNegativeNumber(amount, "Incomes must be of positive amounts");
+    				SemanticValidations.validatePositiveNumber(amount, "Incomes must be of positive amounts");
     			}
     		}
         } catch (Exception e) {
@@ -488,13 +497,16 @@ public class RegisterMovementsController {
         		new Object[]{"OK"}, // Force "OK" button in English
         		"OK" // Default selected option
         	);
+        	
+        	this.clear();
+        	return;
         }
 
         String message = "<html><body>"
                 + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
                 + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + " euros</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Date:</b></td><td style='padding: 2px 5px;'>" + date + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Concept:</b></td><td style='padding: 2px 5px;'>" + concept + "</td></tr>"
                 + "</table>"
@@ -520,15 +532,25 @@ public class RegisterMovementsController {
         
         if (response == 1) return;
         
+        String idLastIncomeExpense = "";
+        
+        if ("".equals(concept)) { concept = null; }
+        
         try {
         	if ("".equals(idType) && status.equals("paid")) { 
-        		SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future");
-        		this.movementsModel.registerIncomeExpense(idActivity, type, amount, date, concept);
-        		String idLasIncomeExpense = String.valueOf(this.movementsModel.getLastRegisteredIncomeExpense().getId());
-        		this.movementsModel.registerMovement(idLasIncomeExpense, amount, date, concept);
+        		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future");
+        		idLastIncomeExpense = this.movementsModel.registerIncomeExpense(idActivity, type, amount, date, concept);
+        		this.movementsModel.registerMovement(idLastIncomeExpense, amount, date, concept);
         	} else if ("".equals(idType) && status.equals("estimated")) {
         		this.movementsModel.registerIncomeExpense(idActivity, type, amount, date, concept);
-        	} else if (status.equals("paid")) { SemanticValidations.validateDateInFuture(date, true, "Payment cannot be made in the future"); this.movementsModel.registerMovement(idType, amount, date, concept); }
+        	} else if (status.equals("paid")) { 
+        		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future"); 
+        		String incomeExpenseDate = this.movementsModel.getIncomeExpenseById(idType).getDateEstimated();
+        		if (SyntacticValidations.isNotNull(incomeExpenseDate)) {
+        			SemanticValidations.validateDateAfterTo(date, incomeExpenseDate, true, "Movement cannot be made before Income/Expense registration");
+        		}
+        		this.movementsModel.registerMovement(idType, amount, date, concept); 
+        	}
         } catch (Exception e) {
         	e.printStackTrace();
         	// Show an error dialog

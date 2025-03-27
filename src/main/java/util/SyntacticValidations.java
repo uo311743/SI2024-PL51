@@ -10,7 +10,7 @@ import java.time.format.DateTimeParseException;
 public class SyntacticValidations {
     
     public static final String PATTERN_EMAIL =
-            "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\\\.[a-zA-Z]{2,}$";
+    		"^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
 
     public static final String PATTERN_PHONE = "^\\+?[1-9][0-9]{8,14}$";
     

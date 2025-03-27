@@ -136,9 +136,11 @@ public class RegisterPaymentController {
 		this.view.getAmountTextField().setText("");
 		
 		// Reset summary panel
-		this.view.getTotalInvoiceLabel().setText("0.00");
-		this.view.getTotalPaymentsLabel().setText("0.00");
-		this.view.getRemainingBalanceLabel().setText("0.00");
+		this.view.getTotalInvoiceLabel().setText("0.0");
+		this.view.getTotalPaymentsLabel().setText("0.0");
+		this.view.getRemainingBalanceLabel().setText("0.0");
+		
+		this.view.getCompensationCheckBox().setSelected(false);
 
 		this.setInputsEnabled(false);
 	}

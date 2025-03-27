@@ -52,7 +52,7 @@ public class RegisterPaymentView extends AbstractView {
 		amountTextField.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (amountTextField.getText().equals("0.00")) {
+                if (amountTextField.getText().equals("0.0")) {
                 	amountTextField.setText("");
                 	amountTextField.setForeground(Color.BLACK); // Normal text color
                 	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.PLAIN));
@@ -62,7 +62,7 @@ public class RegisterPaymentView extends AbstractView {
             @Override
             public void focusLost(FocusEvent e) {
                 if (amountTextField.getText().isEmpty()) {
-                	amountTextField.setText("0.00");
+                	amountTextField.setText("0.0");
                 	amountTextField.setForeground(Color.GRAY); // Placeholder color
                 	amountTextField.setFont(amountTextField.getFont().deriveFont(Font.ITALIC));
                 }
@@ -113,15 +113,15 @@ public class RegisterPaymentView extends AbstractView {
         remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Create value labels (dynamic data placeholders)
-        this.totalInvoiceLabel = new JLabel("0.00");
+        this.totalInvoiceLabel = new JLabel("0.0");
         totalInvoiceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         totalInvoiceLabel.setForeground(Color.BLUE); // Highlight in blue
 
-        this.totalPaymentsLabel = new JLabel("0.00");
+        this.totalPaymentsLabel = new JLabel("0.0");
         this.totalPaymentsLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         this.totalPaymentsLabel.setForeground(Color.GREEN.darker()); // Highlight in green
 
-        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel = new JLabel("0.0");
         this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         this.remainingBalanceLabel.setForeground(Color.RED); // Highlight in red
 

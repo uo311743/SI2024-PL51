@@ -45,34 +45,26 @@ INSERT INTO Levels (idActivity, name, fee) VALUES
 -- Insert sample data into IncomesExpenses (ensuring all have at least one movement)
 INSERT INTO IncomesExpenses (idActivity, type, amountEstimated, dateEstimated, concept) 
 VALUES 
-(1, 'income', 5000.00, '2024-03-01', 'Sponsorship from Company A'),  -- id = 1
-(1, 'income', 2000.00, '2024-03-05', 'Ticket Sales'),  -- id = 2
-(2, 'income', 3500.00, '2024-03-10', 'Donations'),  -- id = 3
-
-(1, 'expense', -1500.00, '2024-03-02', 'Venue Rental'),  -- id = 4
-(1, 'expense', -800.00, '2024-03-06', 'Catering'),  -- id = 5
-(2, 'expense', -1200.00, '2024-03-12', 'Equipment Rental');  -- id = 6
+(1, 'income', 5000.00, '2024-03-01', 'Sponsorship from Company A'),
+(1, 'income', 2000.00, '2024-03-05', 'Ticket Sales'),
+(2, 'income', 3500.00, NULL, 'Donations'),
+(1, 'expense', -1500.00, '2024-03-02', 'Venue Rental'),
+(1, 'expense', -800.00, '2024-03-06', 'Catering'),
+(2, 'expense', -1200.00, '2024-03-12', 'Equipment Rental');
 
 -- Insert sample data into Movements (ensuring all incomes/expenses have at least one movement)
 INSERT INTO Movements (idType, concept, amount, date) 
 VALUES 
--- Income Movements
 (1, 'First payment from Company A', 2500.00, '2024-03-01'),
 (1, 'Final payment from Company A', 2500.00, '2024-03-02'),
-
 (2, 'Online ticket sales', 1200.00, '2024-03-05'),
 (2, 'On-site ticket sales', 800.00, '2024-03-06'),
-
 (3, 'Donation from John Doe', 2000.00, '2024-03-10'),
 (3, 'Donation from Jane Smith', 1500.00, '2024-03-11'),
-
--- Expense Movements (ensuring negative values)
 (4, 'Venue deposit', -750.00, '2024-03-02'),
 (4, 'Final venue payment', -750.00, '2024-03-03'),
-
 (5, 'Catering initial payment', -400.00, '2024-03-06'),
 (5, 'Catering final payment', -400.00, '2024-03-07'),
-
 (6, 'Equipment rental fee', -1200.00, '2024-03-12');
 
 -- Insert ActivityTemplates
