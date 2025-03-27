@@ -13,12 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import controller.RegisterSponsorshipController;
-import view.RegisterSponsorshipView;
 import controller.RegisterSponsorController;
-import view.RegisterSponsorView;
 import controller.*;
 import view.*;
 import javax.swing.BorderFactory;
@@ -124,47 +123,69 @@ public class SwingMain {
 	    /* --------------------------------------------------------------------------------
 	     * 
 	     *     START ADD BUTTONS
-	     */	    
-	    // US 29124
-	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(new RegisterSponsorshipView());
+	     */	   
+	    
+	    // Sponsorship Management Subsystem
+	    addButtonToMain(buttonPanel, "Sponsorship Management", () -> {
+	    	SubmenuView menu = new SubmenuView("Sponsorship Management");
+	    	
+	    	// US 29124
+	    	menu.addButton("Register Sponshorship", () -> {
+		    	new RegisterSponsorshipController(new RegisterSponsorshipView());
+		    });
+	    	
+	    	// US 29125
+	    	menu.addButton("Generate Invoices", () -> {
+	    		new GenerateInvoicesController(new GenerateInvoicesView());
+		    });
+	    	
+	    	// US 29126
+	    	menu.addButton("Register Payment", () -> {}, false);
+	    	
+	    	// US 29331
+	    	menu.addButton("Close Activity", () -> {
+	    		new CloseActivityController(new CloseActivityView());
+		    });
+	    	
+	    	// US 29329
+	    	menu.addButton("Register Sponsor", () -> {
+	    		new RegisterSponsorController(new RegisterSponsorView());
+		    });
+	    	
+	    	menu.setVisible();
 	    });
 	    
-	    // US 29125
-	    addButtonToMain(buttonPanel, "Generate Invoices", () -> {
-	    	new GenerateInvoicesController(new GenerateInvoicesView());
+	    
+	    // Sponsorship Management Subsystem
+	    addButtonToMain(buttonPanel, "Activity Management", () -> {
+	    	SubmenuView menu = new SubmenuView("Activity Management");
+	    	
+	        // US 29127
+	    	menu.addButton("Register Income/Expense", () -> {}, false);
+	    	
+	    	// US 29128
+	    	menu.addButton("Consult Status Activity", () -> {
+	    		new ConsultStatusActivityController(new ConsultStatusActivityView());
+	    	});
+	    	
+		    // US 29129
+	    	menu.addButton("Incomes/Expenses Report", () -> {
+		    	new IncomesExpensesReportController(new IncomesExpensesReportView());
+	    	});
+	    	
+	    	// US 29332
+	    	menu.addButton("Register Activity", () -> {
+	    		new RegisterActivityController(new RegisterActivityView());
+	    	});
+	    	
+	    	menu.setVisible();
 	    });
 	    
-	 	// US 29126
-        addButtonToMain(buttonPanel, "Register Payment", () -> {}, false);
-        
-        // US 29127
-        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {}, false);
-        
-        // US 29128
-	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
-	    	new ConsultStatusActivityController(new ConsultStatusActivityView());
-	    });
-
-	    // US 29129
-	    addButtonToMain(buttonPanel, "Incomes/Expenses Report", () -> {
-	    	new IncomesExpensesReportController(new IncomesExpensesReportView());
-	    });
 	    
-	    // US 29332
-	    addButtonToMain(buttonPanel, "Register Activity", () -> {
-	    	new RegisterActivityController(new RegisterActivityView());
-	    });
+	    buttonPanel.add(Box.createVerticalStrut(10));
+	    buttonPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+	    buttonPanel.add(Box.createVerticalStrut(20));
 	    
-	    // US 29331
-	    addButtonToMain(buttonPanel, "Close Activity", () -> {
-	    	new CloseActivityController(new CloseActivityView());
-	    });
-	    
-	    // US 29329
-	    addButtonToMain(buttonPanel, "Register Sponsor", () -> {
-	    	new RegisterSponsorController(new RegisterSponsorView());
-	    });
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
 	        db.createDatabase(false);
