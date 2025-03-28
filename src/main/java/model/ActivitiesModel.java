@@ -98,9 +98,15 @@ public class ActivitiesModel {
     public void insertNewActivity(String name, String edition, String dateStart, String dateEnd, String place) {
 		SemanticValidations.validateName(name);
 		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
-		SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
-		SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
-		SemanticValidations.validateName(place);
+		if (!dateStart.isBlank()) {
+			SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
+		}
+		if (!dateEnd.isBlank()) {
+			SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
+		}
+		if (!place.isBlank()) {
+			SemanticValidations.validateName(place);
+		}
 		
 		String sql = "INSERT INTO Activities"
 				+ "(name, edition, status, dateStart, dateEnd, place) VALUES "

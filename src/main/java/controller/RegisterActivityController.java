@@ -322,32 +322,41 @@ public class RegisterActivityController {
 		
 		// Validate DateStart
 		String dateStart = this.view.getDateStartTextField().getText();
-		if(!SyntacticValidations.isDate(dateStart)) {
-			this.view.getDateStartTextField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else { 
-			this.view.getDateStartTextField().setForeground(Color.BLACK); 
+		if (dateStart.isBlank()) {}
+		else {
+			if(!SyntacticValidations.isDate(dateStart)) {
+				this.view.getDateStartTextField().setForeground(Color.RED);
+				valid = valid && false;
+			} 
+			else { 
+				this.view.getDateStartTextField().setForeground(Color.BLACK); 
+			}
 		}
 		
 		// Validate DateEnd
 		String dateEnd = this.view.getDateEndTextField().getText();
-		if(!SyntacticValidations.isDate(dateEnd)) {
-			this.view.getDateEndTextField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else { 
-			this.view.getDateEndTextField().setForeground(Color.BLACK); 
+		if (dateEnd.isBlank()) {}
+		else {
+			if(!SyntacticValidations.isDate(dateEnd)) {
+				this.view.getDateEndTextField().setForeground(Color.RED);
+				valid = valid && false;
+			} 
+			else { 
+				this.view.getDateEndTextField().setForeground(Color.BLACK); 
+			}
 		}
 		
 		// Validate Place
 		String place = this.view.getPlaceTextField().getText();
-		if(!SyntacticValidations.isNotEmpty(place)) {
-			this.view.getPlaceTextField().setForeground(Color.RED);
-			valid = false;
-		} 
-		else { 
-			this.view.getPlaceTextField().setForeground(Color.BLACK); 
+		if (place.isBlank()) {}
+		else {
+			if(!SyntacticValidations.isNotEmpty(place)) {
+				this.view.getPlaceTextField().setForeground(Color.RED);
+				valid = valid && false;
+			} 
+			else { 
+				this.view.getPlaceTextField().setForeground(Color.BLACK); 
+			}
 		}
 		
 		// Generate Invoice button
@@ -534,8 +543,12 @@ public class RegisterActivityController {
         int numActivities = this.activitiesModel.getNumberActivitiesByFilters(nameActivity, ed);
         
         if (numActivities == 0) {
-        	SyntacticValidations.isDate(dateStartActivity);
-            SyntacticValidations.isDate(dateEndActivity);
+        	if (!dateStartActivity.isBlank()) {
+            	SyntacticValidations.isDate(dateStartActivity);
+        	}
+        	if (!dateEndActivity.isBlank()) {
+                SyntacticValidations.isDate(dateEndActivity);
+        	}
             	
             this.activitiesModel.insertNewActivity(nameActivity, ed, dateStartActivity, dateEndActivity, placeActivity);
     		JOptionPane.showMessageDialog(
