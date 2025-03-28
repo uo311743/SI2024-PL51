@@ -322,8 +322,7 @@ public class RegisterActivityController {
 		
 		// Validate DateStart
 		String dateStart = this.view.getDateStartTextField().getText();
-		if (dateStart.isBlank()) {}
-		else {
+		if (!dateStart.isBlank()) {
 			if(!SyntacticValidations.isDate(dateStart)) {
 				this.view.getDateStartTextField().setForeground(Color.RED);
 				valid = valid && false;
@@ -335,8 +334,7 @@ public class RegisterActivityController {
 		
 		// Validate DateEnd
 		String dateEnd = this.view.getDateEndTextField().getText();
-		if (dateEnd.isBlank()) {}
-		else {
+		if (!dateEnd.isBlank()) {
 			if(!SyntacticValidations.isDate(dateEnd)) {
 				this.view.getDateEndTextField().setForeground(Color.RED);
 				valid = valid && false;
@@ -348,8 +346,7 @@ public class RegisterActivityController {
 		
 		// Validate Place
 		String place = this.view.getPlaceTextField().getText();
-		if (place.isBlank()) {}
-		else {
+		if (!place.isBlank()) {
 			if(!SyntacticValidations.isNotEmpty(place)) {
 				this.view.getPlaceTextField().setForeground(Color.RED);
 				valid = valid && false;
