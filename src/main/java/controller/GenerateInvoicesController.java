@@ -96,6 +96,21 @@ public class GenerateInvoicesController {
 			@Override
 			public void changedUpdate(DocumentEvent e) {}
     	});
+    	
+    	this.view.getDateIssuedTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> updateDetail());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
     }
     
     public void initView() {
