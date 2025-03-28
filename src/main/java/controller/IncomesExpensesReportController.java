@@ -84,14 +84,14 @@ public class IncomesExpensesReportController {
     }
     
     public void showCurrentData() {
-    	// Table    	
+        // Table    
         Calendar calendario = Calendar.getInstance();
         calendario.setTime(SwingMain.getTodayDate());
         String startDate = calendario.get(Calendar.YEAR) + "-01-01";
         String endDate = calendario.get(Calendar.YEAR) + "-12-31";
         
-    	view.getStartDateField().setText(startDate);
-    	view.getEndDateField().setText(endDate);
+        view.getStartDateField().setText(startDate);
+        view.getEndDateField().setText(endDate);
         
         List<ActivitiesDTO> currentYearActivities = activitiesModel.getActivitiesFromCurrentYear(startDate, endDate);
         
@@ -103,12 +103,12 @@ public class IncomesExpensesReportController {
         double totalPaidExpenses = 0;
         
         for (ActivitiesDTO activity : currentYearActivities) {
-        	double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
-        	double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
-        	double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
-        	double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
-        	
-        	tableModel.addRow(new Object[]{
+            double ei = movementsModel.getEstimatedIncome(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+            double pi = movementsModel.getActualIncome(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+            double ee = movementsModel.getEstimatedExpenses(activity.getId()) + saModel.getEstimatedSponshorships(activity.getId());
+            double pe = movementsModel.getActualExpenses(activity.getId()) + saModel.getActualSponshorships(activity.getId());
+            
+            tableModel.addRow(new Object[]{
                 activity.getDateStart() + "-" + activity.getDateEnd(),
                 activity.getName(),
                 activity.getStatus(),
@@ -120,7 +120,7 @@ public class IncomesExpensesReportController {
                 pi - pe
             });
             
-        	totalEstimatedIncomes += ei;
+            totalEstimatedIncomes += ei;
             totalEstimatedExpenses += ee;
             totalPaidIncomes += pi;
             totalPaidExpenses += pe;
@@ -128,12 +128,15 @@ public class IncomesExpensesReportController {
         
         view.getReportTable().setModel(tableModel);
         
+        view.getReportTable().getColumnModel().getColumn(1).setPreferredWidth(200);
+        
         // Totals
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
         view.getTotalPaidIncomeLabel().setText("Paid Income: " + totalPaidIncomes);
         view.getTotalEstimatedExpensesLabel().setText("Estimated Expenses: " + totalEstimatedExpenses);
         view.getTotalPaidExpensesLabel().setText("Paid Expenses: " + totalPaidExpenses);
     }
+
     
     public void checkTextFields() {
     	boolean valid = true;
@@ -200,6 +203,8 @@ public class IncomesExpensesReportController {
         }
         
         view.getReportTable().setModel(tableModel);
+        
+        view.getReportTable().getColumnModel().getColumn(1).setPreferredWidth(200);
         
         // Totals
         view.getTotalEstimatedIncomeLabel().setText("Estimated Income: " + totalEstimatedIncomes);
