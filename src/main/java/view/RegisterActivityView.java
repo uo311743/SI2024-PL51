@@ -3,6 +3,7 @@ package view;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import net.miginfocom.swing.MigLayout;
+import java.awt.Dimension;
 
 public class RegisterActivityView extends AbstractView {
     
@@ -30,19 +31,28 @@ public class RegisterActivityView extends AbstractView {
     protected void initialize() {
         this.nameCheckBox = new JCheckBox();
         this.templatesComboBox = new JComboBox<>();
-        this.nameTextField = new JTextField(10);
-        this.editionTextField = new JTextField(10);
-        this.dateStartTextField = new JTextField(10);
-        this.dateEndTextField = new JTextField(10);
-        this.placeTextField = new JTextField(10);
+        this.nameTextField = new JTextField(20);
+        this.editionTextField = new JTextField(20);
+        this.dateStartTextField = new JTextField(20);
+        this.dateEndTextField = new JTextField(20);
+        this.placeTextField = new JTextField(20);
         this.addTemplatesButton = new JButton("Add Activity Templates");
         this.addSponsorshipLevelsButton = new JButton("Add Sponsorship Levels");
         
-        this.levelNameTextField = new JTextField(10);
-        this.levelFeeTextField = new JTextField(10);
+        this.levelNameTextField = new JTextField(20);
+        this.levelFeeTextField = new JTextField(20);
         this.backButton = new JButton("Back");
         this.addButton = new JButton("Add");
         this.levelTable = new JTable(new DefaultTableModel());
+        
+        Dimension textFieldSize = new Dimension(200, 30);
+        nameTextField.setPreferredSize(textFieldSize);
+        editionTextField.setPreferredSize(textFieldSize);
+        dateStartTextField.setPreferredSize(textFieldSize);
+        dateEndTextField.setPreferredSize(textFieldSize);
+        placeTextField.setPreferredSize(textFieldSize);
+        levelNameTextField.setPreferredSize(textFieldSize);
+        levelFeeTextField.setPreferredSize(textFieldSize);
         
         super.createButtonLowLeft("Cancel");
         super.createButtonLowRight("Register Activity");
