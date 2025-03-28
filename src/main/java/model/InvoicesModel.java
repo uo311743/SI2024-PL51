@@ -94,33 +94,33 @@ public class InvoicesModel {
     }
 
 	// INSERTIONS    
-    public void insertNewInvoice(String idSponsorshipAgreement, String dateIssued, String dateExpiration, String totalAmount, String taxRate) {
+    public void insertNewInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate) {
 		SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
 		String sql = "INSERT INTO Invoices"
-				+ "(idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate, status) VALUES "
+				+ "(id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES "
 				+ "(?, ?, ?, ?, ?, 'issued')";
-		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate);
+		db.executeUpdate(sql, id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate);
 	}
 
-    public void insertUpdateInvoice(String idSponsorshipAgreement, String dateIssued, String dateExpiration, String totalAmount, String taxRate) {
+    public void insertUpdateInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate) {
     	SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
-		SemanticValidations.validateNumberInRange(taxRate, "0.0", "1.0", "Not valid number (0-1)");
+		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
 		this.validateDateForUpdateInvoices(dateIssued, idSponsorshipAgreement);
 		
 		String sql = "INSERT INTO Invoices"
-				+ "(idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate, status) VALUES "
+				+ "(id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES "
 				+ "(?, ?, ?, ?, ?, 'issued')";
-		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate);
+		db.executeUpdate(sql, id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate);
 		
 		sql = "UPDATE Invoices "
 				+ "SET status = 'rectified' "
-				+ "WHERE idSponsorshipAgreement = ?;";
-		db.executeUpdate(sql, idSponsorshipAgreement);
+				+ "WHERE id = ?;";
+		db.executeUpdate(sql, id);
 	}
     
     // SPECIFIC VALIDATIONS
