@@ -7,7 +7,7 @@ import util.SemanticValidations;
 
 public class LevelsModel {
 	
-	public static final String SQL_LEVELS = "SELECT * FROM Levels L"
+	public static final String SQL_LEVELS = "SELECT * FROM Levels L "
 			+ "JOIN Activities A "
 			+ "ON L.idActivity == A.id "
 			+ "WHERE A.id == ?;";
@@ -59,4 +59,10 @@ public class LevelsModel {
 				+ "(?, ?, ?)";
 		db.executeUpdate(sql, idActivity, name, fee);
 	}
+    
+    public void removeLevels(String idActivity) {
+        String sql = "DELETE FROM Levels WHERE idActivity = ?;";
+        db.executeUpdate(sql, idActivity); // Ensure executeUpdate() is used for DELETE queries
+    }
+
 }

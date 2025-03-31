@@ -496,7 +496,7 @@ public class RegisterActivityController {
 		this.view.getLevelNameTextField().setText("");
 		this.view.getLevelFeeTextField().setText("");
 		
-		this.view.getButtonLowRight().setEnabled(true);;
+		this.view.getButtonLowRight().setEnabled(true);
 	}
     
     private void showSubmitDialog() {

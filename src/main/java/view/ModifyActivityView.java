@@ -32,7 +32,7 @@ public class ModifyActivityView extends AbstractView {
         this.activitiesTable = new JTable(new DefaultTableModel());
         this.nameTextField = new JTextField(20);
         this.editionTextField = new JTextField(20);
-        this.statusComboBox = new JComboBox<>();
+        this.statusComboBox = new JComboBox<>(new String[]{"planned", "closed", "cancelled"});
         this.dateStartTextField = new JTextField(20);
         this.dateEndTextField = new JTextField(20);
         this.placeTextField = new JTextField(20);
