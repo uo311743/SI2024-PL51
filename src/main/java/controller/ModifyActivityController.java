@@ -274,7 +274,7 @@ public class ModifyActivityController {
 			this.view.getDateEndTextField().setText(dateEndActivity);
 			this.view.getPlaceTextField().setText(placeActivity);
 			
-			this.setInputsEnabled();
+			this.setInputsEnabled(true);
 			this.setModifySponsorshipLevelsButtonEnabled(true);
 		}
     }
@@ -417,7 +417,7 @@ public class ModifyActivityController {
 	}
 	
 	public void restoreDetailBack() {
-		this.setInputsEnabled();
+		this.setInputsEnabled(false);
 		
 		this.view.getNameTextField().setText("");
 		this.view.getEditionTextField().setText("");
@@ -450,13 +450,13 @@ public class ModifyActivityController {
 	
 	// ENABLE METHODS
 	
-	public void setInputsEnabled() {
-		this.view.getNameTextField().setEnabled(true);
-		this.view.getEditionTextField().setEnabled(true);
-		this.view.getStatusComboBox().setEnabled(true);
-		this.view.getDateStartTextField().setEnabled(true);
-		this.view.getDateEndTextField().setEnabled(true);
-		this.view.getPlaceTextField().setEnabled(true);
+	public void setInputsEnabled(boolean valid) {
+		this.view.getNameTextField().setEnabled(valid);
+		this.view.getEditionTextField().setEnabled(valid);
+		this.view.getStatusComboBox().setEnabled(valid);
+		this.view.getDateStartTextField().setEnabled(valid);
+		this.view.getDateEndTextField().setEnabled(valid);
+		this.view.getPlaceTextField().setEnabled(valid);
 	}
 	
 	public void setModifySponsorshipLevelsButtonEnabled(boolean valid) {
@@ -464,6 +464,8 @@ public class ModifyActivityController {
     }
 	
 	public void enableLevelInputs() {
+    	this.view.getModifySponsorshipLevelsButton().setEnabled(false);
+
     	this.view.getLevelNameTextField().setEnabled(true);
     	this.view.getLevelFeeTextField().setEnabled(true);
     	

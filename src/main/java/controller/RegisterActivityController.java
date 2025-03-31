@@ -241,6 +241,9 @@ public class RegisterActivityController {
     }
     
     public void enableLevelInputs() {
+    	this.view.getAddTemplatesButton().setEnabled(false);
+    	this.view.getAddSponsorshipLevelsButton().setEnabled(false);
+    	
     	this.view.getLevelNameTextField().setEnabled(true);
     	this.view.getLevelFeeTextField().setEnabled(true);
     	
