@@ -470,6 +470,8 @@ public class ModifyActivityController {
     	this.view.getLevelFeeTextField().setEnabled(true);
     	
     	this.view.getBackButton().setEnabled(true);
+    	
+    	this.view.getButtonLowRight().setEnabled(true);
     }
 	
 	public void setInputsEnabledLevels(boolean valid) {
