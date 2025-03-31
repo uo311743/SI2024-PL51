@@ -152,6 +152,11 @@ public class SwingMain {
 	    		new RegisterSponsorController(new RegisterSponsorView());
 		    });
 	    	
+	    	// US 29325
+	    	menu.addButton("Modify Sponsor Contact", () -> {
+	    		new ModifySponsorContactView().setVisible();
+		    });
+	    	
 	    	menu.setVisible();
 	    });
 	    
