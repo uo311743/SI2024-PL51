@@ -8,6 +8,7 @@ import java.awt.Dimension;
 public class ModifySponsorContactView extends AbstractView {
     
     private JTable contactsTable;
+    private JLabel idSOLabel;
     private JTextField nameTextField;
     private JTextField emailTextField;
     private JTextField phoneTextField;
@@ -19,6 +20,7 @@ public class ModifySponsorContactView extends AbstractView {
     @Override
     protected void initialize() {
         this.contactsTable = new JTable(new DefaultTableModel());
+        this.idSOLabel = new JLabel("Sponsor Organization ID: ");
         this.nameTextField = new JTextField(20);
         this.emailTextField = new JTextField(20);
         this.phoneTextField = new JTextField(20);
@@ -46,6 +48,7 @@ public class ModifySponsorContactView extends AbstractView {
         // Contact Details Panel
         JPanel rightPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
         rightPanel.setBorder(BorderFactory.createTitledBorder("Sponsor Contact Details"));
+        rightPanel.add(idSOLabel, "wrap");
         rightPanel.add(new JLabel("Name:"));
         rightPanel.add(nameTextField, "wrap");
         rightPanel.add(new JLabel("Email:"));
@@ -58,6 +61,10 @@ public class ModifySponsorContactView extends AbstractView {
     // Getters and Setters
     public JTable getContactsTable() {
         return contactsTable;
+    }
+    
+    public JLabel getIdSOLabel() {
+    	return idSOLabel;
     }
     
     public JTextField getNameTextField() { 

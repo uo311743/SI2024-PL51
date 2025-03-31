@@ -22,6 +22,11 @@ public class SponsorContactsModel {
 		String sql = "SELECT * FROM SponsorContacts WHERE id = ?";
 	    return db.executeQueryPojo(SponsorContactsDTO.class, sql, contactId).get(0);
 	}
+    
+    public List<SponsorContactsDTO> getAllContacts() {
+    	String sql = "SELECT * FROM SponsorContacts;";
+	    return db.executeQueryPojo(SponsorContactsDTO.class, sql);
+    }
 
 	// INSERTIONS
     
@@ -30,4 +35,12 @@ public class SponsorContactsModel {
         		+ "(?, ?, ?, ?)";
 		db.executeUpdate(query, idSponsorOrganization, name, email, phone);
     }
+    
+    public void updateContact(String idSponsorOrganization, String name, String email, String phone) {
+    	SemanticValidations.validateIdForTable(idSponsorOrganization, "SponsorOrganizations", "Not valid ID");
+		SemanticValidations.validateName(name);
+		
+		String sql = "UPDATE SponsorContacts SET name = ?, email = ?, phone = ? WHERE idSponsorOrganization = ?;";
+		db.executeUpdate(sql, name, email, phone, idSponsorOrganization);
+	}
 }
