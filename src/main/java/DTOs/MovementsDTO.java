@@ -1,61 +1,73 @@
 package DTOs;
 
 public class MovementsDTO {
-    private String id;
-    private String idActivity;
-    private String type;
+    private int id;
+    private Integer idType; // Nullable field
     private String concept;
-    private String amount;
+    private double amount;
     private String date;
-    private String receiptNumber;
-    private String status;
-    
-	public String getId() {
-		return id;
-	}
-	public void setId(String id) {
-		this.id = id;
-	}
-	public String getIdActivity() {
-		return idActivity;
-	}
-	public void setIdActivity(String idActivity) {
-		this.idActivity = idActivity;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getConcept() {
-		return concept;
-	}
-	public void setConcept(String concept) {
-		this.concept = concept;
-	}
-	public String getAmount() {
-		return amount;
-	}
-	public void setAmount(String amount) {
-		this.amount = amount;
-	}
-	public String getDate() {
-		return date;
-	}
-	public void setDate(String date) {
-		this.date = date;
-	}
-	public String getReceiptNumber() {
-		return receiptNumber;
-	}
-	public void setReceiptNumber(String receiptNumber) {
-		this.receiptNumber = receiptNumber;
-	}
-	public String getStatus() {
-		return status;
-	}
-	public void setStatus(String status) {
-		this.status = status;
-	} 
+
+    // Constructors
+    public MovementsDTO() {}
+
+    public MovementsDTO(int id, Integer idType, String concept, double amount, String date) {
+        this.id = id;
+        this.idType = idType;
+        this.concept = concept;
+        this.amount = amount;
+        this.date = date;
+    }
+
+    // Getters and Setters
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public Integer getIdType() {
+        return idType;
+    }
+
+    public void setIdType(Integer idType) {
+        this.idType = idType;
+    }
+
+    public String getConcept() {
+        return concept;
+    }
+
+    public void setConcept(String concept) {
+        this.concept = concept;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    // toString method for debugging/logging
+    @Override
+    public String toString() {
+        return "MovementsDTO{" +
+                "id=" + id +
+                ", idType=" + idType +
+                ", concept='" + concept + '\'' +
+                ", amount=" + amount +
+                ", date='" + date + '\'' +
+                '}';
+    }
 }

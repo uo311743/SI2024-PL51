@@ -10,19 +10,16 @@ public class SponsorshipPaymentsModel {
     
     // GETTERS
     
-    public SponsorshipPaymentsDTO getSponsorshipPayment(String idInvoice) {
+    public List<SponsorshipPaymentsDTO> getSponsorshipPayment(String idInvoice) {
     	String query = "SELECT * FROM SponsorshipPayments sp WHERE sp.idInvoice = ?;";
-    	List<SponsorshipPaymentsDTO> results = db.executeQueryPojo(SponsorshipPaymentsDTO.class, query, idInvoice);
-    	if (!results.isEmpty()) {
-    		return results.get(0);
-    	}
-    	return null;
+    	
+    	return db.executeQueryPojo(SponsorshipPaymentsDTO.class, query, idInvoice);
     }
     
     // INSERTIONS
 
-    public void registerPayment(Integer idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
+    public void registerPayment(String idInvoice, String dateSponsorshipPayment, double amountSponsorshipPayments) {
         String query = "INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES (?, ?, ?);";
-		db.executeUpdate(query, idInvoice, dateSponsorshipPayment);
+		db.executeUpdate(query, idInvoice, dateSponsorshipPayment, amountSponsorshipPayments);
     }
 }

@@ -2,6 +2,9 @@ package model;
 
 import java.util.Date;
 import java.util.List;
+
+import DTOs.SponsorOrganizationsDTO;
+import DTOs.LevelsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
 import util.Database;
@@ -47,7 +50,10 @@ public class SponsorshipAgreementsModel {
 	
 	public double getActualSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActualSponshorships does not exist.");
-		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status = 'closed' AND idActivity = ?;";
+		String sql = "SELECT SUM(SP.amount) FROM SponsorshipAgreements SA "
+				+ "JOIN Invoices I ON SA.id = I.idSponsorshipAgreement "
+				+ "JOIN SponsorshipPayments SP ON I.id = SP.idInvoice "
+				+ "WHERE idActivity = ?;";
 	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
 		if (result == null) {
 			return 0.0;
@@ -80,6 +86,16 @@ public class SponsorshipAgreementsModel {
 		SemanticValidations.validateName(activityName);
 		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ?;";
 		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
+	}
+    
+    public String getFeeMaxByLevelFee(String feeLevelSelected) {
+		SemanticValidations.validatePositiveNumber(feeLevelSelected, "Not valid fee");
+		String sql = "SELECT * FROM Levels WHERE fee > ? ORDER BY fee ASC;";
+		List<LevelsDTO> max = db.executeQueryPojo(LevelsDTO.class, sql, feeLevelSelected);
+		if (max.size() == 0) {
+			return "isTheMax";
+		}
+		return max.get(0).getFee();
 	}
 
     // INSERTIONS

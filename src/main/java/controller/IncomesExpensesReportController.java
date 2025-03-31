@@ -12,6 +12,7 @@ import DTOs.ActivitiesDTO;
 import model.ActivitiesModel;
 import model.MovementsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -25,10 +26,10 @@ public class IncomesExpensesReportController {
     
     protected IncomesExpensesReportView view; 
         
-    public IncomesExpensesReportController(MovementsModel mm, ActivitiesModel am, SponsorshipAgreementsModel sam, IncomesExpensesReportView v) { 
-        this.movementsModel = mm;
-        this.activitiesModel = am;
-        this.saModel = sam;
+    public IncomesExpensesReportController(IncomesExpensesReportView v) { 
+        this.movementsModel = ModelManager.getInstance().getMovementsModel();
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
         
         this.view = v;
         this.initView();
@@ -77,7 +78,7 @@ public class IncomesExpensesReportController {
     }
     
     public void initView() {
-    	view.getFilterButton().setEnabled(false);
+    	view.getFilterButton().setEnabled(true);
     	showCurrentData();
         view.setVisible();
     }

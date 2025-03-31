@@ -7,7 +7,6 @@ import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,36 +16,23 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 
-public class RegisterSponsorshipView extends AbstractView {
+public class CloseActivityView extends AbstractView {
 	
 	private JTable activityTable;
-	private JComboBox<Object> sponsorComboBox;
-	private JComboBox<Object> contactComboBox;
-	private JComboBox<Object> gbMemberComboBox;
-	private JComboBox<Object> levelsComboBox;
-	private JLabel amountLabel;
-	private JTextField amountTextField;
-	private JTextField agreementDateTextField;
-	private JTextField contactEmailTextField;
+	private JTextField statusSponsorTextField, statusIncomesTextField, statusExpensesTextField;
 	
-	public RegisterSponsorshipView() { super("Register Sponshorship"); }
+	public CloseActivityView() { super("Close Activity"); }
 	
 	@Override
 	protected void initialize()
 	{
 		this.activityTable = new JTable();
-		this.sponsorComboBox = new JComboBox<>();
-        this.contactComboBox = new JComboBox<>();
-        this.gbMemberComboBox = new JComboBox<>();
-        this.levelsComboBox = new JComboBox<>();
-        this.amountLabel = new JLabel("Amount (euro):");
-        this.amountTextField = new JTextField(10);
-        this.agreementDateTextField = new JTextField(10);
-		this.contactEmailTextField = new JTextField(10);
+        this.statusSponsorTextField = new JTextField(20);
+        this.statusIncomesTextField = new JTextField(20);
+		this.statusExpensesTextField = new JTextField(20);
 		
-		super.createButtonLowLeft("Cancel");
-		super.createButtonLowMiddle("Reset");
-		super.createButtonLowRight("Register");
+		super.createButtonLowLeft("Go Back");
+		super.createButtonLowRight("Close");
 	}
 
 	@Override
@@ -98,22 +84,15 @@ public class RegisterSponsorshipView extends AbstractView {
 		fieldsGbc.anchor = GridBagConstraints.WEST;
 
 		// Labels
-		JLabel sponsorLabel = new JLabel("Select a sponsor:");
-		JLabel contactLabel = new JLabel("Select a contact:");
-		JLabel gbMemberLabel = new JLabel("Select a GB member:");
-		JLabel levelsLabel = new JLabel("Select a level:");
-		JLabel agreementDateLabel = new JLabel("Agreement Date (yyyy-MM-dd):");
-		JLabel contactEmailLabel = new JLabel("Contact Email:");
+		JLabel statusSponsorLabel = new JLabel("Sponsorships:");
+		JLabel statusIncomesLabel = new JLabel("Incomes:");
+		JLabel statusExpensesLabel = new JLabel("Expenses:");
 
 		// Fields
 		JComponent[][] fields = {
-		    {sponsorLabel, sponsorComboBox},
-		    {contactLabel, contactComboBox},
-		    {contactEmailLabel, contactEmailTextField},
-		    {gbMemberLabel, gbMemberComboBox},
-		    {levelsLabel, levelsComboBox},
-		    {amountLabel, amountTextField},
-		    {agreementDateLabel, agreementDateTextField}
+		    {statusSponsorLabel, statusSponsorTextField},
+		    {statusIncomesLabel, statusIncomesTextField},
+		    {statusExpensesLabel, statusExpensesTextField}
 		};
 
 		// Add labels above inputs
@@ -146,36 +125,17 @@ public class RegisterSponsorshipView extends AbstractView {
 	    return activityTable;
 	}
 	
-	public JComboBox<Object> getSponsorComboBox() {
-	    return sponsorComboBox;
+
+	public JTextField getStatusSponsorTextField() {
+	    return statusSponsorTextField;
 	}
 
-	public JComboBox<Object> getContactComboBox() {
-	    return contactComboBox;
+	public JTextField getStatusIncomesTextField() {
+	    return statusIncomesTextField;
 	}
 
-	public JComboBox<Object> getGbMemberComboBox() {
-	    return gbMemberComboBox;
-	}
-	
-	public JComboBox<Object> getLevelsComboBox() {
-		return levelsComboBox;
-	}
-	
-	public JLabel getAmountLabel() {
-		return amountLabel;
-	}
-
-	public JTextField getAmountTextField() {
-	    return amountTextField;
-	}
-
-	public JTextField getAgreementDateTextField() {
-	    return agreementDateTextField;
-	}
-
-	public JTextField getContactEmailTextField() {
-	    return contactEmailTextField;
+	public JTextField getStatusExpensesTextField() {
+	    return statusExpensesTextField;
 	}
 
 }

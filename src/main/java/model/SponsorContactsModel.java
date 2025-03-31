@@ -24,4 +24,10 @@ public class SponsorContactsModel {
 	}
 
 	// INSERTIONS
+    
+    public void insertContact(String idSponsorOrganization, String name, String email, String phone) {
+        String query = "INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES"
+        		+ "(?, ?, ?, ?)";
+		db.executeUpdate(query, idSponsorOrganization, name, email, phone);
+    }
 }

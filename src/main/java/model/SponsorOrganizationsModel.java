@@ -35,6 +35,17 @@ public class SponsorOrganizationsModel {
 		String sql = "SELECT name FROM SponsorOrganizations;";
 		return db.executeQueryArray(sql);
 	}
+	
+	public List<SponsorOrganizationsDTO> getSponsorOrganizations() {
+		String sql = "SELECT * FROM SponsorOrganizations;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql);
+	}
+	
+	public SponsorOrganizationsDTO getSOByInvoiceId(String invoiceId) {
+		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
+		List<SponsorOrganizationsDTO> data = db.executeQueryPojo(SponsorOrganizationsDTO.class, SQL_SO_INFO, invoiceId);
+		return data.get(0);
+	}
     
 	public SponsorOrganizationsDTO getSponsorOrganizationByInvoiceId(String invoiceId) {
 		SemanticValidations.validateIdForTable(invoiceId, "Invoices", "Not valid ID");
@@ -61,4 +72,23 @@ public class SponsorOrganizationsModel {
 	}
 
 	// INSERTIONS
+	
+	public String insertSponsorOrganizationAndGetID(String name, String address, String nif, String vat)
+	{
+		String sql = "INSERT INTO SponsorOrganizations"
+				+ "(name, address, nif, vat) VALUES "
+				+ "(?, ?, ?, ?)";
+		return db.executeInsertion(sql, name, address, nif, vat);
+	}
+	
+	
+	public boolean existsSponsorByName(String nameSponsor) {
+		String sql = "SELECT * FROM SponsorOrganizations WHERE name == ?;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nameSponsor).size() != 0;
+	}
+	
+	public boolean existsSponsorByVat(String nifSponsor) {
+		String sql = "SELECT * FROM SponsorOrganizations WHERE nif == ?;";
+		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql, nifSponsor).size() != 0;
+	}
 }

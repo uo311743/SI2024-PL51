@@ -13,29 +13,11 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import controller.RegisterSponsorshipController;
-import model.SponsorContactsModel;
-import model.SponsorOrganizationsModel;
-import model.SponsorshipAgreementsModel;
-import model.SponsorshipPaymentsModel;
-import view.RegisterSponsorshipView;
-import controller.RegisterIncomesExpensesController;
-import model.InvoicesModel;
-import model.MovementsModel;
-import controller.RegisterPaymentController;
-import view.RegisterPaymentView;
-import controller.ConsultStatusActivityController;
-import controller.IncomesExpensesReportController;
-import view.IncomesExpensesReportView;
-import controller.GenerateInvoicesController;
-import model.GBMembersModel;
-import view.ConsultStatusActivityView;
-import view.GenerateInvoicesView;
-import controller.ActivityFinancialReportController;
-import model.ActivitiesModel;
-import view.RegisterIncomesExpensesView;
+import controller.*;
+import view.*;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -139,36 +121,71 @@ public class SwingMain {
 	    /* --------------------------------------------------------------------------------
 	     * 
 	     *     START ADD BUTTONS
-	     */	    
-	    // US 29124
-	    addButtonToMain(buttonPanel, "Register Sponshorship", () -> {
-	    	new RegisterSponsorshipController(new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new SponsorContactsModel(), new GBMembersModel(), new ActivitiesModel(), new RegisterSponsorshipView());
+	     */	   
+	    
+	    // Sponsorship Management Subsystem
+	    addButtonToMain(buttonPanel, "Sponsorship Management", () -> {
+	    	SubmenuView menu = new SubmenuView("Sponsorship Management");
+	    	
+	    	// US 29124
+	    	menu.addButton("Register Sponshorship", () -> {
+		    	new RegisterSponsorshipController(new RegisterSponsorshipView());
+		    });
+	    	
+	    	// US 29125
+	    	menu.addButton("Generate Invoices", () -> {
+	    		new GenerateInvoicesController(new GenerateInvoicesView());
+		    });
+	    	
+	    	// US 29126
+	    	menu.addButton("Register Payment", () -> {
+	    		new RegisterPaymentController(new RegisterPaymentView());
+	    	});
+	    	
+	    	// US 29331
+	    	menu.addButton("Close Activity", () -> {
+	    		new CloseActivityController(new CloseActivityView());
+		    });
+	    	
+	    	// US 29329
+	    	menu.addButton("Register Sponsor", () -> {
+	    		new RegisterSponsorController(new RegisterSponsorView());
+		    });
+	    	
+	    	menu.setVisible();
 	    });
 	    
-	    // US 29125
-	    addButtonToMain(buttonPanel, "Generate Invoices", () -> {
-	    	new GenerateInvoicesController(new SponsorshipAgreementsModel(), new InvoicesModel(), new ActivitiesModel(), new SponsorOrganizationsModel(), new GenerateInvoicesView());
+	    
+	    // Sponsorship Management Subsystem
+	    addButtonToMain(buttonPanel, "Activity Management", () -> {
+	    	SubmenuView menu = new SubmenuView("Activity Management");
+	    	
+	        // US 29127
+	    	menu.addButton("Register Income/Expense", () -> {
+	    		new RegisterMovementsController(new RegisterMovementsView());
+	    	});
+	    	
+	    	// US 29128
+	    	menu.addButton("Consult Status Activity", () -> {
+	    		new ConsultStatusActivityController(new ConsultStatusActivityView());
+	    	});
+	    	
+		    // US 29129
+	    	menu.addButton("Incomes/Expenses Report", () -> {
+		    	new IncomesExpensesReportController(new IncomesExpensesReportView());
+	    	});
+	    	
+	    	// US 29332
+	    	menu.addButton("Register Activity", () -> {
+	    		new RegisterActivityController(new RegisterActivityView());
+	    	});
+	    	
+	    	menu.setVisible();
 	    });
 	    
-	 	// US 29126
-        addButtonToMain(buttonPanel, "Register Payment", () -> {
-        	new RegisterPaymentController(new SponsorshipAgreementsModel(), new SponsorshipPaymentsModel(), new ActivitiesModel(), new InvoicesModel(), new RegisterPaymentView());
-        });
-        
-        // US 29127
-        addButtonToMain(buttonPanel, "Register Income/Expense", () -> {
-        	new RegisterIncomesExpensesController(new ActivitiesModel(), new MovementsModel(), new RegisterIncomesExpensesView());
-	    });
-        
-        // US 29128
-	    addButtonToMain(buttonPanel, "Consult Status Activity", () -> {
-	    	new ConsultStatusActivityController(new ActivitiesModel(), new SponsorOrganizationsModel(), new SponsorshipAgreementsModel(), new MovementsModel(), new ConsultStatusActivityView());
-	    });
-
-	    // US 29129
-	    addButtonToMain(buttonPanel, "Incomes/Expenses Report", () -> {
-	    	new IncomesExpensesReportController(new MovementsModel(), new ActivitiesModel(), new SponsorshipAgreementsModel(), new IncomesExpensesReportView());
-	    });
+	    buttonPanel.add(Box.createVerticalStrut(10));
+	    buttonPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+	    buttonPanel.add(Box.createVerticalStrut(20));
 	    
 	    
 	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
@@ -207,13 +224,23 @@ public class SwingMain {
 	 * @param text to be displied inside the button
 	 * @param action to be performed by the button on-click
 	 */
-	private void addButtonToMain(JPanel panel, String text, Runnable action) {
+	private void addButtonToMain(JPanel panel, String text, Runnable action, boolean enabled) {
 	    JButton button = new JButton(text);
 	    button.addActionListener(e -> action.run());
 	    button.setMaximumSize(new Dimension(Integer.MAX_VALUE, button.getMinimumSize().height));
 	    button.setAlignmentX(Component.CENTER_ALIGNMENT);
+	    button.setEnabled(enabled);
 	    panel.add(button);
 	    panel.add(Box.createVerticalStrut(10)); // Add spacing between buttons
+	}
+	
+	/**
+	 * Creates a button in the main frame
+	 * @param text to be displied inside the button
+	 * @param action to be performed by the button on-click
+	 */
+	private void addButtonToMain(JPanel panel, String text, Runnable action) {
+		addButtonToMain(panel, text, action, true);
 	}
 
 

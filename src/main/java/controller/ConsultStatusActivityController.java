@@ -8,6 +8,7 @@ import java.util.List;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
+import DTOs.IncomesExpensesDTO;
 import DTOs.MovementsDTO;
 import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
@@ -15,6 +16,7 @@ import model.ActivitiesModel;
 import model.MovementsModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import view.ConsultStatusActivityView;
 
@@ -35,12 +37,12 @@ public class ConsultStatusActivityController {
 
     // ================================================================================
 
-    public ConsultStatusActivityController(ActivitiesModel am, SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, MovementsModel mm, ConsultStatusActivityView v)
+    public ConsultStatusActivityController(ConsultStatusActivityView v)
     { 
-        this.activitiesModel = am;
-        this.soModel = som;
-        this.saModel = sam;
-        this.movementsModel = mm;
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+        this.movementsModel = ModelManager.getInstance().getMovementsModel();
         
         this.view = v;
         this.initView();
@@ -102,7 +104,7 @@ public class ConsultStatusActivityController {
 	private void getActivities()
     {
     	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
@@ -135,8 +137,8 @@ public class ConsultStatusActivityController {
 	
 	private void getIncome(String idActivity)
 	{
-		List<MovementsDTO> income = movementsModel.getIncomeByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"amount", "concept", "status", "date"});
+		List<IncomesExpensesDTO> income = movementsModel.getIncomeByActivity(idActivity);
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
 		this.view.getIncomeTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getIncomeTable());
 		
@@ -148,8 +150,8 @@ public class ConsultStatusActivityController {
 	
 	private void getExpenses(String idActivity)
 	{
-		List<MovementsDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"amount", "concept", "status", "date"});
+		List<IncomesExpensesDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
 		this.view.getExpensesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getExpensesTable());
 		

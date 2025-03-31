@@ -13,12 +13,15 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
+import DTOs.LevelsDTO;
 import DTOs.SponsorContactsDTO;
 import model.ActivitiesModel;
 import model.GBMembersModel;
+import model.LevelsModel;
 import model.SponsorContactsModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterSponsorshipView;
@@ -30,6 +33,7 @@ public class RegisterSponsorshipController {
 	protected SponsorContactsModel scModel;
 	protected GBMembersModel gbmModel;
 	protected ActivitiesModel activitiesModel;
+	protected LevelsModel levelsModel;
 	
     protected RegisterSponsorshipView view; 
     
@@ -42,12 +46,13 @@ public class RegisterSponsorshipController {
 
     // ================================================================================
 
-    public RegisterSponsorshipController(SponsorOrganizationsModel som, SponsorshipAgreementsModel sam, SponsorContactsModel scm, GBMembersModel gbmm, ActivitiesModel am, RegisterSponsorshipView v) { 
-        this.soModel = som;
-        this.saModel = sam;
-        this.scModel = scm;
-        this.gbmModel = gbmm;
-        this.activitiesModel = am;
+    public RegisterSponsorshipController(RegisterSponsorshipView v) { 
+        this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+        this.saModel = ModelManager.getInstance().getSponsorshipAgreementsModel();
+        this.scModel = ModelManager.getInstance().getSponsorContactsModel();
+        this.gbmModel = ModelManager.getInstance().getGBMembersModel();
+        this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
+        this.levelsModel = ModelManager.getInstance().getLevelsModel();
         
         this.view = v;
         this.initView();
@@ -82,7 +87,7 @@ public class RegisterSponsorshipController {
     	this.view.getActivityTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetailTable());
 			}
 		});
     	
@@ -97,6 +102,13 @@ public class RegisterSponsorshipController {
     	    	SwingUtil.exceptionWrapper(() -> updateDetail());
     	    }
     	});
+    	
+    	this.view.getLevelsComboBox().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent  e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
+		});
     	
     	this.view.getAmountTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
@@ -138,6 +150,7 @@ public class RegisterSponsorshipController {
 		
 		this.view.getButtonLowRight().setEnabled(false);
 		this.setInputsEnabled(false);
+		this.view.getContactEmailTextField().setEnabled(false);
 		
     	this.restoreDetail();
     	view.setVisible();
@@ -172,7 +185,77 @@ public class RegisterSponsorshipController {
 				String contactId = SwingUtil.getKeyFromText(this.lastSelectedContact);
 				this.getContactEmail(contactId);
 			}
+			this.updateRange();
 			
+			this.setInputsEnabled(true);
+		
+			// ------------------------------------------------------------
+			// Check JTextField inputs:
+			boolean valid = true;
+			
+			// Validate amount
+			String amount = this.view.getAmountTextField().getText();	
+			
+			String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
+			String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
+			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+			
+			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+			String amountMin = levelSelected.getFee();
+			
+			if (amountMax == "isTheMax") {
+				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
+				{
+					this.view.getAmountTextField().setForeground(Color.RED);
+					valid = false;
+				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			}
+			else {
+				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) >= Double.valueOf(amountMax) || Double.valueOf(amount) < Double.valueOf(amountMin))
+				{
+					this.view.getAmountTextField().setForeground(Color.RED);
+					valid = false;
+				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			}
+			
+			// Validate agreement date
+			String agreementDate = this.view.getAgreementDateTextField().getText();
+			if(!SyntacticValidations.isDate(agreementDate))
+			{
+				this.view.getAgreementDateTextField().setForeground(Color.RED);
+				valid = false;
+			} else { this.view.getAgreementDateTextField().setForeground(Color.BLACK); }
+			
+			// Activate/Deactivate the submit button
+			this.view.getButtonLowRight().setEnabled(valid);
+		}
+		
+	}
+	
+	public void updateDetailTable()
+	{		
+		// ------------------------------------------------------------
+		// If an activity is selected in the table do:
+		
+		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivityTable());
+		if(!"".equals(this.lastSelectedActivity))
+		{
+			String selectedSponsor = (String) view.getSponsorComboBox().getSelectedItem();
+			if (this.lastSelectedSponsor != selectedSponsor)
+			{
+				this.lastSelectedSponsor = selectedSponsor;
+				String sponsorId = SwingUtil.getKeyFromText(this.lastSelectedSponsor);
+				this.getContacts(sponsorId); // Populate ComboBox with contacts
+			}
+			
+			String selectedContact = (String) view.getContactComboBox().getSelectedItem();
+			if (this.lastSelectedContact != selectedContact)
+			{
+				this.lastSelectedContact = selectedContact;
+				String contactId = SwingUtil.getKeyFromText(this.lastSelectedContact);
+				this.getContactEmail(contactId);
+			}
+			this.updateLevels();
 			
 			this.setInputsEnabled(true);
 		}
@@ -182,12 +265,29 @@ public class RegisterSponsorshipController {
 		boolean valid = true;
 		
 		// Validate amount
-		String amount = this.view.getAmountTextField().getText();
-		if(!SyntacticValidations.isDecimal(amount))
-		{
-			this.view.getAmountTextField().setForeground(Color.RED);
-			valid = false;
-		} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+		String amount = this.view.getAmountTextField().getText();	
+		
+		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
+		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
+		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+		
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+		String amountMin = levelSelected.getFee();
+		
+		if (amountMax == "isTheMax") {
+			if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
+			{
+				this.view.getAmountTextField().setForeground(Color.RED);
+				valid = false;
+			} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+		}
+		else {
+			if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) >= Double.valueOf(amountMax) || Double.valueOf(amount) < Double.valueOf(amountMin))
+			{
+				this.view.getAmountTextField().setForeground(Color.RED);
+				valid = false;
+			} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+		}
 		
 		// Validate agreement date
 		String agreementDate = this.view.getAgreementDateTextField().getText();
@@ -199,7 +299,25 @@ public class RegisterSponsorshipController {
 		
 		// Activate/Deactivate the submit button
 		this.view.getButtonLowRight().setEnabled(valid);
+	}
+	
+	public void updateLevels() {
+		this.getLevels();
+		this.updateRange();
+	}
+	
+	public void updateRange() {
+		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
+		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
+		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
 		
+		if (amountMax == "isTheMax") {
+			this.view.getAmountLabel().setText("Amount (euro): (" + levelSelected.getFee() + "-" + "Limitless)");
+		}
+		else {
+			this.view.getAmountLabel().setText("Amount (euro): (" + levelSelected.getFee() + "-" + String.valueOf(Double.valueOf(amountMax) - 1) + ")");
+		}
 	}
 	
 	public void restartView()
@@ -209,13 +327,21 @@ public class RegisterSponsorshipController {
 		this.getActivities();
 		this.getSponsors();
 		this.getGBMembers();
-		
+						
 		this.view.getContactComboBox().removeAllItems();
 		this.view.getContactComboBox().addItem(DEFAULT_VALUE_COMBOBOX);
 		this.view.getContactComboBox().setSelectedItem(DEFAULT_VALUE_COMBOBOX);
     	
     	this.view.getAgreementDateTextField().setText("");
     	this.view.getAmountTextField().setText("");
+    	
+		this.view.getAmountLabel().setText("Amount (euro):");
+		
+		this.view.getLevelsComboBox().removeActionListener(e -> updateDetail());
+		
+		this.view.getLevelsComboBox().removeAllItems();
+		
+		this.view.getLevelsComboBox().addActionListener(e -> updateDetail());
     	
     	this.view.getContactEmailTextField().setText("");
     	this.view.getContactEmailTextField().setEditable(false);
@@ -229,7 +355,7 @@ public class RegisterSponsorshipController {
     private void getActivities()
     {
     	List<ActivitiesDTO> activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "status", "dateStart", "dateEnd"});
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
@@ -264,11 +390,19 @@ public class RegisterSponsorshipController {
 		view.getGbMemberComboBox().setEnabled(true);
     }
     
+    private void getLevels() {
+		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);    	
+    	List<Object[]> levelsList = levelsModel.getLevelsListArray(activityId);
+        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(levelsList);
+        view.getLevelsComboBox().setModel(lmodel);
+    }
+    
     private void setInputsEnabled(boolean enabled)
     {
     	this.view.getSponsorComboBox().setEnabled(enabled);
 		this.view.getGbMemberComboBox().setEnabled(enabled);
 		this.view.getContactComboBox().setEnabled(enabled);
+		this.view.getLevelsComboBox().setEnabled(enabled);
     	this.view.getAgreementDateTextField().setEnabled(enabled);
     	this.view.getAmountTextField().setEnabled(enabled);
     }
