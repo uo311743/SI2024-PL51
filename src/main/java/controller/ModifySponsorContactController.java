@@ -111,10 +111,9 @@ public class ModifySponsorContactController {
     
     public void getContacts() {
     	List<SponsorContactsDTO> contacts = scModel.getAllContacts();
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "idSponsorOrganization", "name", "email", "phone"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"idSponsorOrganization", "name", "email", "phone"}, 0);
         for (SponsorContactsDTO contact : contacts) {
         	tableModel.addRow(new Object[] {
-        			contact.getId(),
         			contact.getIdSponsorOrganization(),
         			contact.getName(),
         			contact.getEmail(),
@@ -131,10 +130,10 @@ public class ModifySponsorContactController {
 			restoreDetail();
 		}
 		else {
-			String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
-			String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
-			String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
-			String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 4);
+			String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
+			String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+			String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
+			String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
 
 			this.view.getIdSOLabel().setText("Sponsor Organization ID: " + idSponsorOrganization);
 			this.view.getNameTextField().setText(nameContact);
@@ -208,8 +207,7 @@ public class ModifySponsorContactController {
 	// OTHER METHODS
 	
 	private void showSubmitDialog() {
-		String idContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
-		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
 		String nameContact = this.view.getNameTextField().getText();
 		String emailContact = this.view.getEmailTextField().getText();
 		String phoneContact = this.view.getPhoneTextField().getText();
@@ -218,7 +216,6 @@ public class ModifySponsorContactController {
                 + "<p>Modify a Sponsor Contact: </p>"
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
-                + "<tr><td style='padding: 2px 5px;'><b>Sponsor Contact ID:</b></td><td style='padding: 2px 5px;'>" + idContact + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Sponsor Organization ID:</b></td><td style='padding: 2px 5px;'>" + idSponsorOrganization + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameContact + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Email:</b></td><td style='padding: 2px 5px;'>" + emailContact + "</td></tr>"
@@ -237,10 +234,19 @@ public class ModifySponsorContactController {
         	return;
         }
         
+        String preName = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+        String preEmail = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
+        String prePhone = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
+        
+        SyntacticValidations.matchesPattern(preEmail, SyntacticValidations.PATTERN_EMAIL);
+        SyntacticValidations.matchesPattern(prePhone, SyntacticValidations.PATTERN_PHONE);
+        
+        SponsorContactsDTO contactData = this.scModel.getContactByFilters(idSponsorOrganization, preName, preEmail, prePhone);
+        
         SyntacticValidations.matchesPattern(emailContact, SyntacticValidations.PATTERN_EMAIL);
         SyntacticValidations.matchesPattern(phoneContact, SyntacticValidations.PATTERN_PHONE);
         	
-        this.scModel.updateContact(idSponsorOrganization, nameContact, emailContact, phoneContact);
+        this.scModel.updateContact(contactData.getId(), nameContact, emailContact, phoneContact);
 		JOptionPane.showMessageDialog(
 			this.view.getFrame(), "Sponsor Contact updated correctly",
 			"This operation has been succesful",
