@@ -33,6 +33,11 @@ public class SponsorContactsModel {
 	    List<SponsorContactsDTO> sol = db.executeQueryPojo(SponsorContactsDTO.class, sql, idSponsorOrganization, name, email, phone);
 	    return sol.get(0);
     }
+    
+    public List<SponsorContactsDTO> getAllValidContacts() {
+    	String sql = "SELECT * FROM SponsorContacts WHERE name != 'none' AND email != 'none' AND phone != 'none';";
+	    return db.executeQueryPojo(SponsorContactsDTO.class, sql);
+    }
 
 	// INSERTIONS
     
@@ -48,5 +53,12 @@ public class SponsorContactsModel {
 		
 		String sql = "UPDATE SponsorContacts SET name = ?, email = ?, phone = ? WHERE id = ?;";
 		db.executeUpdate(sql, name, email, phone, id);
+	}
+    
+    public void removeContact(String id) {
+    	SemanticValidations.validateIdForTable(id, "SponsorContacts", "Not valid ID");
+		
+		String sql = "UPDATE SponsorContacts SET name = 'none', email = 'none', phone = 'none' WHERE id = ?;";
+		db.executeUpdate(sql, id);
 	}
 }

@@ -117,7 +117,7 @@ public class ModifySponsorContactController {
     }
     
     public void getContacts() {
-    	List<SponsorContactsDTO> contacts = scModel.getAllContacts();
+    	List<SponsorContactsDTO> contacts = scModel.getAllValidContacts();
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"idSponsorOrganization", "name", "email", "phone"}, 0);
         for (SponsorContactsDTO contact : contacts) {
         	tableModel.addRow(new Object[] {
@@ -264,14 +264,12 @@ public class ModifySponsorContactController {
     }
 	
 	private void showRemoveDialog() {
-		String idContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
-		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
         
         String message = "<html><body>"
                 + "<p>Remove a Sponsor Contact: </p>"
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
-                + "<tr><td style='padding: 2px 5px;'><b>Sponsor Contact ID:</b></td><td style='padding: 2px 5px;'>" + idContact + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Sponsor Organization ID:</b></td><td style='padding: 2px 5px;'>" + idSponsorOrganization + "</td></tr>"
                 + "</table>"
                 + "<p><i>Proceed with the removing for the selected sponsor contact?</i></p>"
@@ -287,9 +285,16 @@ public class ModifySponsorContactController {
         	return;
         }
         
-        // Código corregidor de base de datos
+        String preName = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+        String preEmail = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
+        String prePhone = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
         
-        this.scModel.removeContact(idContact);
+        SyntacticValidations.matchesPattern(preEmail, SyntacticValidations.PATTERN_EMAIL);
+        SyntacticValidations.matchesPattern(prePhone, SyntacticValidations.PATTERN_PHONE);
+        
+        SponsorContactsDTO contactData = this.scModel.getContactByFilters(idSponsorOrganization, preName, preEmail, prePhone);
+                
+        this.scModel.removeContact(contactData.getId());
 		JOptionPane.showMessageDialog(
 			this.view.getFrame(), "Sponsor Contact removed correctly",
 			"This operation has been succesful",
