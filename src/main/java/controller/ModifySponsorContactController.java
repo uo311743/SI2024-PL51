@@ -40,6 +40,13 @@ public class ModifySponsorContactController {
 			}
 		});
     	
+    	this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> showRemoveDialog());
+			}
+		});
+    	
     	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -208,6 +215,49 @@ public class ModifySponsorContactController {
 	// OTHER METHODS
 	
 	private void showSubmitDialog() {
+		String idContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
+		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+		String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
+		String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
+		String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 4);
+        
+        String message = "<html><body>"
+                + "<p>Modify a Sponsor Contact: </p>"
+                + "<p><b>Details:</b></p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Sponsor Contact ID:</b></td><td style='padding: 2px 5px;'>" + idContact + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Sponsor Organization ID:</b></td><td style='padding: 2px 5px;'>" + idSponsorOrganization + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameContact + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Email:</b></td><td style='padding: 2px 5px;'>" + emailContact + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Phone:</b></td><td style='padding: 2px 5px;'>" + phoneContact + "</td></tr>"
+                + "</table>"
+                + "<p><i>Proceed with these changes for the selected sponsor contact?</i></p>"
+                + "</body></html>";
+
+        int response = JOptionPane.showConfirmDialog(
+            this.view.getFrame(),  message,
+            "Confirm Sponsor Contact Details",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (response != JOptionPane.YES_OPTION) {
+        	return;
+        }
+        
+        SyntacticValidations.matchesPattern(emailContact, SyntacticValidations.PATTERN_EMAIL);
+        SyntacticValidations.matchesPattern(phoneContact, SyntacticValidations.PATTERN_PHONE);
+        	
+        this.scModel.updateContact(idSponsorOrganization, nameContact, emailContact, phoneContact);
+		JOptionPane.showMessageDialog(
+			this.view.getFrame(), "Sponsor Contact updated correctly",
+			"This operation has been succesful",
+			JOptionPane.INFORMATION_MESSAGE
+		);
+
+		this.restoreDetail();
+    }
+	
+	private void showRemoveDialog() {
 		String idContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
 		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
 		String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);

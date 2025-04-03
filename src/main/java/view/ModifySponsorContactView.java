@@ -31,6 +31,7 @@ public class ModifySponsorContactView extends AbstractView {
         phoneTextField.setPreferredSize(textFieldSize);
         
         super.createButtonLowLeft("Cancel");
+        super.createButtonLowMiddle("Remove Contact");
         super.createButtonLowRight("Modify Sponsor Contact");
     }
     
@@ -64,7 +65,7 @@ public class ModifySponsorContactView extends AbstractView {
     }
     
     public JLabel getIdSOLabel() {
-    	return idSOLabel;
+        return idSOLabel;
     }
     
     public JTextField getNameTextField() { 
