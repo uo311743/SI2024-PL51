@@ -210,9 +210,9 @@ public class ModifySponsorContactController {
 	private void showSubmitDialog() {
 		String idContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
 		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
-		String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
-		String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
-		String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 4);
+		String nameContact = this.view.getNameTextField().getText();
+		String emailContact = this.view.getEmailTextField().getText();
+		String phoneContact = this.view.getPhoneTextField().getText();
         
         String message = "<html><body>"
                 + "<p>Modify a Sponsor Contact: </p>"
