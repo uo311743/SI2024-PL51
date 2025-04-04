@@ -16,6 +16,7 @@ import model.ActivitiesModel;
 import model.InvoicesModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import model.SponsorshipPaymentsModel;
 import util.ModelManager;
 import util.Params;
 import util.SwingUtil;
@@ -28,6 +29,7 @@ public class GenerateInvoicesController {
 	protected InvoicesModel invoicesModel;
 	protected ActivitiesModel activitiesModel;
 	protected SponsorOrganizationsModel soModel;
+	protected SponsorshipPaymentsModel spModel;
 	
 	protected Params params;
 	
@@ -40,6 +42,7 @@ public class GenerateInvoicesController {
 		this.invoicesModel = ModelManager.getInstance().getInvoicesModel();
 		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
 		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+		this.spModel = ModelManager.getInstance().getSponsorshipPaymentsModel();
 		
 		params = new Params();
 		
@@ -126,7 +129,7 @@ public class GenerateInvoicesController {
     }
     
     private void getAgreements() {
-    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[0]);
+    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[0], splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[1]);
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "Sponsor", "amount", "date", "status"}, 0);
         for (SponsorshipAgreementsDTO agreement : agreements) {
         	tableModel.addRow(new Object[] {
@@ -233,14 +236,11 @@ public class GenerateInvoicesController {
         if (response != JOptionPane.YES_OPTION) {
         	return;
         }
-        
-        String nameActivity = String.valueOf(view.getActivityComboBox().getSelectedItem());
-        String name = splitString(nameActivity)[0];
-        String edition = splitString(nameActivity)[1];
-        
-        int numInvoices = this.invoicesModel.getNumberInvoicesByActivityNameEdition(name, edition);
+                
+        int numInvoices = this.invoicesModel.getNumberInvoicesByAgreement(idAgreement);
         
     	SyntacticValidations.isDate(dateIssued);
+    	
         if(numInvoices == 0) {
         	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate));
 	        
@@ -260,7 +260,8 @@ public class GenerateInvoicesController {
 	        );
 	        
 	        if (response == JOptionPane.YES_OPTION) {
-	        	this.invoicesModel.insertUpdateInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate));
+	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate));
+	        	this.spModel.updatePaymentsInvoiceId(id, idAgreement);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
 		    			"Invoice added correctly",
