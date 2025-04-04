@@ -53,6 +53,21 @@ public class Params {
     	
         return tmp_int;
     }
+    
+    public double getTaxVAT() {
+        String tmp_str = properties.getProperty("taxinfo.vat");
+    	if(tmp_str == null)
+    		throw new ApplicationException("Parameter taxinfo.vat not found in file: " + CONFIG_FILE);
+        
+    	double tmp_int;
+    	try { tmp_int = Double.parseDouble(tmp_str); }
+    	catch (NumberFormatException e)
+    	{
+    		throw new ApplicationException("Parameter taxinfo.vat must be a double in file: " + CONFIG_FILE);
+		}
+    	
+        return tmp_int;
+    }
 
     // Get email configuration
     public String getSmtpHost() {
