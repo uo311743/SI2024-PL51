@@ -368,9 +368,9 @@ public class RegisterSponsorshipController {
 		view.getSponsorComboBox().setEnabled(true);
     }
     
-    private void getContacts(String sponshorId)
+    private void getContacts(String sponsorOrganizationId)
     {
-    	List<Object[]> contacts = scModel.getContactsBySponshorArray(sponshorId);
+    	List<Object[]> contacts = scModel.getValidContactsBySponsorOrganizationArray(sponsorOrganizationId);
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(contacts);
 		view.getContactComboBox().setModel(lmodel);
 		view.getContactComboBox().setEnabled(true);

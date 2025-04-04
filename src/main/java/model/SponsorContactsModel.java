@@ -12,9 +12,9 @@ public class SponsorContactsModel {
 
 	// GETTERS
     
-    public List<Object[]> getContactsBySponshorArray(String sponshor) {
-		String sql = "SELECT id || ' - ' || name AS item FROM SponsorContacts WHERE idSponsorOrganization == ?";
-	    return db.executeQueryArray(sql, sponshor);
+    public List<Object[]> getValidContactsBySponsorOrganizationArray(String sponsorOrganizationId) {
+		String sql = "SELECT id || ' - ' || name AS item FROM SponsorContacts WHERE idSponsorOrganization == ? AND name != 'none' AND email != 'none' AND phone != 'none';";
+	    return db.executeQueryArray(sql, sponsorOrganizationId);
 	}
     
     public SponsorContactsDTO getContactById(String contactId) {
