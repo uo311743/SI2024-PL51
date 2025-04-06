@@ -172,7 +172,7 @@ public class ConsultStatusActivityController {
 		);
 		
 		this.view.getTotalEstimatedBalanceField().setText(
-				String.valueOf(this.estimatedSponsorship + this.estimatedIncome - this.estimatedExpenses)
+				String.valueOf(this.estimatedSponsorship + this.estimatedIncome + this.estimatedExpenses)
 		);
 		
 		this.view.getTotalActualIncomeField().setText(
@@ -184,7 +184,7 @@ public class ConsultStatusActivityController {
 		);
 		
 		this.view.getTotalActualBalanceField().setText(
-				String.valueOf(this.actualSponsorship + this.actualIncome - this.actualExpenses)
+				String.valueOf(this.actualSponsorship + this.actualIncome + this.actualExpenses)
 		);
 	}
 }
