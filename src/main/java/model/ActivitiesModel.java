@@ -71,8 +71,17 @@ public class ActivitiesModel {
 	}
 
     public List<ActivitiesDTO> getActivitiesbyStatus(String... status) {
+	    return getActivitiesbyStatus(true, status);
+	}
+    
+    public List<ActivitiesDTO> getActivitiesbyStatus(boolean includeNull, String... status) {
 	    String placeholders = String.join(",", Collections.nCopies(status.length, "?"));
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
+	    
+	    if(!includeNull)
+	    	sql += " AND dateStart != '' AND dateEnd != '' AND place != '';";
+	    else sql += ";";
+	    
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
   
@@ -114,26 +123,13 @@ public class ActivitiesModel {
 		db.executeUpdate(sql, name, edition, dateStart, dateEnd, place);
 	}
     
-    public void closeActivityById(String idActivity) {
-		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for closeActivityById does not exist.");
+    public void closeActivity(ActivitiesDTO activity) {
+		SemanticValidations.validateIdForTable(activity.getId(), "Activities", "ERROR. Provided idActivity for closeActivityById does not exist.");
+		SemanticValidations.validateDateInPast(activity.getDateEnd(), true, "ERROR. It is not possible to close activities that were not celebrated.");
 		
 		String sql;
 		
 		sql = "UPDATE Activities SET status = 'closed' WHERE id = ?;";
-		db.executeUpdate(sql, idActivity);
-		
-		//sql = "UPDATE Movements SET status = 'cancelled' WHERE idActivity = ? AND status = 'estimated';";
-		//db.executeUpdate(sql, idActivity);
-		
-		sql = "UPDATE SponsorshipAgreements SET status = 'cancelled' WHERE idActivity = ? AND status = 'signed';";
-		db.executeUpdate(sql, idActivity);
-		
-		sql = "UPDATE Invoices SET status = 'cancelled'"
-				+ "WHERE idSponsorshipAgreement IN ("
-				+ "    SELECT id "
-				+ "    FROM SponsorshipAgreements "
-				+ "    WHERE idActivity = ?"
-				+ ") AND status = 'signed';";
-		db.executeUpdate(sql, idActivity);
+		db.executeUpdate(sql, activity.getId());
 	}
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -13,6 +14,7 @@ import model.ActivitiesModel;
 import model.MovementsModel;
 import model.SponsorshipAgreementsModel;
 import util.ModelManager;
+import util.SemanticValidations;
 import util.SwingUtil;
 import view.CloseActivityView;
 
@@ -36,6 +38,8 @@ public class CloseActivityController {
     
     private int lastSelectedActivity;
     
+    private static final Color LIGHT_RED = new Color(255, 204, 204);
+    private static final Color LIGHT_GREEN = new Color(204, 255, 204);
 
     // ================================================================================
 
@@ -115,21 +119,25 @@ public class CloseActivityController {
 					String.format("%.2f paid of %.2f", actualSponsorship, estimatedSponsorship)
 			);
 			
+			this.view.getStatusSponsorTextField().setBackground(actualSponsorship == estimatedSponsorship ? LIGHT_GREEN : LIGHT_RED);
+			
 			estimatedIncome = this.movementsModel.getEstimatedIncome(idLlastSelectedActivity);
 			actualIncome = this.movementsModel.getActualIncome(idLlastSelectedActivity);
 			
 			this.view.getStatusIncomesTextField().setText(
 					String.format("%.2f paid of %.2f", actualIncome, estimatedIncome)
 			);
+			
+			this.view.getStatusIncomesTextField().setBackground(actualIncome == estimatedIncome ? LIGHT_GREEN : LIGHT_RED);
 
 			estimatedExpenses = this.movementsModel.getEstimatedExpenses(idLlastSelectedActivity);
 			actualExpenses = this.movementsModel.getActualExpenses(idLlastSelectedActivity);
 
 			this.view.getStatusExpensesTextField().setText(
-					String.format("%.2f paid of %.2f", actualExpenses, estimatedExpenses)
+					String.format("%.2f paid of %.2f", actualExpenses * -1, estimatedExpenses * -1)
 			);
 			
-			// FIXME Add colour red or green depending on values
+			this.view.getStatusExpensesTextField().setBackground(actualExpenses == estimatedExpenses ? LIGHT_GREEN : LIGHT_RED);
 			
 			this.view.getButtonLowRight().setEnabled(true);
 		}
@@ -140,7 +148,7 @@ public class CloseActivityController {
     
     private void getActivities()
     {
-    	activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
+    	activities = activitiesModel.getActivitiesbyStatus(false, "registered", "planned", "done");
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
@@ -148,11 +156,11 @@ public class CloseActivityController {
     
     // ================================================================================
 
-    private void showCloseDialog() // FIXME
+    private void showCloseDialog()
     {
     	ActivitiesDTO DTOlastSelectedActivity = this.activities.get(
 				this.lastSelectedActivity
-			);
+		);
     	
     	boolean isPaidSponsorship = (estimatedSponsorship - actualSponsorship) == 0;
     	boolean isPaidIncome      = (estimatedIncome      - actualIncome     ) == 0;
@@ -190,7 +198,7 @@ public class CloseActivityController {
 	        if(response != JOptionPane.YES_OPTION) return;
     	}
 	
-    	this.activitiesModel.closeActivityById(DTOlastSelectedActivity.getId());
+    	this.activitiesModel.closeActivity(DTOlastSelectedActivity);
     	
     	JOptionPane.showMessageDialog(
     			this.view.getFrame(), "Activity closed successfully.",
