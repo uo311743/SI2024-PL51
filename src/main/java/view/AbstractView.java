@@ -65,10 +65,15 @@ public abstract class AbstractView {
 		// On close, the frame is disposed (Other frames still running).
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
+		this.frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT); // Sets the frame dimensions.
+		
 		this.initialize(); // Inicializes other possible required attributes.
 		
 		this.createStructureFrame(viewName); // Creates the structure for the frame.
 	 }
+	
+	
+	
 	
 	/* ================================================================================
      * 
@@ -84,7 +89,6 @@ public abstract class AbstractView {
 	 */
 	private final void createStructureFrame(String title)
 	{
-		this.frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT); // Sets the frame dimensions.
 		this.frame.setLayout(new BorderLayout(10 ,10)); // Defines the layout for the frame.
 		
 		JPanel topPanel = createTitlePanel(title);
@@ -225,6 +229,16 @@ public abstract class AbstractView {
 	  * @return a panel of the class JPanel.
 	  */
 	 protected final JPanel getMainPanel() { return this.mainPanel; }
+	 
+	 /**
+	  * Sets the frame dimensions.
+	  * @param width of the frame in pixels
+	  * @param height of the frame in pixels
+	  */
+	 protected void setDimensions(int width, int height)
+	 {
+		 this.frame.setSize(width, height);
+	 }
 	 
 	 /**
 	  * Reset the panel that is inserted in the center of the frame, leaving it blank.
