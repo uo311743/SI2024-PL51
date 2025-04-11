@@ -19,9 +19,11 @@ public class InvoicesModel {
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ?;";
 	
-	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
-			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
-			+ "AND SA.id == ?;";
+	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(id) FROM Invoices "
+			+ "WHERE idSponsorshipAgreement == ?;";
+	
+	public static final String SQL_NUMBER_INVOICES = "SELECT COUNT(id) FROM Invoices "
+			+ "WHERE id == ?;";
 	
 	private Database db = new Database();
 
@@ -61,17 +63,17 @@ public class InvoicesModel {
 		return (int) result.get(0)[0];
 	}
     
-    public int getNumberOldInvoicesBySponsorshipAgreementsId(String idSA) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, idSA);
+    public List<InvoicesDTO> getInvoicesBySponsor(String sponsorId) {
+		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
+        return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
+    }
+    
+    public int getNumberInvoices(String id) {
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES, id);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
 		return (int) result.get(0)[0];
-	}
-    
-    public List<InvoicesDTO> getInvoicesBySponsor(String sponsorId) {
-		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
-        return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
     }
     
     // SETTERS - UPDATES

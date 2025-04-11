@@ -241,35 +241,45 @@ public class GenerateInvoicesController {
         
     	SyntacticValidations.isDate(dateIssued);
     	
-        if(numInvoices == 0) {
-        	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
-	        
-			JOptionPane.showMessageDialog(
-	    			this.view.getFrame(), "Invoice added correctly",
-	    			"This operation has been succesful",
-	    			JOptionPane.INFORMATION_MESSAGE
-	    	);
-	        this.restoreDetail();
-        }
+    	if (this.invoicesModel.getNumberInvoices(id) == 0) {
+    		if(numInvoices == 0) {
+            	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
+    	        
+    			JOptionPane.showMessageDialog(
+    	    			this.view.getFrame(), "Invoice added correctly",
+    	    			"This operation has been succesful",
+    	    			JOptionPane.INFORMATION_MESSAGE
+    	    	);
+    	        this.restoreDetail();
+            }
+        	else {
+        		message = "It will modify " + numInvoices + " invoices for that activity.";
+        		response = JOptionPane.showConfirmDialog(
+        	            this.view.getFrame(), message,
+        	            "Confirm modification of old invoices",
+        	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+    	        );
+    	        
+    	        if (response == JOptionPane.YES_OPTION) {
+    	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
+    	        	this.spModel.updatePaymentsInvoiceId(id, idAgreement);
+    		        JOptionPane.showMessageDialog(
+    		    			this.view.getFrame(),
+    		    			"Invoice added correctly",
+    		    			"This operation has been succesful",
+    		    			JOptionPane.INFORMATION_MESSAGE
+    		    	);
+    		        this.restoreDetail();
+    	        }
+        	}
+    	}
     	else {
-    		message = "It will modify " + numInvoices + " invoices for that activity.";
-    		response = JOptionPane.showConfirmDialog(
-    	            this.view.getFrame(), message,
-    	            "Confirm modification of old invoices",
-    	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
-	        );
-	        
-	        if (response == JOptionPane.YES_OPTION) {
-	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
-	        	this.spModel.updatePaymentsInvoiceId(id, idAgreement);
-		        JOptionPane.showMessageDialog(
-		    			this.view.getFrame(),
-		    			"Invoice added correctly",
-		    			"This operation has been succesful",
-		    			JOptionPane.INFORMATION_MESSAGE
-		    	);
-		        this.restoreDetail();
-	        }
+    		JOptionPane.showMessageDialog(
+    				this.view.getFrame(),
+		    		"This ID already exists in the system",
+		    		"ERROR",
+		    		JOptionPane.INFORMATION_MESSAGE
+		    );
     	}
     }
     
