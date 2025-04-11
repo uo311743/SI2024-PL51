@@ -155,7 +155,6 @@ public class GenerateInvoicesController {
 			restoreDetail();
 		}
 		else {
-			view.getIdAgreementLabel().setText("ID Sponsorship Agreement: " + lastSelectedAgreement); 
 			view.getAmountLabel().setText("Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(view.getAgreementsTable().getSelectedRow(), 2));
 			view.getTaxRateLabel().setText("Tax Rate: " + String.valueOf(params.getTaxVAT()) + " %");
 			

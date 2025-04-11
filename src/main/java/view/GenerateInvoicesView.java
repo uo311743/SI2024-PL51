@@ -14,7 +14,6 @@ public class GenerateInvoicesView extends AbstractView {
     private JComboBox<Object> activityComboBox;
     private JTable agreementsTable;
     private JTextField idTextField;
-    private JLabel idAgreementLabel;
     private JTextField dateIssuedTextField;
     private JLabel amountLabel;
     private JLabel taxRateLabel;
@@ -28,7 +27,6 @@ public class GenerateInvoicesView extends AbstractView {
         this.agreementsTable = new JTable();
         this.activityComboBox = new JComboBox<>();
         this.idTextField = new JTextField(10);
-        this.idAgreementLabel = new JLabel("ID Sponsorship Agreement: -");
         this.dateIssuedTextField = new JTextField(10);
         this.amountLabel = new JLabel("Amount: -");
         this.taxRateLabel = new JLabel("Tax Rate: ");
@@ -58,7 +56,6 @@ public class GenerateInvoicesView extends AbstractView {
         invoiceDetailsPanel.add(new JLabel("Invoice Details"), "wrap");
         invoiceDetailsPanel.add(new JLabel("ID: "));
         invoiceDetailsPanel.add(idTextField, "wrap");
-        invoiceDetailsPanel.add(idAgreementLabel, "wrap");
         invoiceDetailsPanel.add(new JLabel("Date Issued: "));
         invoiceDetailsPanel.add(dateIssuedTextField, "wrap");
         invoiceDetailsPanel.add(amountLabel, "wrap");
@@ -77,10 +74,6 @@ public class GenerateInvoicesView extends AbstractView {
     
     public JTextField getIdTextField() {
         return idTextField;
-    }
-    
-    public JLabel getIdAgreementLabel() {
-    	return idAgreementLabel;
     }
     
     public JTextField getDateIssuedTextField() {
