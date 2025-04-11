@@ -60,7 +60,6 @@ CREATE TABLE Invoices (
     idSponsorshipAgreement INTEGER NOT NULL,
     
     dateIssued TEXT NOT NULL,
-    dateExpiration TEXT NOT NULL,
     totalAmount REAL NOT NULL,
     taxRate REAL NOT NULL,
     status TEXT NOT NULL CHECK (lower(status) IN ('issued', 'paid', 'rectified', 'cancelled')),
