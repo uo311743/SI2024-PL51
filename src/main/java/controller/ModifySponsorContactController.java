@@ -137,12 +137,10 @@ public class ModifySponsorContactController {
 			restoreDetail();
 		}
 		else {
-			String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
 			String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
 			String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
 			String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
 
-			this.view.getIdSOLabel().setText("Sponsor Organization ID: " + idSponsorOrganization);
 			this.view.getNameTextField().setText(nameContact);
 			this.view.getEmailTextField().setText(emailContact);
 			this.view.getPhoneTextField().setText(phoneContact);
@@ -194,7 +192,6 @@ public class ModifySponsorContactController {
 		
 		this.getContacts();
 		
-    	this.view.getIdSOLabel().setText("Sponsor Organization ID: ");
 		this.view.getNameTextField().setEnabled(false);
 		this.view.getEmailTextField().setEnabled(false);
 		this.view.getPhoneTextField().setEnabled(false);
