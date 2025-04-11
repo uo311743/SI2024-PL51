@@ -14,7 +14,7 @@ public class SponsorContactsModel {
     
     public List<Object[]> getValidContactsBySponsorOrganizationArray(String sponsorOrganizationId) {
     	SemanticValidations.validateIdForTable(sponsorOrganizationId, "SponsorOrganizations", "Not valid ID");
-		String sql = "SELECT id || ' - ' || name AS item FROM SponsorContacts WHERE idSponsorOrganization == ? AND name != 'Removed data' AND email != 'Removed data' AND phone != 'Removed data';";
+		String sql = "SELECT id || ' - ' || name AS item FROM SponsorContacts WHERE idSponsorOrganization == ? AND name != '<<Removed data>>' AND email != '<<Removed data>>' AND phone != '<<Removed data>>';";
 	    return db.executeQueryArray(sql, sponsorOrganizationId);
 	}
     
@@ -36,7 +36,7 @@ public class SponsorContactsModel {
     }
     
     public List<SponsorContactsDTO> getAllValidContacts() {
-    	String sql = "SELECT * FROM SponsorContacts WHERE name != 'Removed data' AND email != 'Removed data' AND phone != 'Removed data';";
+    	String sql = "SELECT * FROM SponsorContacts WHERE name != '<<Removed data>>' AND email != '<<Removed data>>' AND phone != '<<Removed data>>';";
 	    return db.executeQueryPojo(SponsorContactsDTO.class, sql);
     }
 
@@ -59,7 +59,7 @@ public class SponsorContactsModel {
     public void removeContact(String id) {
     	SemanticValidations.validateIdForTable(id, "SponsorContacts", "Not valid ID");
 		
-		String sql = "UPDATE SponsorContacts SET name = 'Removed data', email = 'Removed data', phone = 'Removed data' WHERE id = ?;";
+		String sql = "UPDATE SponsorContacts SET name = '<<Removed data>>', email = '<<Removed data>>', phone = '<<Removed data>>' WHERE id = ?;";
 		db.executeUpdate(sql, id);
 	}
 }
