@@ -210,6 +210,7 @@ public class GenerateInvoicesController {
         String dateIssued = view.getDateIssuedTextField().getText();
 
         String amount = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 2);
+        String dateAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 3);
         double taxRate = params.getTaxVAT();
         
         String taxAmount = String.valueOf(Double.valueOf(amount) * taxRate / 100);
@@ -241,7 +242,7 @@ public class GenerateInvoicesController {
     	SyntacticValidations.isDate(dateIssued);
     	
         if(numInvoices == 0) {
-        	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate));
+        	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
 	        
 			JOptionPane.showMessageDialog(
 	    			this.view.getFrame(), "Invoice added correctly",
@@ -259,7 +260,7 @@ public class GenerateInvoicesController {
 	        );
 	        
 	        if (response == JOptionPane.YES_OPTION) {
-	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate));
+	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
 	        	this.spModel.updatePaymentsInvoiceId(id, idAgreement);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),

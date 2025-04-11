@@ -92,8 +92,10 @@ public class InvoicesModel {
     }
 
 	// INSERTIONS    
-    public void insertNewInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate) {
+    public void insertNewInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate, String dateAgreement) {
 		SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validateDateAfterTo(dateIssued, dateAgreement, true, "Not valid date");
+		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
@@ -103,8 +105,10 @@ public class InvoicesModel {
 		db.executeUpdate(sql, id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate);
 	}
 
-    public void updateInsertInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate) {
+    public void updateInsertInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate, String dateAgreement) {
     	SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validateDateAfterTo(dateIssued, dateAgreement, true, "Not valid date");
+		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
