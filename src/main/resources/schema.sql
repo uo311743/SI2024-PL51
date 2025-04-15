@@ -106,9 +106,9 @@ CREATE TABLE IncomesExpenses (
     type TEXT NOT NULL CHECK(lower(type) IN ('income', 'expense')),
     status TEXT NOT NULL CHECK(lower(status) IN ('estimated', 'paid')),
     
-    amountEstimated REAL,
+    amountEstimated REAL NOT NULL,
     dateEstimated TEXT,
-    concept TEXT NOT NULL,
+    concept TEXT,
     
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
 );

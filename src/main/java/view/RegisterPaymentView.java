@@ -97,19 +97,19 @@ public class RegisterPaymentView extends AbstractView {
 	{
     	// Labels
         JLabel invoicesTableLabel = new JLabel("Select an Invoice to Register a Payment");
-        JLabel paymentsTableLabel = new JLabel("Payments registered for the invoice");
+        JLabel paymentsTableLabel = new JLabel("Payments registered for the Invoice");
         
         // Create a panel with GridLayout to align labels properly
-        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 5, 5)); // 3 rows, 2 columns, spacing of 10px
 
         // Create title labels with bold text
-        JLabel totalInvoiceTitle = new JLabel("Total Invoice Amount (euro): ");
+        JLabel totalInvoiceTitle = new JLabel("Total Invoice (€): ");
         totalInvoiceTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JLabel totalPaymentsTitle = new JLabel("Total Payments (euro): ");
+        JLabel totalPaymentsTitle = new JLabel("Total Payments (€): ");
         totalPaymentsTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (euro): ");
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (€): ");
         remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Create value labels (dynamic data placeholders)
@@ -198,7 +198,7 @@ public class RegisterPaymentView extends AbstractView {
 		fieldsGbc.anchor = GridBagConstraints.WEST;
 
 		// Labels
-		JLabel amountLabel = new JLabel("Amount (euro):");
+		JLabel amountLabel = new JLabel("Amount (€):");
 		JLabel paymentDateLabel = new JLabel("Date Received:");
 
 		// Fields

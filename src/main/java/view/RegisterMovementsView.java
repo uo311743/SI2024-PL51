@@ -11,14 +11,20 @@ public class RegisterMovementsView extends AbstractView {
 	private JTable activitiesTable;
 	private JTable incomesExpensesTable;
 	private JTable movementsTable;
-    private JTextField amountTextField;
-    private JTextField dateTextField;
-    private JTextField conceptTextField;
-    private JLabel estimatedLabel;
-    private JLabel paidLabel;
-    private JLabel incomesExpensesLabel;
-    private JLabel movementLabel;
+    private JTextField amountTextField1;
+    private JTextField dateTextField1;
+    private JTextArea conceptTextField1;
+    private JTextField amountTextField2;
+    private JTextField dateTextField2;
+    private JTextArea conceptTextField2;
+    private JLabel estimatedIncomesLabel;
+    private JLabel paidIncomesLabel;
+    private JLabel estimatedExpensesLabel;
+    private JLabel paidExpensesLabel;
+    private JLabel remainingBalanceLabel;
     private JCheckBox compensationCheckBox;
+    private JButton btnIncomesExpenses;
+    private JButton btnMovements;
     
     public RegisterMovementsView() { super("Register Movement"); }
     
@@ -30,130 +36,197 @@ public class RegisterMovementsView extends AbstractView {
     	this.setMovementsTable(new JTable());
     	this.setActivitiesTable(new JTable());
     	this.setIncomesExpensesTable(new JTable());
-    	this.setCompensationCheckBox(new JCheckBox("Register Compensation Movement"));
-    	this.amountTextField = new JTextField("");
-    	this.dateTextField = new JTextField("");
-    	this.conceptTextField = new JTextField("");
-    	this.estimatedLabel = new JLabel("");
-    	this.paidLabel = new JLabel("");
-    	this.incomesExpensesLabel = new JLabel("Select Income/Expense to see the Movements");
-    	this.movementLabel = new JLabel("Movements registered for the selected Income/Expense");
+    	this.setCompensationCheckBox(new JCheckBox("Compensation Movement"));
+    	this.amountTextField1 = new JTextField("");
+    	this.dateTextField1 = new JTextField("");
+    	this.conceptTextField1 = new JTextArea(3, 20);
+    	this.amountTextField2 = new JTextField("");
+    	this.dateTextField2 = new JTextField("");
+    	this.conceptTextField2 = new JTextArea(3, 20);
+    	this.estimatedIncomesLabel = new JLabel("");
+    	this.paidIncomesLabel = new JLabel("");
+    	this.estimatedExpensesLabel = new JLabel("");
+    	this.paidExpensesLabel = new JLabel("");
+    	this.remainingBalanceLabel = new JLabel("");
+    	this.btnIncomesExpenses = new JButton("Register Income/Expense");
+    	this.btnMovements = new JButton("Register Movement");
     	
     	super.createButtonLowLeft("Cancel");
     	super.createButtonLowMiddle("Reset");
-        super.createButtonLowRight("Register");
+        //super.createButtonLowRight("Register");
     }
     
     @Override
     protected void configMainPanel()
     {
     	super.getMainPanel().setLayout(new BorderLayout());
-		super.getMainPanel().setBorder(new EmptyBorder(10, 20, 10, 20));
+    	super.getMainPanel().setBorder(new EmptyBorder(10, 20, 10, 20));
 
+    	JPanel leftPanel = createLeftPanel();
+    	JPanel rightPanel = createRightPanel();
 
-		super.getMainPanel().add(createLeftPanel(), BorderLayout.WEST);
-		super.getMainPanel().add(createRightPanel(), BorderLayout.EAST);
+    	// Create the split pane
+    	JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
+    	splitPane.setResizeWeight(0.5); // Equal distribution of extra space
+    	splitPane.setDividerLocation(0.5); // Start at 50% position
+    	splitPane.setBorder(null);
+    	splitPane.setContinuousLayout(true); // Smooth resizing
+
+    	// Ensure panels take all available space
+    	leftPanel.setMinimumSize(new Dimension(100, 100)); // Minimum sizes
+    	rightPanel.setMinimumSize(new Dimension(100, 100));
+    	leftPanel.setPreferredSize(new Dimension(300, 300)); // Initial sizes
+    	rightPanel.setPreferredSize(new Dimension(300, 300));
+
+		// Add to parent container
+		super.getMainPanel().add(splitPane);
     }
     
     private JPanel createLeftPanel()
-	{
-    	// Labels
-        JLabel activityLabel = new JLabel("Select an Activity to register a Movement");
-        JLabel typeLabel = new JLabel("Type:");
-        JLabel statusLabel = new JLabel("Status:");
-        
+	{   
         // Create title labels with bold text
-        JLabel estimatedTitle = new JLabel("Estimated (euro): ");
-        estimatedTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel estimatedIncomesTitle = new JLabel("Estimated Incomes (€): ");
+        estimatedIncomesTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
-        JLabel paidTitle = new JLabel("Paid (euro): ");
-        paidTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        JLabel paidIncomesTitle = new JLabel("Paid Incomes (€): ");
+        paidIncomesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        JLabel estimatedExpensesTitle = new JLabel("Estimated Expenses (€): ");
+        estimatedExpensesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+
+        JLabel paidExpensesTitle = new JLabel("Paid Expenses (€): ");
+        paidExpensesTitle.setFont(new Font("Arial", Font.BOLD, 14));
+        
+        JLabel remainingBalanceTitle = new JLabel("Total amount paid (€): ");
+        remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Create a panel with GridLayout to align labels properly
-        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 10, 10)); // 3 rows, 2 columns, spacing of 10px
+        JPanel summaryPanel = new JPanel(new GridLayout(3, 2, 6, 6)); // 3 rows, 2 columns, spacing of 10px
         
         // Create value labels (dynamic data placeholders)
-        this.estimatedLabel = new JLabel("0.00");
-        estimatedLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        estimatedLabel.setForeground(Color.BLUE); // Highlight in blue
+        this.estimatedIncomesLabel = new JLabel("0.00");
+        estimatedIncomesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        estimatedIncomesLabel.setForeground(Color.BLUE); // Highlight in blue
 
-        this.paidLabel = new JLabel("0.00");
-        this.paidLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        this.paidLabel.setForeground(Color.GREEN.darker()); // Highlight in green
+        this.paidIncomesLabel = new JLabel("0.00");
+        this.paidIncomesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.paidIncomesLabel.setForeground(Color.GREEN.darker()); // Highlight in green
+        
+        this.estimatedExpensesLabel = new JLabel("0.00");
+        estimatedExpensesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        estimatedExpensesLabel.setForeground(Color.BLUE); // Highlight in blue
+
+        this.paidExpensesLabel = new JLabel("0.00");
+        this.paidExpensesLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.paidExpensesLabel.setForeground(Color.GREEN.darker()); // Highlight in green
+        
+        this.remainingBalanceLabel = new JLabel("0.00");
+        this.remainingBalanceLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        this.remainingBalanceLabel.setForeground(Color.RED.darker()); // Highlight in green
 
         // Add elements to the panel
-        summaryPanel.add(estimatedTitle);
-        summaryPanel.add(this.estimatedLabel);
-        summaryPanel.add(paidTitle);
-        summaryPanel.add(this.paidLabel);
-
+        summaryPanel.add(estimatedIncomesTitle);
+        summaryPanel.add(this.estimatedIncomesLabel);
+        summaryPanel.add(estimatedExpensesTitle);
+        summaryPanel.add(this.estimatedExpensesLabel);
+        summaryPanel.add(paidIncomesTitle);
+        summaryPanel.add(this.paidIncomesLabel);
+        summaryPanel.add(paidExpensesTitle);
+        summaryPanel.add(this.paidExpensesLabel);
+        summaryPanel.add(remainingBalanceTitle);
+        summaryPanel.add(remainingBalanceLabel);
+        
+        UIManager.put("TitledBorder.font", new Font("Arial", Font.PLAIN, 14));
+        
         // Wrap it in a titled border for a professional look
         JPanel borderedPanel = new JPanel(new BorderLayout());
         borderedPanel.setBorder(BorderFactory.createTitledBorder("Movement Summary"));
         borderedPanel.add(summaryPanel);
 
         // Set table properties
-        activitiesTable.setName("Activites");
+        JLabel activitiesTableLabel = new JLabel("Select an Activity to see the Incomes and Expenses");
+        activitiesTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         activitiesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         activitiesTable.setDefaultEditor(Object.class, null);
+        // Visual improvements
+	    activitiesTable.setRowHeight(25); // Bigger rows
+	    activitiesTable.setFont(new Font("Arial", Font.PLAIN, 14)); // Bigger font
+	    
+	    // Optional: Intercell spacing for better readability
+	    activitiesTable.setIntercellSpacing(new Dimension(10, 5));
+	    
+	    // Optional: Grid lines
+	    activitiesTable.setShowGrid(true);
+	    activitiesTable.setGridColor(Color.LIGHT_GRAY);
         JScrollPane activitiesTableScroll = new JScrollPane(activitiesTable);
         
-        incomesExpensesTable.setName("Incomes/Expenses");
+        JLabel incomeExpensesTableLabel = new JLabel("Select an Income/Expense to register a Movement");
+        incomeExpensesTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         incomesExpensesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         incomesExpensesTable.setDefaultEditor(Object.class, null);
+        // Visual improvements
+        incomesExpensesTable.setRowHeight(25); // Bigger rows
+        incomesExpensesTable.setFont(new Font("Arial", Font.PLAIN, 14)); // Bigger font
+        //incomesExpensesTable.setPreferredScrollableViewportSize(new Dimension(300, 100)); // Bigger view
+	    
+	    // Optional: Intercell spacing for better readability
+        incomesExpensesTable.setIntercellSpacing(new Dimension(10, 5));
+	    
+	    // Optional: Grid lines
+        incomesExpensesTable.setShowGrid(true);
+        incomesExpensesTable.setGridColor(Color.LIGHT_GRAY);
         JScrollPane incomesExpensesTableScroll = new JScrollPane(incomesExpensesTable);
         
-        movementsTable.setName("Movements");
-        movementsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JLabel movementsTableLabel = new JLabel("Movements registered for the selected Income/Expense");
+        movementsTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
         movementsTable.setDefaultEditor(Object.class, null);
+        // Visual improvements
+        movementsTable.setRowHeight(25); // Bigger rows
+        movementsTable.setFont(new Font("Arial", Font.PLAIN, 14)); // Bigger font
+	    
+	    // Optional: Intercell spacing for better readability
+        movementsTable.setIntercellSpacing(new Dimension(10, 5));
+	    
+	    // Optional: Grid lines
+        movementsTable.setShowGrid(true);
+        movementsTable.setGridColor(Color.LIGHT_GRAY);
         JScrollPane movementsTableScroll = new JScrollPane(movementsTable);
 
         // Main panel with vertical layout
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+        panel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 10)); // Left/right padding
 
         // Activity Panel
         JPanel activitiesPanel = new JPanel(new BorderLayout());
-        activitiesPanel.add(activityLabel, BorderLayout.NORTH);
-        activitiesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        // Create a container panel for the label with empty border
+        JPanel activitiesLabelPanel = new JPanel(new BorderLayout());
+        activitiesLabelPanel.add(activitiesTableLabel, BorderLayout.CENTER);
+        activitiesLabelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Bottom padding
+
+        activitiesPanel.add(activitiesLabelPanel, BorderLayout.NORTH);
         activitiesPanel.add(activitiesTableScroll, BorderLayout.CENTER);
         
         // Incomes/Exoenses Panel
         JPanel incomesExpensesPanel = new JPanel(new BorderLayout());
-        incomesExpensesPanel.add(this.getIncomesExpensesLabel(), BorderLayout.NORTH);
-        incomesExpensesPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        // Create a container panel for the label with empty border
+        JPanel incomesExpensesLabelPanel = new JPanel(new BorderLayout());
+        incomesExpensesLabelPanel.add(incomeExpensesTableLabel, BorderLayout.CENTER);
+        incomesExpensesLabelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Bottom padding
+
+        incomesExpensesPanel.add(incomesExpensesLabelPanel, BorderLayout.NORTH);
         incomesExpensesPanel.add(incomesExpensesTableScroll, BorderLayout.CENTER);
         
         // Movement Panel
         JPanel movementPanel = new JPanel(new BorderLayout());
-        movementPanel.add(this.getMovementLabel(), BorderLayout.NORTH);
-        movementPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
+        // Create a container panel for the label with empty border
+        JPanel labelPanel = new JPanel(new BorderLayout());
+        labelPanel.add(movementsTableLabel, BorderLayout.CENTER);
+        labelPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 10, 0)); // Bottom padding
+
+        movementPanel.add(labelPanel, BorderLayout.NORTH);
         movementPanel.add(movementsTableScroll, BorderLayout.CENTER);
 
-        // Type Panel
-        JPanel typePanel = new JPanel(new BorderLayout());
-        typePanel.add(typeLabel, BorderLayout.NORTH);
-        typePanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
-        typePanel.add(type, BorderLayout.CENTER);
-        
-        // Status Panel
-        JPanel satusPanel = new JPanel(new BorderLayout());
-        satusPanel.add(statusLabel, BorderLayout.NORTH);
-        satusPanel.add(Box.createVerticalStrut(10), BorderLayout.SOUTH);
-        satusPanel.add(status, BorderLayout.CENTER);
-        
-        // Compensation Movement Check Panel
-        JPanel compensationCheckPanel = new JPanel(new BorderLayout());
-        compensationCheckPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
-        compensationCheckPanel.add(compensationCheckBox);
-
-        // Add panels in correct order
-        panel.add(compensationCheckPanel);
-        panel.add(Box.createVerticalStrut(10)); // Adds spacing
-        panel.add(typePanel);
-        panel.add(Box.createVerticalStrut(10)); // Adds spacing
-        panel.add(satusPanel);
-        panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(activitiesPanel);
         panel.add(Box.createVerticalStrut(10)); // Adds spacing
         panel.add(incomesExpensesPanel);
@@ -164,76 +237,292 @@ public class RegisterMovementsView extends AbstractView {
 	
 		return panel;
 	}
+    
+    public void adjustColumns() {
+    	activitiesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    	incomesExpensesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    	movementsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+    }
 
-    private JPanel createRightPanel()
-	{
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.insets = new Insets(30, 30, 30, 30);
-		gbc.anchor = GridBagConstraints.WEST;
+    private JPanel createRightPanel() {
+    	JPanel containerPanel = new JPanel();
+        containerPanel.setLayout(new BoxLayout(containerPanel, BoxLayout.Y_AXIS));
 
-		// Fields Panel with Border
-		JPanel fieldsPanel = new JPanel(new GridBagLayout());
-		fieldsPanel.setBorder(BorderFactory.createTitledBorder("Movement Details"));
-		GridBagConstraints fieldsGbc = new GridBagConstraints();
-		fieldsGbc.insets = new Insets(30, 30, 30, 30);
-		fieldsGbc.anchor = GridBagConstraints.WEST;
+        // Add panels
+        containerPanel.add(createIncomesExpensesPanel());
 
-		// Labels
-		JLabel amountLabel = new JLabel("Amount (euro):");
-		JLabel dateLabel = new JLabel("Date:");
-		JLabel conceptLabel = new JLabel("Concept:");
+        // Configure button to stretch
+        btnIncomesExpenses.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnIncomesExpenses.setMaximumSize(new Dimension(Short.MAX_VALUE, btnIncomesExpenses.getPreferredSize().height));
+        containerPanel.add(btnIncomesExpenses);
 
-		// Fields
-		JComponent[][] fields = {
-		    {amountLabel, amountTextField},
-		    {dateLabel, dateTextField},
-		    {conceptLabel, conceptTextField}
-		};
+        // Add second panel
+        containerPanel.add(createMovementsPanel());
 
-		// Add labels above inputs
-		for (int i = 0; i < fields.length; i++) {
-		    // Set label in the first row
-		    fieldsGbc.gridx = 0;
-		    fieldsGbc.gridy = i * 2; // position label in even rows
-		    fieldsPanel.add(fields[i][0], fieldsGbc);
+        // Configure second button to stretch
+        btnMovements.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnMovements.setMaximumSize(new Dimension(Short.MAX_VALUE, btnMovements.getPreferredSize().height));
+        containerPanel.add(btnMovements);
+        
+        return containerPanel;
+    }
+    
+    public JPanel createIncomesExpensesPanel() {
+        // Main panel setup
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-		    // Set input field in the second row
-		    fieldsGbc.gridx = 0;
-		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
-		    fieldsGbc.gridwidth = 2; // input spans two columns
-		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
-		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
-		    fieldsPanel.add(fields[i][1], fieldsGbc);
-		}
+        // Fields Panel with Border
+        JPanel fieldsPanel = new JPanel(new GridBagLayout());
+        fieldsPanel.setBorder(BorderFactory.createTitledBorder("Income/Expense Details"));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 30, 10, 30);  // Consistent padding
+        gbc.weightx = 1.0;
 
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridwidth = 2;
-		panel.add(fieldsPanel, gbc);
+        // Initialize text fields with proper sizes
+        amountTextField1 = new JTextField(20);
+        dateTextField1 = new JTextField(20);
+        conceptTextField1 = new JTextArea(10, 30);  // Increased to 8 rows
+        conceptTextField1.setLineWrap(true);
+        conceptTextField1.setWrapStyleWord(true);
+        conceptTextField1.setFont(new Font("Arial", Font.PLAIN, 14));
+        JScrollPane conceptScrollPane = new JScrollPane(conceptTextField1);
+        conceptScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        conceptScrollPane.setPreferredSize(new Dimension(450, 250));  // Larger size
 
+        // Create labels with consistent font
+        JLabel typeLabel = new JLabel("Type:");
+        JLabel statusLabel = new JLabel("Status:");
+        Font labelFont = new Font("Arial", Font.PLAIN, 14);
+        JLabel amountLabel = new JLabel("Amount (€):");
+        JLabel dateLabel = new JLabel("Date (yyyy-mm-dd):");
+        JLabel conceptLabel = new JLabel("Concept:");
+        
+        amountLabel.setFont(labelFont);
+        dateLabel.setFont(labelFont);
+        conceptLabel.setFont(labelFont);
+        typeLabel.setFont(labelFont);
+        statusLabel.setFont(labelFont);
+
+        // Add components in a clean grid
+        int row = 0;
+        
+        // Type row
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(typeLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(type, gbc);
+        
+        // Status row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(statusLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(status, gbc);
+        
+        // Amount row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(amountLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(amountTextField1, gbc);
+        
+        // Date row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(dateLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(dateTextField1, gbc);
+        
+        // Concept row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(conceptLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        fieldsPanel.add(conceptTextField1, gbc);
+        
+        // Add glue to push components to top
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        fieldsPanel.add(Box.createGlue(), gbc);
+
+        panel.add(fieldsPanel, BorderLayout.CENTER);
+        
         return panel;
-	}
+    }
+    
+    public JPanel createMovementsPanel() {
+        // Main panel setup
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
-    public JTextField getAmountTextField() {
-    	return amountTextField;
+        // Fields Panel with Border
+        JPanel fieldsPanel = new JPanel(new GridBagLayout());
+        fieldsPanel.setBorder(BorderFactory.createTitledBorder("Movement Details"));
+        
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.anchor = GridBagConstraints.WEST;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(10, 30, 10, 30);  // Consistent padding
+        gbc.weightx = 1.0;
+
+        // Initialize text fields with proper sizes
+        amountTextField2 = new JTextField(20);
+        dateTextField2 = new JTextField(20);
+        conceptTextField2 = new JTextArea(10, 13);
+        JScrollPane conceptScrollPane = new JScrollPane(conceptTextField2);
+        conceptScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+
+        // Create labels with consistent font
+        Font labelFont = new Font("Arial", Font.PLAIN, 14);
+        JLabel amountLabel = new JLabel("Amount (€):");
+        JLabel dateLabel = new JLabel("Date (yyyy-mm-dd):");
+        JLabel conceptLabel = new JLabel("Concept:");
+        
+        amountLabel.setFont(labelFont);
+        dateLabel.setFont(labelFont);
+        conceptLabel.setFont(labelFont);
+
+        // Add components in a clean grid
+        int row = 0;
+        
+        // CheckBox row
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.gridwidth = 2;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(compensationCheckBox, gbc);
+        gbc.gridwidth = 1;
+        
+        // Amount row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(amountLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(amountTextField2, gbc);
+        
+        // Date row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(dateLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        fieldsPanel.add(dateTextField2, gbc);
+        
+        // Concept row
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.weightx = 0;
+        gbc.fill = GridBagConstraints.NONE;
+        fieldsPanel.add(conceptLabel, gbc);
+        
+        gbc.gridx = 1;
+        gbc.weightx = 1.0;
+        gbc.weighty = 0.5;
+        gbc.fill = GridBagConstraints.BOTH;
+        fieldsPanel.add(conceptTextField2, gbc);
+        
+        // Add glue to push components to top
+        row++;
+        gbc.gridx = 0;
+        gbc.gridy = row;
+        gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        fieldsPanel.add(Box.createGlue(), gbc);
+
+        panel.add(fieldsPanel, BorderLayout.CENTER);
+        
+        return panel;
     }
 
-    public JTextField getDateTextField() {
-    	return dateTextField;
+    public JTextField getAmountTextField1() {
+    	return amountTextField1;
+    }
+
+    public JTextField getDateTextField1() {
+    	return dateTextField1;
     }
     
-    public JTextField getConceptTextField() {
-    	return conceptTextField;
+    public JTextArea getConceptTextField1() {
+    	return conceptTextField1;
     }
     
-    public JLabel getEstimatedLabel() {
-    	return estimatedLabel;
+    public JTextField getAmountTextField2() {
+    	return amountTextField2;
+    }
+
+    public JTextField getDateTextField2() {
+    	return dateTextField2;
     }
     
-    public JLabel getPaidLabel() {
-    	return paidLabel;
+    public JTextArea getConceptTextField2() {
+    	return conceptTextField2;
+    }
+    
+    public JLabel getEstimatedIncomesLabel() {
+    	return estimatedIncomesLabel;
+    }
+    
+    public JLabel getPaidIncomesLabel() {
+    	return paidIncomesLabel;
+    }
+    
+    public JLabel getEstimatedExpensesLabel() {
+    	return estimatedExpensesLabel;
+    }
+    
+    public JLabel getPaidExpensesLabel() {
+    	return paidExpensesLabel;
     }
 
 	public JComboBox<Object> getType() {
@@ -275,13 +564,9 @@ public class RegisterMovementsView extends AbstractView {
 	public void setIncomesExpensesTable(JTable invoicesExpensesTable) {
 		this.incomesExpensesTable = invoicesExpensesTable;
 	}
-
-	public JLabel getIncomesExpensesLabel() {
-		return incomesExpensesLabel;
-	}
 	
-	public JLabel getMovementLabel() {
-		return movementLabel;
+	public JLabel getRemainingBalanceLabel() {
+		return remainingBalanceLabel;
 	}
 
 	public JCheckBox getCompensationCheckBox() {
@@ -290,5 +575,13 @@ public class RegisterMovementsView extends AbstractView {
 
 	public void setCompensationCheckBox(JCheckBox compensationCheckBox) {
 		this.compensationCheckBox = compensationCheckBox;
+	}
+	
+	public JButton getBtnIncomesExpenses() {
+		return this.btnIncomesExpenses;
+	}
+	
+	public JButton getBtnMovements() {
+		return this.btnMovements;
 	}
 }
