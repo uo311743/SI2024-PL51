@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
 import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -45,6 +46,8 @@ public class RegisterMovementsController {
     
     private List<String> activitiesId;
     private List<String> incomeExpenseId;
+    
+    private boolean submit;
 	
 	public RegisterMovementsController(RegisterMovementsView view) {
 		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
@@ -54,6 +57,8 @@ public class RegisterMovementsController {
 		
 		activitiesId = new ArrayList<String>();
 		incomeExpenseId = new ArrayList<String>();
+		
+		this.submit = false;
 		
 		this.initController();
 		this.initView();
@@ -208,6 +213,20 @@ public class RegisterMovementsController {
 		view.setVisible();
 	}
 	
+	public void clearFields() {
+		// Reset amount field with placeholder effect
+    	this.view.getDateTextField1().setText("");
+    	this.view.getAmountTextField1().setText("");
+    	this.view.getConceptTextField1().setText("");
+    	this.view.getDateTextField2().setText("");
+    	this.view.getAmountTextField2().setText("");
+    	this.view.getConceptTextField2().setText("");
+    	
+    	this.view.getCompensationCheckBox().setSelected(false);
+		this.view.getType().setSelectedIndex(0);
+		this.view.getStatus().setSelectedIndex(0);
+	}
+	
 	public void restartView()
     {
 		this.getActivities();
@@ -220,13 +239,7 @@ public class RegisterMovementsController {
 		DefaultTableModel imodel = (DefaultTableModel) this.view.getIncomesExpensesTable().getModel();
 		imodel.setRowCount(0); // Clears the table
     	
-    	// Reset amount field with placeholder effect
-    	this.view.getDateTextField1().setText("");
-    	this.view.getAmountTextField1().setText("");
-    	this.view.getConceptTextField1().setText("");
-    	this.view.getDateTextField2().setText("");
-    	this.view.getAmountTextField2().setText("");
-    	this.view.getConceptTextField2().setText("");
+    	this.clearFields();
     	
     	// Reset summary panel
     	this.view.getEstimatedIncomesLabel().setText("0.0");
@@ -235,17 +248,15 @@ public class RegisterMovementsController {
     	this.view.getPaidExpensesLabel().setText("0.0");
     	this.view.getRemainingBalanceLabel().setText("0.0");
     	
-    	this.view.getCompensationCheckBox().setSelected(false);
-		this.view.getType().setSelectedIndex(0);
-		this.view.getStatus().setSelectedIndex(0);
-    	
     	this.setInputsEnabled1(false);
     	this.setInputsEnabled2(false);
     }
 	
 	public void updateView() {
+		this.setInputsEnabled1(false);
+    	this.setInputsEnabled2(false);
 		this.getIncomesExpenses();
-		this.incomeExpenseSelection();
+		getMovements();
 		calculateTotals();
 	}
 	
@@ -288,6 +299,11 @@ public class RegisterMovementsController {
 	    incomeExpenseId.clear();
 	    for (IncomesExpensesDTO incomeExpense : incomesExpenses) {
 	    	incomeExpenseId.add(incomeExpense.getId());
+	    	if (incomeExpense.getId() == this.lastSelectedIncomeExpense) {
+	    		this.view.getIncomesExpensesTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	    		this.view.getIncomesExpensesTable().setRowSelectionInterval(incomeExpenseId.size()-1, incomeExpenseId.size()-1);
+	    		this.view.getIncomesExpensesTable().scrollRectToVisible(this.view.getIncomesExpensesTable().getCellRect(incomeExpenseId.size()-1, 0, true));
+	    	}
 	    }
 	    
 	    // Set the model in the JTable
@@ -322,7 +338,7 @@ public class RegisterMovementsController {
 	private void activitySelection()
 	{
 		int row = this.view.getActivitiesTable().getSelectedRow();
-		this.lastSelectedActivity = activitiesId.get(row);;
+		this.lastSelectedActivity = activitiesId.get(row);
 		
 		calculateTotals();
 	    getIncomesExpenses();
@@ -343,6 +359,8 @@ public class RegisterMovementsController {
 	
 	private void incomeExpenseSelection()
 	{
+		this.clearFields();
+		
 		int row = this.view.getIncomesExpensesTable().getSelectedRow();
 		this.lastSelectedIncomeExpense = incomeExpenseId.get(row);
 		
@@ -367,7 +385,7 @@ public class RegisterMovementsController {
 	public void updateDetail1()
 	{	
 		// ------------------------------------------------------------
-		// If a movement is selected in the table do:
+		// If an Income/Expense is selected in the table do:
 		if (this.view.getIncomesExpensesTable().getSelectedRow() >= 0) {
 			return;
 		}
@@ -383,14 +401,14 @@ public class RegisterMovementsController {
 				
 		// ------------------------------------------------------------
 		// Check JTextField inputs:
-		boolean valid = true;
+		this.submit = true;
 		
 		// Validate amount
 		String amount = this.view.getAmountTextField1().getText();
 		if(!SyntacticValidations.isDecimal(amount) || !SyntacticValidations.isNotEmpty(amount) || !SyntacticValidations.isPositiveNumber(amount, true))
 		{
 			this.view.getAmountTextField1().setForeground(Color.RED);
-			valid = false;
+			this.submit = false;
 		} else { this.view.getAmountTextField1().setForeground(Color.BLACK); }
 		
 		// Validate date
@@ -399,13 +417,13 @@ public class RegisterMovementsController {
 		if(!SyntacticValidations.isDate(paymentDate) || (status.equals("paid") && !SyntacticValidations.isNotEmpty(paymentDate)))
 		{
 			this.view.getDateTextField1().setForeground(Color.RED);
-			valid = false;
+			this.submit = false;
 		} else { this.view.getDateTextField1().setForeground(Color.BLACK); }
 		
 		// Validate concept
 		String concept = this.view.getConceptTextField1().getText();
 		if (!SyntacticValidations.isNotEmpty(concept)) { 
-			valid = false; 
+			this.submit = false; 
 		}
 	}
 	
@@ -425,14 +443,15 @@ public class RegisterMovementsController {
 				
 		// ------------------------------------------------------------
 		// Check JTextField inputs:
-		boolean valid = true;
+		this.submit = true;
 		
 		// Validate amount
 		String amount = this.view.getAmountTextField2().getText();
+		
 		if(!SyntacticValidations.isDecimal(amount) || !SyntacticValidations.isNotEmpty(amount) || !SyntacticValidations.isPositiveNumber(amount, true))
 		{
 			this.view.getAmountTextField2().setForeground(Color.RED);
-			valid = false;
+			this.submit = false;
 		} else { this.view.getAmountTextField2().setForeground(Color.BLACK); }
 		
 		// Validate date
@@ -441,19 +460,34 @@ public class RegisterMovementsController {
 		if(!SyntacticValidations.isDate(paymentDate) || !SyntacticValidations.isNotEmpty(paymentDate))
 		{
 			this.view.getDateTextField2().setForeground(Color.RED);
-			valid = false;
+			this.submit = false;
 		} else { this.view.getDateTextField2().setForeground(Color.BLACK); }
 		
 		// Validate concept
 		String concept = this.view.getConceptTextField2().getText();
 		if (!SyntacticValidations.isNotEmpty(concept)) { 
-			valid = false; 
+			this.submit = false; 
 		}
 	}
 	
 	// ================================================================================
 	private void submitIncomeExpense()
 	{
+		if (!submit) {
+			// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"Some of the fields have an incorrect format", // Error message
+        		"Income/Expense Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	return;
+		}
+		
 		// Force UI messages to be in English
         Locale.setDefault(Locale.ENGLISH);
         
@@ -473,6 +507,46 @@ public class RegisterMovementsController {
         String concept = this.view.getConceptTextField1().getText();
         String status = this.view.getStatus().getSelectedItem().toString();
         
+        String message = "";
+        boolean validated = true;
+        
+        if (!SyntacticValidations.isNotEmpty(amount)) {
+        	message = "<html><body>"
+                    + "<p>Amount must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(concept)) {
+        	message = "<html><body>"
+                    + "<p>Concept must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (DEFAULT_VALUE_COMBOBOX.equals(type) || DEFAULT_VALUE_COMBOBOX.equals(status)) {
+        	message = "<html><body>"
+                    + "<p>Type and Status must be selected</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if ("paid".equals(status) && !SyntacticValidations.isNotEmpty(date)) {
+        	message = "<html><body>"
+                    + "<p>Date must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        }
+        
+        if (!validated) {
+        	// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An error occurred: " + message, // Error message
+        		"Income/Expense Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	return;
+        }
+        
         if ("expense".equals(type))
 		{
     		Double aux = Double.parseDouble(amount);
@@ -480,7 +554,7 @@ public class RegisterMovementsController {
 			amount = String.valueOf(aux);
 		}
         
-        String message = "<html><body>"
+        message = "<html><body>"
                 + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
                 + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
@@ -492,43 +566,6 @@ public class RegisterMovementsController {
                 + "</body></html>";
         
         Object[] options = {"Yes", "No"};
-        
-        if (DEFAULT_VALUE_COMBOBOX.equals(type) || DEFAULT_VALUE_COMBOBOX.equals(status)) {
-        	message = "<html><body>"
-                    + "<p>Type and Status must be selected</p>"
-                    + "</body></html>";
-        	// Show an error dialog
-        	JOptionPane.showOptionDialog(
-        		null, 
-        		"An error occurred: " + message, // Error message
-        		"Movement Registration Error", // Dialog title
-        		JOptionPane.DEFAULT_OPTION, 
-        		JOptionPane.ERROR_MESSAGE, 
-        		null, 
-        		new Object[]{"OK"}, // Force "OK" button in English
-        		"OK" // Default selected option
-        	);
-        	return;
-        } 
-        
-        if ("".equals(concept)) {
-        	message = "<html><body>"
-                    + "<p>Concept must be provided</p>"
-                    + "</body></html>";
-        	concept = null;
-        	// Show an error dialog
-        	JOptionPane.showOptionDialog(
-        		null, 
-        		"An error occurred: " + message, // Error message
-        		"Movement Registration Error", // Dialog title
-        		JOptionPane.DEFAULT_OPTION, 
-        		JOptionPane.ERROR_MESSAGE, 
-        		null, 
-        		new Object[]{"OK"}, // Force "OK" button in English
-        		"OK" // Default selected option
-        	);
-        	return;
-        }
         
         int response = JOptionPane.showOptionDialog(null,
                 message, 		// The message
@@ -566,8 +603,24 @@ public class RegisterMovementsController {
         	);
         }
 	}
+	
 	private void submitMovement()
 	{
+		if (!submit) {
+			// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"Some of the fields have an incorrect format", // Error message
+        		"Movement Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	return;
+		}
+		
 		// Force UI messages to be in English
         Locale.setDefault(Locale.ENGLISH);
         
@@ -599,36 +652,27 @@ public class RegisterMovementsController {
         
         boolean compensationMovement = this.view.getCompensationCheckBox().isSelected() ? true : false;
         
-        if ("expense".equals(type) && !compensationMovement)
-		{
-    		Double aux = Double.parseDouble(amount);
-			aux = (-1)*aux;
-			amount = String.valueOf(aux);
-		} else if ("income".equals(type) && compensationMovement)
-		{
-			Double aux = Double.parseDouble(amount);
-			aux = (-1)*aux;
-			amount = String.valueOf(aux);
-		}
+        String message = "";
+        boolean validated = true;
         
-        String message = "<html><body>"
-                + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
-                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
-                + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Date:</b></td><td style='padding: 2px 5px;'>" + date + "</td></tr>"
-                + "<tr><td style='padding: 2px 5px;'><b>Concept:</b></td><td style='padding: 2px 5px;'>" + concept + "</td></tr>"
-                + "</table>"
-                + "<p><i>Do you want to proceed with adding this Movement?</i></p>"
-                + "</body></html>";
-        
-        Object[] options = {"Yes", "No"};
-        
-        if ("".equals(concept)) {
+        if (!SyntacticValidations.isNotEmpty(amount)) {
+        	message = "<html><body>"
+                    + "<p>Amount must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(concept)) {
         	message = "<html><body>"
                     + "<p>Concept must be provided</p>"
                     + "</body></html>";
-        	concept = null;
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(date)) {
+        	message = "<html><body>"
+                    + "<p>Date must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        }
+        
+        if (!validated) {
         	// Show an error dialog
         	JOptionPane.showOptionDialog(
         		null, 
@@ -643,6 +687,31 @@ public class RegisterMovementsController {
         	return;
         }
         
+        if ("expense".equals(type) && !compensationMovement)
+		{
+    		Double aux = Double.parseDouble(amount);
+			aux = (-1)*aux;
+			amount = String.valueOf(aux);
+		} else if ("income".equals(type) && compensationMovement)
+		{
+			Double aux = Double.parseDouble(amount);
+			aux = (-1)*aux;
+			amount = String.valueOf(aux);
+		}
+        
+        message = "<html><body>"
+                + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Date:</b></td><td style='padding: 2px 5px;'>" + date + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Concept:</b></td><td style='padding: 2px 5px;'>" + concept + "</td></tr>"
+                + "</table>"
+                + "<p><i>Do you want to proceed with adding this Movement?</i></p>"
+                + "</body></html>";
+        
+        Object[] options = {"Yes", "No"};
+        
         int response = JOptionPane.showOptionDialog(null,
                 message, 		// The message
                 "Confirmation of Movement Registration",    // The title
@@ -653,8 +722,6 @@ public class RegisterMovementsController {
                 options[0]); 
         
         if (response == 1) return;
-        
-        String idLastIncomeExpense = "";
         
         try {
         	this.movementsModel.registerMovement(idType, amount, date, concept);

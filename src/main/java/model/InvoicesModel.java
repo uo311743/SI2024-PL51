@@ -76,6 +76,13 @@ public class InvoicesModel {
         return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
     }
     
+    public double getTotalAmount(String idInvoice) {
+    	SemanticValidations.validateIdForTable(idInvoice, "Invoices", "ERROR. Provided idInvoice for getTotalAmount does not exist.");
+		String sql = "SELECT totalAmount FROM Invoices WHERE id = ?;";
+	    Object result = db.executeQueryArray(sql, idInvoice).get(0)[0];
+		return (result == null) ? 0.0 : (double) result;
+    }
+    
     // SETTERS - UPDATES
     public void setInvoiceStatus(String invoiceId, String status)
     {

@@ -145,7 +145,7 @@ public class RegisterMovementsView extends AbstractView {
 
         // Set table properties
         JLabel activitiesTableLabel = new JLabel("Select an Activity to see the Incomes and Expenses");
-        activitiesTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        activitiesTableLabel.setFont(new Font("Arial", Font.BOLD, 14));
         activitiesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         activitiesTable.setDefaultEditor(Object.class, null);
         // Visual improvements
@@ -161,7 +161,7 @@ public class RegisterMovementsView extends AbstractView {
         JScrollPane activitiesTableScroll = new JScrollPane(activitiesTable);
         
         JLabel incomeExpensesTableLabel = new JLabel("Select an Income/Expense to register a Movement");
-        incomeExpensesTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        incomeExpensesTableLabel.setFont(new Font("Arial", Font.BOLD, 14));
         incomesExpensesTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         incomesExpensesTable.setDefaultEditor(Object.class, null);
         // Visual improvements
@@ -178,7 +178,7 @@ public class RegisterMovementsView extends AbstractView {
         JScrollPane incomesExpensesTableScroll = new JScrollPane(incomesExpensesTable);
         
         JLabel movementsTableLabel = new JLabel("Movements registered for the selected Income/Expense");
-        movementsTableLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+        movementsTableLabel.setFont(new Font("Arial", Font.BOLD, 14));
         movementsTable.setDefaultEditor(Object.class, null);
         // Visual improvements
         movementsTable.setRowHeight(25); // Bigger rows
