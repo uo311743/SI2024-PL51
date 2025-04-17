@@ -266,6 +266,7 @@ public class RegisterMovementsController {
     	activities.sort(Comparator.comparing(ActivitiesDTO::getDateStart));
     	
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"dateStart", "dateEnd", "name", "status"});
+		activitiesId.clear();
 		for (ActivitiesDTO activity : activities) {
 	    	activitiesId.add(activity.getId());
 	    }

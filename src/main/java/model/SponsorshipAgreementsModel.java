@@ -124,6 +124,53 @@ public class SponsorshipAgreementsModel {
 				+ "(?, ?, ?, ?, ?, 'signed')";
 		db.executeUpdate(sql, idSponsorContact, idGBMember, idActivity, amount, date);
 	}
+    
+    public void insertNewLongTermSponsorshipAgreement(String idSponsorContact, String idGBMember, 
+            List<String> activityIds, String amount, String date, String endDate) {
+        // Validate main agreement inputs
+        SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
+                "ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
+        
+        SemanticValidations.validateIdForTable(idGBMember, "GBMembers",
+                "ERROR. Tried to insert a Sponsorship agreement with an unexisting idGBMember.");
+        
+        SemanticValidations.validateDateInPast(date, true,
+                "ERROR. Tried to insert a Sponsorship agreement with a future date.");
+        
+        SemanticValidations.validateDateInPast(endDate, true,
+                "ERROR. Tried to insert a Sponsorship agreement with a future date.");
+        
+        SemanticValidations.validatePositiveNumber(amount,
+				"ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
+
+        for (int i = 0; i < activityIds.size(); i++) {
+            String idActivity = activityIds.get(i);
+
+            SemanticValidations.validateIdForTable(idActivity, "Activities",
+                    "ERROR. Tried to insert a Sponsorship agreement with an unexisting idActivity.");
+            
+            // Check for existing agreements for this sponsor and activity
+            if (getNumberOldSponsorshipAgreements(idSponsorContact, idActivity) != 0) {
+                throw new ApplicationException("Args provided for activity " + idActivity + 
+                        " correspond to an existing agreement.");
+            }
+        }
+
+        // Insert into SponsorshipAgreements
+        String sqlAgreement = "INSERT INTO SponsorshipAgreements " +
+                "(idSponsorContact, idGBMember, amount, date, endDate, status) VALUES " +
+                "(?, ?, ?, ?, ?, 'signed')";
+        String agreementId = db.executeInsertion(sqlAgreement, idSponsorContact, idGBMember, 
+                amount, date, endDate);
+
+        // Insert into LongTermAgreementActivities
+        String sqlActivity = "INSERT INTO LongTermAgreementActivities " +
+                "(idSponsorshipAgreement, idActivity) VALUES (?, ?)";
+        for (int i = 0; i < activityIds.size(); i++) {
+            db.executeUpdate(sqlActivity, agreementId, 
+                    activityIds.get(i));
+        }
+    }
 
     public void insertUpdateSponsorshipAgreement(String idSponsorContact, String idGBMember, String idActivity, String amount, String date) {
 		SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
