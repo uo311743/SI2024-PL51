@@ -5,8 +5,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
@@ -18,12 +16,11 @@ import model.ActivitiesModel;
 import model.InvoicesModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
+import model.SponsorshipPaymentsModel;
 import util.ModelManager;
 import util.Params;
-import util.SwingMain;
 import util.SwingUtil;
 import util.SyntacticValidations;
-import util.Util;
 import view.GenerateInvoicesView;
 
 public class GenerateInvoicesController {
@@ -32,6 +29,9 @@ public class GenerateInvoicesController {
 	protected InvoicesModel invoicesModel;
 	protected ActivitiesModel activitiesModel;
 	protected SponsorOrganizationsModel soModel;
+	protected SponsorshipPaymentsModel spModel;
+	
+	protected Params params;
 	
 	protected GenerateInvoicesView view;
 	
@@ -42,6 +42,9 @@ public class GenerateInvoicesController {
 		this.invoicesModel = ModelManager.getInstance().getInvoicesModel();
 		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
 		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
+		this.spModel = ModelManager.getInstance().getSponsorshipPaymentsModel();
+		
+		params = new Params();
 		
         this.view = v;
         this.initView();
@@ -82,7 +85,22 @@ public class GenerateInvoicesController {
 		});
     	
     	// Invoice Details Panel
-    	this.view.getTaxRateTextField().getDocument().addDocumentListener(new DocumentListener() {
+    	this.view.getIdTextField().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> updateDetail());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	this.view.getDateIssuedTextField().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
 			public void insertUpdate(DocumentEvent e) {
     			SwingUtil.exceptionWrapper(() -> updateDetail());
@@ -111,7 +129,7 @@ public class GenerateInvoicesController {
     }
     
     private void getAgreements() {
-    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[0]);
+    	List<SponsorshipAgreementsDTO> agreements = saModel.getSignedAgreementsByActivityName(splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[0], splitString(String.valueOf(view.getActivityComboBox().getSelectedItem()))[1]);
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "Sponsor", "amount", "date", "status"}, 0);
         for (SponsorshipAgreementsDTO agreement : agreements) {
         	tableModel.addRow(new Object[] {
@@ -127,7 +145,8 @@ public class GenerateInvoicesController {
     }
     
     private void setInputsEnabled(boolean enabled) {
-    	view.getTaxRateTextField().setEnabled(enabled);
+    	view.getIdTextField().setEnabled(enabled);
+    	view.getDateIssuedTextField().setEnabled(enabled);
     }
         
 	public void updateDetail() {	
@@ -136,32 +155,32 @@ public class GenerateInvoicesController {
 			restoreDetail();
 		}
 		else {
-			String today = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3);
-	        Date date = Util.isoStringToDate(today);
-	        Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(date);
-			Params params = new Params();
-			calendar.add(Calendar.DAY_OF_MONTH, params.getTaxExpDays());
-	        String expDate = Util.dateToIsoString(calendar.getTime());
-			
-			view.getIdLabel().setText("ID Sponsorship Agreement: " + lastSelectedAgreement); 
-			view.getDateIssuedLabel().setText("Date Issued: " + today);
-			view.getDateExpLabel().setText("Date Expired: " + expDate);
 			view.getAmountLabel().setText("Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(view.getAgreementsTable().getSelectedRow(), 2));
+			view.getTaxRateLabel().setText("Tax Rate: " + String.valueOf(params.getTaxVAT()) + " %");
 			
 			this.setInputsEnabled(true);
 		}
 		
 		boolean valid = true;
 		
-		// Validate TaxRate
-		String taxRate = this.view.getTaxRateTextField().getText();
-		if(!SyntacticValidations.isDecimal(taxRate)) {
-			this.view.getTaxRateTextField().setForeground(Color.RED);
+		// Validate Id
+		String id = this.view.getIdTextField().getText();
+		if(!SyntacticValidations.isNotEmpty(id)) {
+			this.view.getIdTextField().setForeground(Color.RED);
 			valid = false;
 		} 
 		else { 
-			this.view.getTaxRateTextField().setForeground(Color.BLACK); 
+			this.view.getIdTextField().setForeground(Color.BLACK); 
+		}
+		
+		// Validate Date
+		String date = this.view.getDateIssuedTextField().getText();
+		if(!SyntacticValidations.isDate(date)) {
+			this.view.getDateIssuedTextField().setForeground(Color.RED);
+			valid = false;
+		} 
+		else { 
+			this.view.getDateIssuedTextField().setForeground(Color.BLACK); 
 		}
 		
 		// Generate Invoice button
@@ -173,7 +192,7 @@ public class GenerateInvoicesController {
 		
 		this.getAgreements();
 		
-    	this.view.getTaxRateTextField().setText("");
+    	this.view.getIdTextField().setText("");
     	
     	this.setInputsEnabled(false);
     }
@@ -186,11 +205,15 @@ public class GenerateInvoicesController {
         if (row >= 0) {
         	idAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 0);
         }
+        
+        String id = view.getIdTextField().getText();
+        String dateIssued = view.getDateIssuedTextField().getText();
 
         String amount = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 2);
-        String taxRate = this.view.getTaxRateTextField().getText();
+        String dateAgreement = (String) this.view.getAgreementsTable().getModel().getValueAt(row, 3);
+        double taxRate = params.getTaxVAT();
         
-        String taxAmount = String.valueOf(Double.valueOf(amount) * Double.valueOf(taxRate));
+        String taxAmount = String.valueOf(Double.valueOf(amount) * taxRate / 100);
         String totalAmount = String.valueOf(Double.valueOf(amount) + Double.valueOf(taxAmount));
 
         String message = "<html><body>"
@@ -213,59 +236,50 @@ public class GenerateInvoicesController {
         if (response != JOptionPane.YES_OPTION) {
         	return;
         }
+                
+        int numInvoices = this.invoicesModel.getNumberInvoicesByAgreement(idAgreement);
         
-        String nameActivity = String.valueOf(view.getActivityComboBox().getSelectedItem());
-        String name = splitString(nameActivity)[0];
-        String edition = splitString(nameActivity)[1];
-        
-        int numInvoices = this.invoicesModel.getNumberInvoicesByActivityNameEdition(name, edition);
+    	SyntacticValidations.isDate(dateIssued);
     	
-        if(numInvoices == 0) {
-        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-        	String today = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3);
-	        Date date = Util.isoStringToDate(today);
-	        Calendar calendar = Calendar.getInstance();
-	        calendar.setTime(date);
-			Params params = new Params();
-			calendar.add(Calendar.DAY_OF_MONTH, params.getTaxExpDays());
-	        String expDate = Util.dateToIsoString(calendar.getTime());
-						
-			this.invoicesModel.insertNewInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), expDate, totalAmount, taxRate);
-	        
-			JOptionPane.showMessageDialog(
-	    			this.view.getFrame(), "Invoice added correctly",
-	    			"This operation has been succesful",
-	    			JOptionPane.INFORMATION_MESSAGE
-	    	);
-	        this.restoreDetail();
-        }
+    	if (this.invoicesModel.getNumberInvoices(id) == 0) {
+    		if(numInvoices == 0) {
+            	this.invoicesModel.insertNewInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
+    	        
+    			JOptionPane.showMessageDialog(
+    	    			this.view.getFrame(), "Invoice added correctly",
+    	    			"This operation has been succesful",
+    	    			JOptionPane.INFORMATION_MESSAGE
+    	    	);
+    	        this.restoreDetail();
+            }
+        	else {
+        		message = "It will modify " + numInvoices + " invoices for that activity.";
+        		response = JOptionPane.showConfirmDialog(
+        	            this.view.getFrame(), message,
+        	            "Confirm modification of old invoices",
+        	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+    	        );
+    	        
+    	        if (response == JOptionPane.YES_OPTION) {
+    	        	this.invoicesModel.updateInsertInvoice(id, lastSelectedAgreement, dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
+    	        	this.spModel.updatePaymentsInvoiceId(id, idAgreement);
+    		        JOptionPane.showMessageDialog(
+    		    			this.view.getFrame(),
+    		    			"Invoice added correctly",
+    		    			"This operation has been succesful",
+    		    			JOptionPane.INFORMATION_MESSAGE
+    		    	);
+    		        this.restoreDetail();
+    	        }
+        	}
+    	}
     	else {
-    		message = "It will modify " + numInvoices + " invoices for that activity.";
-    		response = JOptionPane.showConfirmDialog(
-    	            this.view.getFrame(), message,
-    	            "Confirm modification of old invoices",
-    	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
-	        );
-	        
-	        if (response == JOptionPane.YES_OPTION) {
-	        	SyntacticValidations.isDate(Util.dateToIsoString(SwingMain.getTodayDate()));
-	        	String today = (String) this.view.getAgreementsTable().getModel().getValueAt(this.view.getAgreementsTable().getSelectedRow(), 3);
-		        Date date = Util.isoStringToDate(today);
-		        Calendar calendar = Calendar.getInstance();
-		        calendar.setTime(date);
-				Params params = new Params();
-				calendar.add(Calendar.DAY_OF_MONTH, params.getTaxExpDays());
-		        String expDate = Util.dateToIsoString(calendar.getTime());
-        		
-	        	this.invoicesModel.insertUpdateInvoice(lastSelectedAgreement, Util.dateToIsoString(SwingMain.getTodayDate()), expDate, totalAmount, taxRate);
-		        JOptionPane.showMessageDialog(
-		    			this.view.getFrame(),
-		    			"Invoice added correctly",
-		    			"This operation has been succesful",
-		    			JOptionPane.INFORMATION_MESSAGE
-		    	);
-		        this.restoreDetail();
-	        }
+    		JOptionPane.showMessageDialog(
+    				this.view.getFrame(),
+		    		"This ID already exists in the system",
+		    		"ERROR",
+		    		JOptionPane.INFORMATION_MESSAGE
+		    );
     	}
     }
     

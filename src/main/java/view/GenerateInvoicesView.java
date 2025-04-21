@@ -13,11 +13,10 @@ public class GenerateInvoicesView extends AbstractView {
     
     private JComboBox<Object> activityComboBox;
     private JTable agreementsTable;
-    private JLabel idLabel;
-    private JLabel dateIssuedLabel;
-    private JLabel dateExpLabel;
+    private JTextField idTextField;
+    private JTextField dateIssuedTextField;
     private JLabel amountLabel;
-    private JTextField taxRateTextField;
+    private JLabel taxRateLabel;
     
     public GenerateInvoicesView() {
         super("Generate Invoices");
@@ -27,11 +26,10 @@ public class GenerateInvoicesView extends AbstractView {
     protected void initialize() {
         this.agreementsTable = new JTable();
         this.activityComboBox = new JComboBox<>();
-        this.idLabel = new JLabel("ID Sponsorship Agreement: -");
-        this.dateIssuedLabel = new JLabel("Date Issued: -");
-        this.dateExpLabel = new JLabel("Date Expired: -");
+        this.idTextField = new JTextField(10);
+        this.dateIssuedTextField = new JTextField(10);
         this.amountLabel = new JLabel("Amount: -");
-        this.taxRateTextField = new JTextField(10);
+        this.taxRateLabel = new JLabel("Tax Rate: ");
         
         super.createButtonLowLeft("Cancel");
         super.createButtonLowRight("Generate Invoice");
@@ -56,12 +54,12 @@ public class GenerateInvoicesView extends AbstractView {
         // Invoice Details Panel
         JPanel invoiceDetailsPanel = new JPanel(new MigLayout("", "[][grow]", ""));
         invoiceDetailsPanel.add(new JLabel("Invoice Details"), "wrap");
-        invoiceDetailsPanel.add(idLabel, "wrap");
-        invoiceDetailsPanel.add(dateIssuedLabel, "wrap");
-        invoiceDetailsPanel.add(dateExpLabel, "wrap");
+        invoiceDetailsPanel.add(new JLabel("ID: "));
+        invoiceDetailsPanel.add(idTextField, "wrap");
+        invoiceDetailsPanel.add(new JLabel("Date Issued: "));
+        invoiceDetailsPanel.add(dateIssuedTextField, "wrap");
         invoiceDetailsPanel.add(amountLabel, "wrap");
-        invoiceDetailsPanel.add(new JLabel("Tax Rate: "));
-        invoiceDetailsPanel.add(taxRateTextField, "wrap");
+        invoiceDetailsPanel.add(taxRateLabel, "wrap");
         getMainPanel().add(invoiceDetailsPanel, "cell 1 1, grow");
     }
     
@@ -74,23 +72,19 @@ public class GenerateInvoicesView extends AbstractView {
         return activityComboBox;
     }
     
-    public JLabel getIdLabel() {
-    	return idLabel;
+    public JTextField getIdTextField() {
+        return idTextField;
     }
     
-    public JLabel getDateIssuedLabel() {
-    	return dateIssuedLabel;
-    }
-    
-    public JLabel getDateExpLabel() {
-    	return dateExpLabel;
+    public JTextField getDateIssuedTextField() {
+    	return dateIssuedTextField;
     }
     
     public JLabel getAmountLabel() {
         return amountLabel;
     }
     
-    public JTextField getTaxRateTextField() {
-        return taxRateTextField;
+    public JLabel getTaxRateLabel() {
+    	return taxRateLabel;
     }
 }
