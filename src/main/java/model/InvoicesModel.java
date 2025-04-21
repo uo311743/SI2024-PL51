@@ -13,16 +13,17 @@ public class InvoicesModel {
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ? AND SA.idActivity == ?;";
+	
 	public static final String SQL_FILTERED_INVOICES_BY_SPONSOR = "SELECT I.* FROM Invoices I "
 			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id "
 			+ "JOIN SponsorContacts SC ON SA.idSponsorContact == SC.id "
 			+ "WHERE SC.idSponsorOrganization == ?;";
 	
-	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(I.id) FROM Invoices I "
-			+ "JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement == SA.id "
-			+ "JOIN Activities A ON SA.idActivity == A.id "
-			+ "WHERE A.name == ? "
-			+ "AND A.edition == ?;";
+	public static final String SQL_NUMBER_INVOICES_ACTIVITY = "SELECT COUNT(id) FROM Invoices "
+			+ "WHERE idSponsorshipAgreement == ?;";
+	
+	public static final String SQL_NUMBER_INVOICES = "SELECT COUNT(id) FROM Invoices "
+			+ "WHERE id == ?;";
 	
 	private Database db = new Database();
 
@@ -53,18 +54,9 @@ public class InvoicesModel {
 		}
 	}
     
-    public int getNumberInvoicesByActivityNameEdition(String name, String edition) {
-    	SemanticValidations.validateName(name);
-		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, name, edition);
-		if (result == null || result.isEmpty()) {
-			return 0;
-		}
-		return (int) result.get(0)[0];
-	}
-    
-    public int getNumberOldInvoicesBySponsorshipAgreementsId(String idSA) {
-		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, idSA);
+    public int getNumberInvoicesByAgreement(String idActivity) {
+    	SemanticValidations.validateIdForTable(idActivity, "Activities", "Not valid ID");
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES_ACTIVITY, idActivity);
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
@@ -74,6 +66,14 @@ public class InvoicesModel {
     public List<InvoicesDTO> getInvoicesBySponsor(String sponsorId) {
 		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
         return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
+    }
+    
+    public int getNumberInvoices(String id) {
+		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES, id);
+		if (result == null || result.isEmpty()) {
+			return 0;
+		}
+		return (int) result.get(0)[0];
     }
     
     // SETTERS - UPDATES
@@ -94,33 +94,37 @@ public class InvoicesModel {
     }
 
 	// INSERTIONS    
-    public void insertNewInvoice(String idSponsorshipAgreement, String dateIssued, String dateExpiration, String totalAmount, String taxRate) {
+    public void insertNewInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate, String dateAgreement) {
 		SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validateDateAfterTo(dateIssued, dateAgreement, true, "Not valid date");
+		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
 		String sql = "INSERT INTO Invoices"
-				+ "(idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate, status) VALUES "
+				+ "(id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES "
 				+ "(?, ?, ?, ?, ?, 'issued')";
-		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate);
+		db.executeUpdate(sql, id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate);
 	}
 
-    public void insertUpdateInvoice(String idSponsorshipAgreement, String dateIssued, String dateExpiration, String totalAmount, String taxRate) {
+    public void updateInsertInvoice(String id, String idSponsorshipAgreement, String dateIssued, String totalAmount, String taxRate, String dateAgreement) {
     	SemanticValidations.validateIdForTable(idSponsorshipAgreement, "SponsorshipAgreements", "Not valid ID");
+		SemanticValidations.validateDateAfterTo(dateIssued, dateAgreement, true, "Not valid date");
+		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
-		SemanticValidations.validateNumberInRange(taxRate, "0.0", "1.0", "Not valid number (0-1)");
+		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
 		
 		this.validateDateForUpdateInvoices(dateIssued, idSponsorshipAgreement);
 		
-		String sql = "INSERT INTO Invoices"
-				+ "(idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate, status) VALUES "
-				+ "(?, ?, ?, ?, ?, 'issued')";
-		db.executeUpdate(sql, idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate);
-		
-		sql = "UPDATE Invoices "
+		String sql = "UPDATE Invoices "
 				+ "SET status = 'rectified' "
 				+ "WHERE idSponsorshipAgreement = ?;";
 		db.executeUpdate(sql, idSponsorshipAgreement);
+		
+		sql = "INSERT INTO Invoices"
+				+ "(id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES "
+				+ "(?, ?, ?, ?, ?, 'issued')";
+		db.executeUpdate(sql, id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate);
 	}
     
     // SPECIFIC VALIDATIONS
