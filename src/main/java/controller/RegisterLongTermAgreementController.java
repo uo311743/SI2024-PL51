@@ -52,10 +52,11 @@ public class RegisterLongTermAgreementController {
 	
 	private List<String> activitiesId;
 	private List<String> activitiesSelected;
+	private List<String> levels;
 	private List<String> amounts;
 	
 	private boolean datesFieldsValidation;
-	private boolean agreementFieldsValidation;
+	private boolean activityFieldsValidation;
 
 	public RegisterLongTermAgreementController(RegisterLongTermAgreementView view) {
 		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
@@ -69,11 +70,12 @@ public class RegisterLongTermAgreementController {
 		
 		this.activitiesId = new ArrayList<String>();
 		this.activitiesSelected = new ArrayList<String>();
+		this.levels = new ArrayList<String>();
 		this.amounts = new ArrayList<String>();
 		this.lastSelectedActivity = "";
 		
 		this.datesFieldsValidation = false;
-		this.agreementFieldsValidation = false;
+		this.activityFieldsValidation = false;
 
 		this.initController();
 		this.initView();
@@ -111,6 +113,13 @@ public class RegisterLongTermAgreementController {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				SwingUtil.exceptionWrapper(() -> activitySelection());
+			}
+		});
+		
+		this.view.getActivitySelectionTable().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> setRemoveActivityButtonVisibility(true));
 			}
 		});
 
@@ -208,8 +217,7 @@ public class RegisterLongTermAgreementController {
 	}
 
 	public void initView() {
-    	this.getSponsors();
-		this.getGBMembers();
+    	this.restartView();
 		
 		this.setInputsEnabled(false);
 		this.setActivityInputsEnabled(false);
@@ -254,22 +262,34 @@ public class RegisterLongTermAgreementController {
 	
 	private void resetButtonSelection() {
 		this.lastSelectedActivity = "";
+		this.datesFieldsValidation = false;
+		this.activityFieldsValidation = false;
 		this.clearActivitiesSelection();
-		this.view.setRemoveActivityButtonVisibility(false);
+		this.setRemoveActivityButtonVisibility(false);
 		this.restartView();
 	}
 	
 	private void clearActivitiesSelection() {
 		this.activitiesSelected.clear();
+		this.levels.clear();
 		this.amounts.clear();
+		this.view.getActivitySelectionTable().removeAll();
+		this.view.getActivitySelectionTable().clearSelection();
+		DefaultTableModel model = (DefaultTableModel) this.view.getActivitySelectionTable().getModel();
+		model.setRowCount(0); // Clears the table
+		this.setRemoveActivityButtonVisibility(false);
+	}
+	
+	private void setRemoveActivityButtonVisibility(boolean visibility) {
+		this.view.setRemoveActivityButtonVisibility(visibility);
 	}
 	
 	private void addActivitySelection() {
-		if (!this.activitiesSelected.contains(lastSelectedActivity) && this.agreementFieldsValidation) { 
+		if (!"".equals(lastSelectedActivity) && !this.activitiesSelected.contains(lastSelectedActivity) && this.activityFieldsValidation) { 
 			this.activitiesSelected.add(lastSelectedActivity);
 			this.amounts.add(this.view.getAmountTextField().getText().toString());
+			this.levels.add(this.view.getLevelsComboBox().getSelectedItem().toString());
 			this.getActivitySelection();
-			this.view.setRemoveActivityButtonVisibility(true);
 		}
 	}
 	
@@ -278,24 +298,29 @@ public class RegisterLongTermAgreementController {
 		if (row >= 0) {
 			this.activitiesSelected.remove(this.activitiesSelected.get(row));
 			this.amounts.remove(this.amounts.get(row));
+			this.levels.remove(this.levels.get(row));
 			this.view.getActivitySelectionTable().removeAll();
 			this.view.getActivitySelectionTable().clearSelection();
 			DefaultTableModel model = (DefaultTableModel) this.view.getActivitySelectionTable().getModel();
 			model.setRowCount(0); // Clears the table
 			this.getActivitySelection();
+			this.setRemoveActivityButtonVisibility(false);
 		}
 	}
 	
 	private void activitySelection() {
 		this.lastSelectedActivity = this.activitiesId.get(this.view.getActivitiesTable().getSelectedRow());
 		this.setActivityInputsEnabled(true);
+		this.setRemoveActivityButtonVisibility(false);
 		this.updateLevels();
 		this.updateDetail();
 	}
 	
 	private void showActivitiesSelection() {
-		this.getActivities();
-		this.setInputsEnabled(true);
+		if (this.datesFieldsValidation) {
+			this.getActivities();
+			if (this.activityFieldsValidation) { this.setInputsEnabled(true); }
+		}
 	}
 	
 	private void updateDates() {
@@ -339,25 +364,48 @@ public class RegisterLongTermAgreementController {
 	    this.view.adjustColumns();
     }
 	
-	private void getActivitySelection()
-    {
-    	List<ActivitiesDTO> activities = new ArrayList<ActivitiesDTO>();
-    	
-    	for (String idActivity : activitiesSelected) {
-			activities.add(this.activitiesModel.getActivityById(idActivity));
+	private void getActivitySelection() {
+	    List<ActivitiesDTO> activities = new ArrayList<>();
+	    
+	    for (String idActivity : activitiesSelected) {
+	        activities.add(this.activitiesModel.getActivityById(idActivity));
 	    }
-    	
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"dateStart", "dateEnd", "name", "status"});
-		
-		// Create larger font
-		Font largerFont = new Font("Arial", Font.PLAIN, 14); // Adjust size as needed
-		
-		// Set the model in the JTable
-	    this.view.getActivitySelectionTable().setModel(tmodel);
+	    
+	    // Create TableModel with base columns from ActivitiesDTO
+	    TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"dateStart", "dateEnd", "name", "status"});
+	    
+	    // Create a new DefaultTableModel to include "level" and "amount"
+	    DefaultTableModel customModel = new DefaultTableModel();
+	    
+	    // Add all columns: original + new ones
+	    for (int i = 0; i < tmodel.getColumnCount(); i++) {
+	        customModel.addColumn(tmodel.getColumnName(i));
+	    }
+	    customModel.addColumn("level");
+	    customModel.addColumn("amount");
+	    
+	    // Populate rows with data from original TableModel and new lists
+	    for (int i = 0; i < tmodel.getRowCount(); i++) {
+	        Object[] rowData = new Object[tmodel.getColumnCount() + 2]; // +2 for level and amount
+	        // Copy original columns
+	        for (int j = 0; j < tmodel.getColumnCount(); j++) {
+	            rowData[j] = tmodel.getValueAt(i, j);
+	        }
+	        // Add level and amount
+	        rowData[tmodel.getColumnCount()] = levels.get(i);
+	        rowData[tmodel.getColumnCount() + 1] = amounts.get(i);
+	        customModel.addRow(rowData);
+	    }
+	    
+	    // Create larger font
+	    Font largerFont = new Font("Arial", Font.PLAIN, 14); // Adjust size as needed
+	    
+	    // Set the model in the JTable
+	    this.view.getActivitySelectionTable().setModel(customModel);
 	    JTableHeader header = this.view.getActivitySelectionTable().getTableHeader();
 	    header.setFont(largerFont);
 	    this.view.adjustColumns();
-    }
+	}
 
 	private void setInputsEnabled(boolean enabled)
     {
@@ -394,7 +442,7 @@ public class RegisterLongTermAgreementController {
 
 		// ------------------------------------------------------------
 		// Check JTextField inputs:
-		this.agreementFieldsValidation = true;
+		this.activityFieldsValidation = true;
 		
 		// Validate amount
 		if (!"".equals(lastSelectedActivity))
@@ -410,14 +458,14 @@ public class RegisterLongTermAgreementController {
 				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
 				{
 					this.view.getAmountTextField().setForeground(Color.RED);
-					this.agreementFieldsValidation = false;
+					this.activityFieldsValidation = false;
 				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
 			}
 			else {
 				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) >= Double.valueOf(amountMax) || Double.valueOf(amount) < Double.valueOf(amountMin))
 				{
 					this.view.getAmountTextField().setForeground(Color.RED);
-					this.agreementFieldsValidation = false;
+					this.activityFieldsValidation = false;
 				} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
 			}	
 		}
@@ -482,11 +530,11 @@ public class RegisterLongTermAgreementController {
 	// ================================================================================
 
 	private void showSubmitDialog() {
-		if (!datesFieldsValidation || !agreementFieldsValidation) {
+		if (!datesFieldsValidation || !activityFieldsValidation) {
 			// Show an error dialog
         	JOptionPane.showOptionDialog(
         		null, 
-        		"Some of the fields have an incorrect format", // Error message
+        		"Some of the fields have an incorrect format or have not been provided", // Error message
         		"Agreement Registration Error", // Dialog title
         		JOptionPane.DEFAULT_OPTION, 
         		JOptionPane.ERROR_MESSAGE, 
@@ -541,6 +589,11 @@ public class RegisterLongTermAgreementController {
                     + "<p>End Date must be provided</p>"
                     + "</body></html>";
         	validated = false;
+        } else if (activitiesSelected.size() <= 0) {
+        	message = "<html><body>"
+                    + "<p>At least one Activity must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
         }
         
         if (!validated) {
@@ -563,7 +616,7 @@ public class RegisterLongTermAgreementController {
                 .sum();
 
 		message = "<html><body>"
-                + "<p>You are about to add a long-term sponsorship agreement</b>.</p>"
+                + "<p>You are about to add a Long-Term Sponsorship Agreement</b>.</p>"
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
                 + "<tr><td style='padding: 2px 5px;'><b>Sponsor:</b></td><td style='padding: 2px 5px;'>" + sponsor + "</td></tr>"

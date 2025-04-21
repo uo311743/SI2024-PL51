@@ -62,8 +62,8 @@ CREATE TABLE LongTermAgreementActivities (
 	idSponsorshipAgreement INTEGER NOT NULL,
 	idActivity TEXT NOT NULL,
 	
-	FOREIGN KEY (idSponsorshipAgreement) REFERENCES GBMeSponsorshipAgreementsmbers(id) ON DELETE CASCADE,
-    FOREIGN KEY (idActivity) REFERENCES Activity(id) ON DELETE CASCADE
+	FOREIGN KEY (idSponsorshipAgreement) REFERENCES SponsorshipAgreements(id) ON DELETE CASCADE,
+    FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
 );
 
 CREATE TABLE Invoices (

@@ -21,6 +21,11 @@ public class SponsorshipAgreementsModel {
 				+ "FROM SponsorContacts "
 				+ "WHERE id = ? ) AND sa.idActivity = ?;";
 	
+	public static final String SQL_NUMBER_LONG_SA = "SELECT COUNT(*) AS agreement_count "
+            + "FROM LongTermAgreementActivities lta "
+            + "JOIN SponsorshipAgreements sa ON lta.idSponsorshipAgreement = sa.id "
+            + "WHERE lta.idActivity = ? ";
+	
 	public static final String SQL_SA_ID = "SELECT sa.id "
 				+ "FROM SponsorshipAgreements sa "
 				+ "JOIN SponsorContacts sc ON sa.idSponsorContact = sc.id "
@@ -63,6 +68,8 @@ public class SponsorshipAgreementsModel {
 
     public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity) {
 		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_SA, idSponsorContact, idActivity);
+		result.addAll(db.executeQueryArray(SQL_NUMBER_LONG_SA, idActivity));
+		
 		if (result == null || result.isEmpty()) {
 			return 0;
 		}
