@@ -11,13 +11,19 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import DTOs.ActivitiesDTO;
+import DTOs.InvoicesDTO;
+import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import model.ActivitiesModel;
 import model.InvoicesModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
+import util.InvoiceInstance;
 import util.ModelManager;
+import util.PDFGenerator;
 import util.Params;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -155,7 +161,7 @@ public class GenerateInvoicesController {
 			restoreDetail();
 		}
 		else {
-			view.getAmountLabel().setText("Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(view.getAgreementsTable().getSelectedRow(), 2));
+			view.getAmountLabel().setText("Total Amount: " + (String) this.view.getAgreementsTable().getModel().getValueAt(view.getAgreementsTable().getSelectedRow(), 2));
 			view.getTaxRateLabel().setText("Tax Rate: " + String.valueOf(params.getTaxVAT()) + " %");
 			
 			this.setInputsEnabled(true);
@@ -272,6 +278,8 @@ public class GenerateInvoicesController {
     		        this.restoreDetail();
     	        }
         	}
+    		
+    		this.generatePDF(id);
     	}
     	else {
     		JOptionPane.showMessageDialog(
@@ -286,5 +294,15 @@ public class GenerateInvoicesController {
     public static String[] splitString(String input) {
         String[] parts = input.split("-");
         return parts;
+    }
+    
+    private void generatePDF(String id) {
+    	
+    	InvoicesDTO invoice = this.invoicesModel.getInvoiceById(id);
+        SponsorOrganizationsDTO sponsor = this.soModel.getSOByInvoiceId(id);
+        ActivitiesDTO activity = this.activitiesModel.getActivityByInvoice(id);
+    	
+    	InvoiceInstance invoiceInstance = new InvoiceInstance(invoice, sponsor, activity);
+    	PDFGenerator.generateInvoice(invoiceInstance);
     }
 }

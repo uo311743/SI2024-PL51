@@ -33,6 +33,13 @@ public class InvoicesModel {
 		String sql ="SELECT id, dateIssued, totalAmount FROM Invoices;";
 		return db.executeQueryPojo(InvoicesDTO.class, sql);
 	}
+    
+    public InvoicesDTO getInvoiceById(String id) {
+		SemanticValidations.validateIdForTable(id, "Invoices", "Arg id for getInvoiceById is a non-valid or non-existing id for Invoices table");
+		String sql ="SELECT * FROM Invoices WHERE id == ?;";
+		
+		return db.executeQueryPojo(InvoicesDTO.class, sql, id).get(0);
+	}
 
     public List<InvoicesDTO> getInvoicesBySponsorAndActivity(String sponsorId, String activityId) {
 		SemanticValidations.validateIdForTable(sponsorId, "SponsorOrganizations", "Not valid ID");
