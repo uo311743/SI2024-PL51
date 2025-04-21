@@ -29,6 +29,8 @@ import javax.swing.JButton;
  */
 public class SwingMain {
 	
+	private static final boolean ACTIVE_DEBUG = true;
+	
 	private static Date today;
 
 	private JFrame frame;
@@ -196,6 +198,11 @@ public class SwingMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
+	    
+	    if(ACTIVE_DEBUG)
+		    addButtonToMain(buttonPanel, "Debugger", () -> {
+				new Debugger();
+		    });
 
 	    
 	    /* 

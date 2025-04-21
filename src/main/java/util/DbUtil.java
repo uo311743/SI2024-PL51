@@ -5,10 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -52,7 +55,7 @@ public abstract class DbUtil {
 		Connection conn=null;
 		try {
 			conn=this.getConnection();
-			System.out.println(conn);
+			//System.out.println(conn);
 			BeanListHandler<T> beanListHandler=new BeanListHandler<>(pojoClass);
 			System.out.println(beanListHandler);
 			QueryRunner runner=new QueryRunner();
@@ -63,6 +66,46 @@ public abstract class DbUtil {
 			DbUtils.closeQuietly(conn);
 		}
 	}
+	
+	public LinkedList<LinkedList<String>> executeRaw(String sql) {
+        Connection conn = null;
+        LinkedList<LinkedList<String>> result = new LinkedList<>();
+
+        try {
+            conn = this.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql);
+
+            ResultSetMetaData metaData = rs.getMetaData();
+            int columnCount = metaData.getColumnCount();
+
+            // Fetch the column names and add them as the first row
+            LinkedList<String> columnNames = new LinkedList<>();
+            for (int i = 1; i <= columnCount; i++) {
+                columnNames.add(metaData.getColumnName(i));
+            }
+            result.add(columnNames);
+
+            // Fetch and add the rows
+            while (rs.next()) {
+            	LinkedList<String> row = new LinkedList<>();
+                for (int i = 1; i <= columnCount; i++) {
+                    row.add(rs.getString(i));
+                }
+                result.add(row);
+            }
+
+            return result;
+        } catch (SQLException e) {
+        	result = new LinkedList<>();
+        	LinkedList<String> tmp = new LinkedList<>();
+        	tmp.add(e.getMessage());
+        	result.add(tmp);
+        	return result;
+        }
+    }
+
+	
 	/**
 	 * Ejecuta una query sql con los parametros especificados mapeando el resultet en una lista de arrays de objetos;
 	 * Utiliza apache commons-dbutils para relizar el mapeo y el manejo del resto de aspectos de jdbc
