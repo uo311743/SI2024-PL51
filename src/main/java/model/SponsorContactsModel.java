@@ -1,7 +1,6 @@
 package model;
 
 import java.util.List;
-
 import DTOs.SponsorContactsDTO;
 import util.Database;
 import util.SemanticValidations;
@@ -33,6 +32,11 @@ public class SponsorContactsModel {
 	    List<SponsorContactsDTO> sol = db.executeQueryPojo(SponsorContactsDTO.class, sql, idSponsorOrganization, name, email, phone);
 	    return sol.get(0);
     }
+    
+    public List<SponsorContactsDTO> getContactsBySponsorId(String sponsor) {
+		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ?;";
+		return db.executeQueryPojo(SponsorContactsDTO.class, sql, sponsor);
+	}
 
 	// INSERTIONS
     

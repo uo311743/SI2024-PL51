@@ -1,15 +1,19 @@
 package controller;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import DTOs.SponsorContactsDTO;
 import model.SponsorContactsModel;
+import model.SponsorOrganizationsModel;
 import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
@@ -18,6 +22,7 @@ import view.ModifySponsorContactView;
 public class ModifySponsorContactController {
 	
 	protected SponsorContactsModel scModel;
+	protected SponsorOrganizationsModel soModel;
 		
 	protected ModifySponsorContactView view;
 	
@@ -25,6 +30,7 @@ public class ModifySponsorContactController {
 	
     public ModifySponsorContactController(ModifySponsorContactView v) {
 		this.scModel = ModelManager.getInstance().getSponsorContactsModel();
+		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
 		
 		this.view = v;
         this.initView();
@@ -44,6 +50,14 @@ public class ModifySponsorContactController {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
+			}
+		});
+    	
+    	// Sponsor ComboBox
+    	this.view.getSponsorComboBox().addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail());
 			}
 		});
     	
@@ -105,12 +119,19 @@ public class ModifySponsorContactController {
     }
     
     public void initView() {
+    	this.getSponsors();
     	this.restoreDetail();
     	view.setVisible();
     }
     
+    public void getSponsors() {
+    	List<Object[]> sponsors = soModel.getSponsorListArray();
+        ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(sponsors);
+        view.getSponsorComboBox().setModel(lmodel);
+    }
+    
     public void getContacts() {
-    	List<SponsorContactsDTO> contacts = scModel.getAllContacts();
+    	List<SponsorContactsDTO> contacts = scModel.getContactsBySponsorId(soModel.getSponsorByName(String.valueOf(view.getSponsorComboBox().getSelectedItem())).getId());
         DefaultTableModel tableModel = new DefaultTableModel(new String[]{"idSponsorOrganization", "name", "email", "phone"}, 0);
         for (SponsorContactsDTO contact : contacts) {
         	tableModel.addRow(new Object[] {
