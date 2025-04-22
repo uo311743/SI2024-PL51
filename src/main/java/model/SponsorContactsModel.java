@@ -39,8 +39,8 @@ public class SponsorContactsModel {
 	    return db.executeQueryPojo(SponsorContactsDTO.class, sql);
     }
     
-    public List<SponsorContactsDTO> getContactsBySponsorId(String sponsor) {
-		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ?;";
+    public List<SponsorContactsDTO> getValidContactsBySponsorId(String sponsor) {
+		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ? AND name != '<<Removed data>>' AND email != '<<Removed data>>' AND phone != '<<Removed data>>';";
 		return db.executeQueryPojo(SponsorContactsDTO.class, sql, sponsor);
 	}
 

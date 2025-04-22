@@ -32,6 +32,7 @@ public class ModifyActivityController {
 	protected List<LevelsDTO> levels;
 	protected List<LevelsDTO> newLevels;
     protected DefaultTableModel tableModelLevels;
+    protected List<String> ids;
 	
     public ModifyActivityController(ModifyActivityView v) {
 		this.atModel = ModelManager.getInstance().getActivityTemplatesModel();
@@ -237,11 +238,12 @@ public class ModifyActivityController {
     }
     
     public void getActivities() {
+    	ids = new LinkedList<>();
     	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
-        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"id", "name", "edition", "status", "dateStart", "dateEnd", "place"}, 0);
+        DefaultTableModel tableModel = new DefaultTableModel(new String[]{"name", "edition", "status", "dateStart", "dateEnd", "place"}, 0);
         for (ActivitiesDTO activity : activities) {
+        	ids.add(activity.getId());
         	tableModel.addRow(new Object[] {
-        			activity.getId(),
         			activity.getName(),
         			activity.getEdition(),
         			activity.getStatus(),
@@ -260,12 +262,12 @@ public class ModifyActivityController {
 			restoreDetail();
 		}
 		else {
-			String nameActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 1);
-			String editionActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 2);
-			Object statusActivity = this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 3);
-			String dateStartActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 4);
-			String dateEndActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 5);
-			String placeActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 6);
+			String nameActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 0);
+			String editionActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 1);
+			Object statusActivity = this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 2);
+			String dateStartActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 3);
+			String dateEndActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 4);
+			String placeActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 5);
 
 			this.view.getNameTextField().setText(nameActivity);
 			this.view.getEditionTextField().setText(editionActivity);
@@ -370,8 +372,7 @@ public class ModifyActivityController {
     }
     
     public void getLevels() {
-    	String idActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 0);
-    	List<LevelsDTO> preLevels = levelsModel.getLevelsByActivityId(idActivity);
+    	List<LevelsDTO> preLevels = levelsModel.getLevelsByActivityId(ids.get(view.getActivitiesTable().getSelectedRow()));
         for (LevelsDTO level : preLevels) {
         	levels.add(level);
         	tableModelLevels.addRow(new Object[] {
@@ -528,7 +529,6 @@ public class ModifyActivityController {
 	}
     
     private void showSubmitDialog() {
-    	String idActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(this.view.getActivitiesTable().getSelectedRow(), 0);
     	String nameActivity = view.getNameTextField().getText();
     	String editionActivity = view.getEditionTextField().getText();
     	String statusActivity = (String) view.getStatusComboBox().getSelectedItem();
@@ -540,7 +540,6 @@ public class ModifyActivityController {
                 + "<p>Modify an activity: </p>"
                 + "<p><b>Details:</b></p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
-                + "<tr><td style='padding: 2px 5px;'><b>Activity ID:</b></td><td style='padding: 2px 5px;'>" + idActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Name:</b></td><td style='padding: 2px 5px;'>" + nameActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Edition:</b></td><td style='padding: 2px 5px;'>" + editionActivity + "</td></tr>"
                 + "<tr><td style='padding: 2px 5px;'><b>Status:</b></td><td style='padding: 2px 5px;'>" + statusActivity + "</td></tr>"
@@ -570,16 +569,16 @@ public class ModifyActivityController {
             SyntacticValidations.isDate(dateEndActivity);
     	}
         	
-        this.activitiesModel.updateActivity(idActivity, nameActivity, ed, statusActivity, dateStartActivity, dateEndActivity, placeActivity);
+        this.activitiesModel.updateActivity(ids.get(view.getActivitiesTable().getSelectedRow()), nameActivity, ed, statusActivity, dateStartActivity, dateEndActivity, placeActivity);
 		JOptionPane.showMessageDialog(
 			this.view.getFrame(), "Activity updated correctly",
 			"This operation has been succesful",
 			JOptionPane.INFORMATION_MESSAGE
 		);
 		
-		levelsModel.removeLevels(idActivity);
+		levelsModel.removeLevels(ids.get(view.getActivitiesTable().getSelectedRow()));
 		for (LevelsDTO level : levels) {
-    		this.levelsModel.insertNewLevel(idActivity, level.getName(), level.getFee());
+    		this.levelsModel.insertNewLevel(ids.get(view.getActivitiesTable().getSelectedRow()), level.getName(), level.getFee());
 		}
 		
 		JOptionPane.showMessageDialog(
