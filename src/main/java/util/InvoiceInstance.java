@@ -31,9 +31,9 @@ public class InvoiceInstance {
 
         
         this.taxRate = Double.parseDouble(invoice.getTaxRate());
-        this.total = Double.parseDouble(invoice.getTotalAmount());
-        this.subtotal = total / (1 + taxRate);
-        this.taxAmount = total - subtotal;
+        this.subtotal = Double.parseDouble(invoice.getTotalAmount());
+        this.taxAmount = subtotal * taxRate / 100;
+        this.total = subtotal + taxAmount;
     }
 
     // Getters

@@ -101,7 +101,7 @@ public class PDFGenerator {
                     .setTextAlignment(TextAlignment.RIGHT));
 
             amountTable.addCell(new Cell()
-                    .add(new Paragraph(String.format("Tax (%.0f%%)", invoice.getTaxRate() * 100)))
+                    .add(new Paragraph(String.format("Tax (%.0f%%)", invoice.getTaxRate())))
                     .setTextAlignment(TextAlignment.LEFT));
             amountTable.addCell(new Cell()
                     .add(new Paragraph(String.format("%.2f", invoice.getTaxAmount())))
