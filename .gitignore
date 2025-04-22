@@ -1,3 +1,4 @@
 /target/
 /Coiipa.db
 /PDF_Invoices/
+/src/main/resources/set_env_vars.bat
