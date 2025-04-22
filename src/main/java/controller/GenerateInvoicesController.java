@@ -296,13 +296,13 @@ public class GenerateInvoicesController {
         return parts;
     }
     
-    private void generatePDF(String id) {
+    private String generatePDF(String id) {
     	
     	InvoicesDTO invoice = this.invoicesModel.getInvoiceById(id);
         SponsorOrganizationsDTO sponsor = this.soModel.getSOByInvoiceId(id);
         ActivitiesDTO activity = this.activitiesModel.getActivityByInvoice(id);
     	
     	InvoiceInstance invoiceInstance = new InvoiceInstance(invoice, sponsor, activity);
-    	PDFGenerator.generateInvoice(invoiceInstance);
+    	return PDFGenerator.generateInvoice(invoiceInstance);
     }
 }
