@@ -46,6 +46,13 @@ public class ModifySponsorContactController {
 			}
 		});
     	
+    	this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> showRemoveDialog());
+			}
+		});
+    	
     	this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -151,12 +158,10 @@ public class ModifySponsorContactController {
 			restoreDetail();
 		}
 		else {
-			String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
 			String nameContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
 			String emailContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
 			String phoneContact = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
 
-			this.view.getIdSOLabel().setText("Sponsor Organization ID: " + idSponsorOrganization);
 			this.view.getNameTextField().setText(nameContact);
 			this.view.getEmailTextField().setText(emailContact);
 			this.view.getPhoneTextField().setText(phoneContact);
@@ -208,7 +213,6 @@ public class ModifySponsorContactController {
 		
 		this.getContacts();
 		
-    	this.view.getIdSOLabel().setText("Sponsor Organization ID: ");
 		this.view.getNameTextField().setEnabled(false);
 		this.view.getEmailTextField().setEnabled(false);
 		this.view.getPhoneTextField().setEnabled(false);
@@ -270,6 +274,47 @@ public class ModifySponsorContactController {
         this.scModel.updateContact(contactData.getId(), nameContact, emailContact, phoneContact);
 		JOptionPane.showMessageDialog(
 			this.view.getFrame(), "Sponsor Contact updated correctly",
+			"This operation has been succesful",
+			JOptionPane.INFORMATION_MESSAGE
+		);
+
+		this.restoreDetail();
+    }
+	
+	private void showRemoveDialog() {
+		String idSponsorOrganization = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 0);
+        
+        String message = "<html><body>"
+                + "<p>Remove a Sponsor Contact: </p>"
+                + "<p><b>Details:</b></p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Sponsor Organization ID:</b></td><td style='padding: 2px 5px;'>" + idSponsorOrganization + "</td></tr>"
+                + "</table>"
+                + "<p><i>Proceed with the removing for the selected sponsor contact?</i></p>"
+                + "</body></html>";
+
+        int response = JOptionPane.showConfirmDialog(
+            this.view.getFrame(),  message,
+            "Confirm Sponsor Contact Details",
+            JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE
+        );
+        
+        if (response != JOptionPane.YES_OPTION) {
+        	return;
+        }
+        
+        String preName = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 1);
+        String preEmail = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 2);
+        String prePhone = (String) this.view.getContactsTable().getModel().getValueAt(this.view.getContactsTable().getSelectedRow(), 3);
+        
+        SyntacticValidations.matchesPattern(preEmail, SyntacticValidations.PATTERN_EMAIL);
+        SyntacticValidations.matchesPattern(prePhone, SyntacticValidations.PATTERN_PHONE);
+        
+        SponsorContactsDTO contactData = this.scModel.getContactByFilters(idSponsorOrganization, preName, preEmail, prePhone);
+                
+        this.scModel.removeContact(contactData.getId());
+		JOptionPane.showMessageDialog(
+			this.view.getFrame(), "Sponsor Contact removed correctly",
 			"This operation has been succesful",
 			JOptionPane.INFORMATION_MESSAGE
 		);
