@@ -41,6 +41,7 @@ public class ModifySponsorContactView extends AbstractView {
         getMainPanel().setLayout(new MigLayout("", "[grow 30][grow 70]", "[grow]"));
 
         // Left Panel - Contacts Table and ComboBox
+        contactsTable.setDefaultEditor(Object.class, null);
         JPanel leftPanel = new JPanel(new MigLayout("wrap", "[grow]", "[][][grow]"));
         JScrollPane contactsTableScrollPane = new JScrollPane(contactsTable);
         leftPanel.setBorder(BorderFactory.createTitledBorder("Contacts"));

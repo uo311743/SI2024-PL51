@@ -51,6 +51,7 @@ public class IncomesExpensesReportView extends AbstractView {
 
         // Report Table
         reportTable.setName("reportTable");
+        reportTable.setDefaultEditor(Object.class, null);
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tablePanel = new JScrollPane(reportTable);
         getMainPanel().add(tablePanel, "cell 0 1, grow");
