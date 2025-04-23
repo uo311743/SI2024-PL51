@@ -44,11 +44,11 @@ public class EmailManager {
 				+ "<p>Dear " + contact.getName() + ",</p>"
 				+ "<p>I hope this message finds you well. "
 				+ "Please find attached the invoice related to our sponsorship agreement with <strong>"
-				+ sponsor.getName() + "</strong> for the activity "
-				+ activity.getName() + " Edition " + activity.getEdition()+ "</strong>.</p>"
+				+ sponsor.getName() + "</strong> for the activity <strong>"
+				+ activity.getName() + " Edition " + activity.getEdition()+ "</strong>.<br>"
 				+ "The activity is scheduled to take place between " + activity.getDateStart() + " and "
 				+ activity.getDateEnd() + " in " + activity.getPlace() + "</p>"
-				+ "<p>Best wishes,</p><p>" + params.getTaxName() + "</p>";
+				+ "<p>Best wishes,<br>" + params.getTaxName() + "</p>";
 		
 		// Path to the PDF to send
 		this.filePath = filepath;
