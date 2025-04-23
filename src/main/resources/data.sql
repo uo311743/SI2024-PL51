@@ -23,13 +23,13 @@ INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amo
 
 -- Insert Invoices
 INSERT INTO Invoices (id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES
-('INV-001', 1, '2024-02-05', 5000.00, 10, 'issued'),
-('INV-002', 2, '2024-01-20', 2000.00, 10, 'issued'),
-('INV-003', 3, '2024-03-05', 3000.00, 10, 'paid');
+('INV-001', 1, '2024-02-05', 5000.00, 21, 'issued'),
+('INV-002', 2, '2024-01-20', 2000.00, 21, 'issued'),
+('INV-003', 4, '2024-03-05', 3000.00, 21, 'paid');
 
 -- Insert SponsorshipPayments
 INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES
-('INV-003', '2024-02-10', 3000.00);
+('INV-003', '2024-02-10', 3000.00*1.21);
 
 -- Insert Activities
 INSERT INTO Activities (name, edition, status, dateStart, dateEnd, place) VALUES
