@@ -144,11 +144,6 @@ public class SwingMain {
 	    		new RegisterPaymentController(new RegisterPaymentView());
 	    	});
 	    	
-	    	// US 29331
-	    	menu.addButton("Close Activity", () -> {
-	    		new CloseActivityController(new CloseActivityView());
-		    });
-	    	
 	    	// US 29329
 	    	menu.addButton("Register Sponsor", () -> {
 	    		new RegisterSponsorController(new RegisterSponsorView());
@@ -186,6 +181,11 @@ public class SwingMain {
 	    	menu.addButton("Register Activity", () -> {
 	    		new RegisterActivityController(new RegisterActivityView());
 	    	});
+	    	
+	    	// US 29331
+	    	menu.addButton("Close Activity", () -> {
+	    		new CloseActivityController(new CloseActivityView());
+		    });
 	    	
 	    	menu.setVisible();
 	    });
