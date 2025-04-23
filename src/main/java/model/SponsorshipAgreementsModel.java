@@ -1,5 +1,6 @@
 package model;
 
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -22,9 +23,8 @@ public class SponsorshipAgreementsModel {
 				+ "WHERE id = ? ) AND sa.idActivity = ?;";
 	
 	public static final String SQL_NUMBER_LONG_SA = "SELECT COUNT(*) AS agreement_count "
-            + "FROM LongTermAgreementActivities lta "
-            + "JOIN SponsorshipAgreements sa ON lta.idSponsorshipAgreement = sa.id "
-            + "WHERE lta.idActivity = ? ";
+			+ "FROM SponsorshipAgreements sa JOIN LongTermAgreementActivities lta ON sa.id = lta.idSponsorshipAgreement "
+			+ "WHERE sa.idSponsorContact = ? AND lta.idActivity = ?;";
 	
 	public static final String SQL_SA_ID = "SELECT sa.id "
 				+ "FROM SponsorshipAgreements sa "
@@ -68,12 +68,15 @@ public class SponsorshipAgreementsModel {
 
     public int getNumberOldSponsorshipAgreements(String idSponsorContact, String idActivity) {
 		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_SA, idSponsorContact, idActivity);
-		result.addAll(db.executeQueryArray(SQL_NUMBER_LONG_SA, idActivity));
+		List<Object[]> rs = db.executeQueryArray(SQL_NUMBER_LONG_SA, Integer.parseInt(idSponsorContact), idActivity);
 		
 		if (result == null || result.isEmpty()) {
 			return 0;
+		} else if (result == null || result.isEmpty()) {
+			return 0;
 		}
-		return (int) result.get(0)[0];
+		
+		return ((int)result.get(0)[0] + (int)rs.get(0)[0]);
 	}
 
     public Integer getSponsorshipAgreementId(String nifOrVat, String activity) {

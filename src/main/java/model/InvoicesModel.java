@@ -139,9 +139,9 @@ public class InvoicesModel {
             if (result.isEmpty()) {
             	throw new ApplicationException("No Invoice Found");
             } else {
-            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
-            	Date paymentDate = Date.valueOf(date);
-            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
+            	String invoiceIssuedDate = result.get(0)[0].toString();
+            	String paymentDate = date;
+            	SemanticValidations.validateDateAfterTo(paymentDate, invoiceIssuedDate, true, "Payment cannot be made before Invoice generation");
             }
         } catch (Exception e) {
         	e.printStackTrace();

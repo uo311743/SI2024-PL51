@@ -312,7 +312,7 @@ public class RegisterPaymentController {
 			// Show an error dialog
         	JOptionPane.showOptionDialog(
         		null, 
-        		"Some of the fields have an incorrect format", // Error message
+        		"Some of the fields have an incorrect format or have not been provided", // Error message
         		"Payment Registration Error", // Dialog title
         		JOptionPane.DEFAULT_OPTION, 
         		JOptionPane.ERROR_MESSAGE, 

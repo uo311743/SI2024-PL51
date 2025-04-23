@@ -229,6 +229,8 @@ public class RegisterMovementsController {
 	
 	public void restartView()
     {
+		this.lastSelectedActivity = "";
+		this.lastSelectedIncomeExpense = "";
 		this.getActivities();
 		
 		this.view.getActivitiesTable().clearSelection();
@@ -339,22 +341,26 @@ public class RegisterMovementsController {
 	private void activitySelection()
 	{
 		int row = this.view.getActivitiesTable().getSelectedRow();
-		this.lastSelectedActivity = activitiesId.get(row);
+		if (row >= 0) {
+			this.lastSelectedActivity = activitiesId.get(row);
+			this.lastSelectedIncomeExpense = "";
+		}
 		
-		calculateTotals();
-	    getIncomesExpenses();
+		updateView();
 		updateDetail1();
 	}
 	
 	private void calculateTotals()
 	{
+		double income = this.movementsModel.getActualIncome(lastSelectedActivity);
+		double expense = this.movementsModel.getActualExpenses(lastSelectedActivity);
 		this.view.getEstimatedIncomesLabel().setText(String.valueOf(this.movementsModel.getEstimatedIncome(lastSelectedActivity)));
-		this.view.getPaidIncomesLabel().setText(String.valueOf(String.valueOf(this.movementsModel.getActualIncome(lastSelectedActivity))));
+		this.view.getPaidIncomesLabel().setText(String.valueOf(String.valueOf(income)));
 		this.view.getEstimatedExpensesLabel().setText(String.valueOf(this.movementsModel.getEstimatedExpenses(lastSelectedActivity)));
-		this.view.getPaidExpensesLabel().setText(String.valueOf(this.movementsModel.getActualExpenses(lastSelectedActivity)));
+		this.view.getPaidExpensesLabel().setText(String.valueOf(expense));
 		
 		this.view.getRemainingBalanceLabel().setText(
-				String.valueOf(this.movementsModel.getTotalAmountPaidForActivity(lastSelectedActivity))
+				String.valueOf(income + expense)
 		);
 	}
 	
@@ -363,7 +369,7 @@ public class RegisterMovementsController {
 		this.clearFields();
 		
 		int row = this.view.getIncomesExpensesTable().getSelectedRow();
-		this.lastSelectedIncomeExpense = incomeExpenseId.get(row);
+		if (row >= 0) {this.lastSelectedIncomeExpense = incomeExpenseId.get(row);}
 		
 		getMovements(); 
 		updateDetail2();
@@ -386,7 +392,7 @@ public class RegisterMovementsController {
 	public void updateDetail1()
 	{	
 		// ------------------------------------------------------------
-		// If an Income/Expense is selected in the table do:
+		// If an Activity is selected in the table do:
 		if (this.view.getIncomesExpensesTable().getSelectedRow() >= 0) {
 			return;
 		}
@@ -431,11 +437,10 @@ public class RegisterMovementsController {
 	public void updateDetail2()
 	{	
 		// ------------------------------------------------------------
-		// If a movement is selected in the table do:
-		
+		// If a Income/Expense is selected in the table do:
 		if("".equals(this.lastSelectedIncomeExpense))
 		{
-			restartView(); 
+			updateView(); 
 		}
 		else
 		{
@@ -486,6 +491,7 @@ public class RegisterMovementsController {
         		new Object[]{"OK"}, // Force "OK" button in English
         		"OK" // Default selected option
         	);
+        	updateView();
         	return;
 		}
 		
@@ -603,10 +609,28 @@ public class RegisterMovementsController {
         		"OK" // Default selected option
         	);
         }
+        
+        updateView();
 	}
 	
 	private void submitMovement()
 	{
+		if ("".equals(lastSelectedIncomeExpense)) {
+			// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An Income/Expense must be selected to register a Movement", // Error message
+        		"Movement Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	updateView();
+        	return;
+		}
+		
 		if (!submit) {
 			// Show an error dialog
         	JOptionPane.showOptionDialog(
@@ -619,6 +643,7 @@ public class RegisterMovementsController {
         		new Object[]{"OK"}, // Force "OK" button in English
         		"OK" // Default selected option
         	);
+        	updateView();
         	return;
 		}
 		
@@ -726,7 +751,6 @@ public class RegisterMovementsController {
         
         try {
         	this.movementsModel.registerMovement(idType, amount, date, concept);
-        	this.updateView();
         } catch (Exception e) {
         	e.printStackTrace();
         	// Show an error dialog
@@ -741,5 +765,6 @@ public class RegisterMovementsController {
         		"OK" // Default selected option
         	);
         }
+        this.updateView();
 	}
 }

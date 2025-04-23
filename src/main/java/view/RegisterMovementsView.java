@@ -97,7 +97,7 @@ public class RegisterMovementsView extends AbstractView {
         JLabel paidExpensesTitle = new JLabel("Paid Expenses (€): ");
         paidExpensesTitle.setFont(new Font("Arial", Font.BOLD, 14));
         
-        JLabel remainingBalanceTitle = new JLabel("Total amount paid (€): ");
+        JLabel remainingBalanceTitle = new JLabel("Remaining Balance (€): ");
         remainingBalanceTitle.setFont(new Font("Arial", Font.BOLD, 14));
 
         // Create a panel with GridLayout to align labels properly
