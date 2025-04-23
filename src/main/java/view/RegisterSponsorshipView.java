@@ -104,6 +104,7 @@ public class RegisterSponsorshipView extends AbstractView {
 		JLabel levelsLabel = new JLabel("Select a level:");
 		JLabel agreementDateLabel = new JLabel("Agreement Date (yyyy-MM-dd):");
 		JLabel contactEmailLabel = new JLabel("Contact Email:");
+		JLabel additionalLabel = new JLabel("(Amount DO NOT include taxes)"); // New label
 
 		// Fields
 		JComponent[][] fields = {
@@ -112,8 +113,9 @@ public class RegisterSponsorshipView extends AbstractView {
 		    {contactEmailLabel, contactEmailTextField},
 		    {gbMemberLabel, gbMemberComboBox},
 		    {levelsLabel, levelsComboBox},
+		    {agreementDateLabel, agreementDateTextField},
 		    {amountLabel, amountTextField},
-		    {agreementDateLabel, agreementDateTextField}
+			{additionalLabel, null}
 		};
 
 		// Add labels above inputs
@@ -123,13 +125,15 @@ public class RegisterSponsorshipView extends AbstractView {
 		    fieldsGbc.gridy = i * 2; // position label in even rows
 		    fieldsPanel.add(fields[i][0], fieldsGbc);
 
-		    // Set input field in the second row
-		    fieldsGbc.gridx = 0;
-		    fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
-		    fieldsGbc.gridwidth = 2; // input spans two columns
-		    fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
-		    fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
-		    fieldsPanel.add(fields[i][1], fieldsGbc);
+		    // Set input field in the second row if it exists
+		    if (fields[i][1] != null) {
+		        fieldsGbc.gridx = 0;
+		        fieldsGbc.gridy = i * 2 + 1; // position input in odd rows
+		        fieldsGbc.gridwidth = 2; // input spans two columns
+		        fieldsGbc.fill = GridBagConstraints.HORIZONTAL; // Let the field take up horizontal space
+		        fieldsGbc.weightx = 1.0; // Allow the input to expand horizontally evenly
+		        fieldsPanel.add(fields[i][1], fieldsGbc);
+		    }
 		}
 
 		gbc.gridx = 0;
