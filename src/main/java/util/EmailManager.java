@@ -19,7 +19,7 @@ public class EmailManager {
 	
 	private static String FILENAME = "Invoice.pdf";
 	
-	public EmailManager(SponsorContactsDTO contact, SponsorOrganizationsDTO sponsor, ActivitiesDTO activity)
+	public EmailManager(SponsorContactsDTO contact, SponsorOrganizationsDTO sponsor, ActivitiesDTO activity, String filepath)
 	{
 		// Class for reading params
 		Params params = new Params();
@@ -41,14 +41,17 @@ public class EmailManager {
 		// Email contents
 		this.subject = "Invoice for " + activity.getName();
 		this.body = ""
-				+ "<p>Dear " + contact.getName() + ",</p><br>"
-				+ "<p>I hope this message finds you well."
+				+ "<p>Dear " + contact.getName() + ",</p>"
+				+ "<p>I hope this message finds you well. "
 				+ "Please find attached the invoice related to our sponsorship agreement with <strong>"
 				+ sponsor.getName() + "</strong> for the activity "
 				+ activity.getName() + " Edition " + activity.getEdition()+ "</strong>.</p>"
 				+ "The activity is scheduled to take place between " + activity.getDateStart() + " and "
-				+ activity.getDateEnd() + " in " + activity.getPlace() + "</p><br>"
+				+ activity.getDateEnd() + " in " + activity.getPlace() + "</p>"
 				+ "<p>Best wishes,</p><p>" + params.getTaxName() + "</p>";
+		
+		// Path to the PDF to send
+		this.filePath = filepath;
 	}
 	
 	public boolean sendEmail()
@@ -98,7 +101,10 @@ public class EmailManager {
             // Send the email
             Transport.send(message);
             
+            System.out.println("Email sent: " + emailFrom + " -> " + emailTo);
+            
         } catch (MessagingException e) {
+        	e.printStackTrace();
             return false;
         }
         

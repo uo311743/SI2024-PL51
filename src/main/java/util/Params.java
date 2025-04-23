@@ -53,8 +53,8 @@ public class Params
     public String get_mail_smtp_auth() { return this.getPropertyString("mail.smtp.auth"); }
     public String get_mail_smtp_starttls() { return this.getPropertyString("mail.smtp.starttls"); }
     
-    public String get_mail_auth_username() { return System.getenv("COIIPA_SMTP_AUTH_username"); }
-    public String get_mail_auth_passwd() { return System.getenv("COIIPA_SMTP_AUTH_passd"); }
+    public String get_mail_auth_username() { return this.getEnvVar("COIIPA_SMTP_AUTH_username"); }
+    public String get_mail_auth_passwd() { return this.getEnvVar("COIIPA_SMTP_AUTH_passd"); }
 
     public String get_mail_from() { return this.getPropertyString("mail.from"); }
     
@@ -64,6 +64,13 @@ public class Params
     	String tmp = properties.getProperty(name);
     	if(tmp == null)
     		throw new ApplicationException("Parameter " + name + " not found in file: " + CONFIG_FILE);
+        return tmp;
+    }
+    
+    private String getEnvVar(String name) {
+    	String tmp = System.getenv(name);
+    	if(tmp == null)
+    		throw new ApplicationException("Env variable " + name + " does not exist.");
         return tmp;
     }
 }

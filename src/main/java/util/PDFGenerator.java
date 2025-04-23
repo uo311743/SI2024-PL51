@@ -18,7 +18,7 @@ public class PDFGenerator {
 
     private static final String ROOT_FOLDER = "PDF_Invoices";
 
-    public static void generateInvoice(InvoiceInstance invoice) {
+    public static String generateInvoice(InvoiceInstance invoice) {
         try {
             // Ensure the root folder exists
             File rootDir = new File(ROOT_FOLDER);
@@ -114,7 +114,6 @@ public class PDFGenerator {
                     .add(new Paragraph(String.format("%.2f", invoice.getTotal()))).setBold()
                     .setTextAlignment(TextAlignment.RIGHT));
 
-
             document.add(amountTable);
 
             // Footer
@@ -123,11 +122,15 @@ public class PDFGenerator {
 
             // Close the document
             document.close();
+            
+            System.out.println("PDF generated at: " + pdfFile.getAbsolutePath());
 
-            System.out.println("Invoice PDF generated at: " + pdfFile.getAbsolutePath());
+            // Return the path to the generated file
+            return pdfFile.getAbsolutePath();
 
         } catch (IOException e) {
             System.err.println("Error generating PDF: " + e.getMessage());
+            return null;
         }
     }
 }

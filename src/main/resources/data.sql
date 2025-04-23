@@ -10,9 +10,9 @@ INSERT INTO GBMembers (name, role) VALUES
 
 -- Insert SponsorContacts
 INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
-(1, 'John Doe', 'john@techcorp.com', '+34911234567'),
-(2, 'Mary White', 'mary@citycouncil.gov', '+34912345678'),
-(2, 'Robert Smith', 'robert@citycouncil.gov', '+34913456789');
+(1, 'John Doe', 'uo294319@uniovi.es', '+34911234567'),
+(2, 'Mary White', 'uo294319@uniovi.es', '+34912345678'),
+(2, 'Robert Smith', 'uo294319@uniovi.es', '+34913456789');
 
 -- Insert SponsorshipAgreements
 INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES
