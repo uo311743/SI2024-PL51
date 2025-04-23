@@ -14,13 +14,16 @@ import javax.swing.table.DefaultTableModel;
 
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
+import DTOs.SponsorContactsDTO;
 import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import model.ActivitiesModel;
 import model.InvoicesModel;
+import model.SponsorContactsModel;
 import model.SponsorOrganizationsModel;
 import model.SponsorshipAgreementsModel;
 import model.SponsorshipPaymentsModel;
+import util.EmailManager;
 import util.InvoiceInstance;
 import util.ModelManager;
 import util.PDFGenerator;
@@ -35,6 +38,7 @@ public class GenerateInvoicesController {
 	protected InvoicesModel invoicesModel;
 	protected ActivitiesModel activitiesModel;
 	protected SponsorOrganizationsModel soModel;
+	protected SponsorContactsModel scModel;
 	protected SponsorshipPaymentsModel spModel;
 	
 	protected Params params;
@@ -49,6 +53,7 @@ public class GenerateInvoicesController {
 		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
 		this.soModel = ModelManager.getInstance().getSponsorOrganizationsModel();
 		this.spModel = ModelManager.getInstance().getSponsorshipPaymentsModel();
+		this.scModel = ModelManager.getInstance().getSponsorContactsModel();
 		
 		params = new Params();
 		
@@ -279,7 +284,7 @@ public class GenerateInvoicesController {
     	        }
         	}
     		
-    		this.generatePDF(id);
+    		this.generateSendPDF(id);
     	}
     	else {
     		JOptionPane.showMessageDialog(
@@ -296,13 +301,45 @@ public class GenerateInvoicesController {
         return parts;
     }
     
-    private void generatePDF(String id) {
+    private void generateSendPDF(String id) {
     	
+    	// Obtain data
     	InvoicesDTO invoice = this.invoicesModel.getInvoiceById(id);
         SponsorOrganizationsDTO sponsor = this.soModel.getSOByInvoiceId(id);
+        SponsorContactsDTO contact = this.scModel.getContactByInvoiceId(id);
         ActivitiesDTO activity = this.activitiesModel.getActivityByInvoice(id);
     	
+        // Generate invoice
     	InvoiceInstance invoiceInstance = new InvoiceInstance(invoice, sponsor, activity);
-    	PDFGenerator.generateInvoice(invoiceInstance);
+    	String pdfpath = PDFGenerator.generateInvoice(invoiceInstance);
+    	
+    	// Ask user to send invoice
+    	String message = "<html><body>"
+    			+ "<p>Do you want to send the invoice generated as a PDF to:</p><br>"
+    			+ "<table>"
+    			+ "<tr><td>Sponsor Organization</td><td>" + sponsor.getName() + "</td></tr>"
+    			+ "<tr><td>Sponsor Contact</td><td>" + contact.getName() + "</td></tr>"
+    			+ "<tr><td>Recipient Email</td><td>" + contact.getEmail() + "</td></tr>"
+				+ "</table></body></html>";
+    	
+		int response = JOptionPane.showConfirmDialog(
+	            this.view.getFrame(), message,
+	            "Confirm modification of old invoices",
+	            JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE
+        );
+        
+        if (response == JOptionPane.YES_OPTION)
+        {
+        	EmailManager tmp = new EmailManager(contact, sponsor, activity, pdfpath);
+        	if(tmp.sendEmail())
+        	{
+        		JOptionPane.showMessageDialog(
+        				this.view.getFrame(),
+    		    		"Email sent successfully",
+    		    		"Success",
+    		    		JOptionPane.INFORMATION_MESSAGE
+    		    );
+        	}
+        }
     }
 }
