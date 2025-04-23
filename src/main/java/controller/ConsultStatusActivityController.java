@@ -34,6 +34,8 @@ public class ConsultStatusActivityController {
     private double estimatedSponsorship, actualSponsorship;
     private double estimatedIncome, actualIncome;
     private double estimatedExpenses, actualExpenses;
+    
+    List<ActivitiesDTO> activities;
 
     // ================================================================================
 
@@ -76,13 +78,12 @@ public class ConsultStatusActivityController {
 
 	public void restoreDetail()
 	{
-		this.lastSelectedActivity = SwingUtil.selectAndGetSelectedKey(this.view.getActivityTable(), this.lastSelectedActivity);
-		if (!"".equals(this.lastSelectedActivity)) this.updateDetail();
+		//TODO
 	}
 
 	public void updateDetail()
-	{		
-		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivityTable());
+	{
+		this.lastSelectedActivity = this.activities.get(this.view.getActivityTable().getSelectedRow()).getId();
 		if("".equals(this.lastSelectedActivity)) {  restartView(); }
 		else
 		{
@@ -103,39 +104,44 @@ public class ConsultStatusActivityController {
 	
 	private void getActivities()
     {
-    	List<ActivitiesDTO> activities = activitiesModel.getAllActivities();
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
+    	this.activities = activitiesModel.getAllActivities();
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
     
 	private void getSponsorships(String idActivity)
 	{
+		this.estimatedSponsorship = 0.0;
+		this.actualSponsorship = 0.0;
+		
 		List<SponsorshipAgreementsDTO> sponsorships = saModel.getApplicableSponsorshipAgreementsByActivity(idActivity);
 		
-		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"amount", "sponsor", "status", "date"}, 0);
+		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"Sponsor", "Level", "Estimated", "Paid"}, 0);
 		for(SponsorshipAgreementsDTO item : sponsorships)
 		{
 			SponsorOrganizationsDTO sponsor = this.soModel.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
+			double paidAmount = this.saModel.getSponshorshipPaidAmountByAgreementId(item.getId());
 			tmodel.addRow(new Object[] {
-					item.getAmount(),
 					sponsor.getName(),
-					item.getStatus(),
-					item.getDate()
+					this.saModel.calculateLevelFromSponsorshipAgreementId(item.getId()).getName(),
+					item.getAmount(),
+					paidAmount
 			});
+			
+			this.estimatedSponsorship += Double.parseDouble(item.getAmount());
+			this.actualSponsorship += paidAmount;
 		}
 
 		this.view.getSponsorshipTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getSponsorshipTable());
 		
-		this.estimatedSponsorship = this.saModel.getEstimatedSponshorships(idActivity);
 		this.view.getSubTotalSponsorshipEstimatedField().setText(String.valueOf(this.estimatedSponsorship));
-		this.actualSponsorship = this.saModel.getActualSponshorships(idActivity);
 		this.view.getSubTotalSponsorshipActualField().setText(String.valueOf(this.actualSponsorship));
 
 	}
 	
-	private void getIncome(String idActivity)
+	private void getIncome(String idActivity) //FIXME
 	{
 		List<IncomesExpensesDTO> income = movementsModel.getIncomeByActivity(idActivity);
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
@@ -148,7 +154,7 @@ public class ConsultStatusActivityController {
 		this.view.getSubTotalIncomeActualField().setText(String.valueOf(this.actualIncome));
 	}
 	
-	private void getExpenses(String idActivity)
+	private void getExpenses(String idActivity) //FIXME
 	{
 		List<IncomesExpensesDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});

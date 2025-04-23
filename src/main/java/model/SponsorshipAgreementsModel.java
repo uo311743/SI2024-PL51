@@ -30,9 +30,21 @@ public class SponsorshipAgreementsModel {
 
 	// GETTERS
 	
+	public LevelsDTO calculateLevelFromSponsorshipAgreementId(String idSponsorship) {
+		SemanticValidations.validateIdForTable(idSponsorship, "SponsorshipAgreements", "ERROR. Provided idSponsorship for calculateLevelFromSponsorshipAgreementId does not exist.");
+
+		String sql = "SELECT l.* FROM SponsorshipAgreements sa "
+				+ "	JOIN Activities a ON a.id = sa.idActivity"
+				+ "	JOIN Levels l ON l.idActivity = a.id"
+				+ "	WHERE sa.id = ? AND sa.amount >= l.fee"
+				+ "	ORDER BY l.fee DESC LIMIT 1;";
+		
+	    return db.executeQueryPojo(LevelsDTO.class, sql, idSponsorship).get(0);
+	}
+	
 	public List<SponsorshipAgreementsDTO> getApplicableSponsorshipAgreementsByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getSponsorshipAgreementsByActivity does not exist.");
-	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
+	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed','paid', 'closed') AND idActivity = ?;";
 	    return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
 	}
 
@@ -44,6 +56,23 @@ public class SponsorshipAgreementsModel {
 			return 0.0;
 		}
 		return (double) result;
+	}
+    
+    public double getSponshorshipPaidAmountByAgreementId(String idAgreement) {
+		SemanticValidations.validateIdForTable(idAgreement, "SponsorshipAgreements", "ERROR. Provided idAgreement for getEstimatedSponshorshipsByAgreementId does not exist.");
+		
+		String sql = "SELECT SUM(sp.amount) "
+				+ "FROM SponsorshipPayments sp "
+				+ "JOIN Invoices i ON sp.idInvoice = i.id "
+				+ "WHERE i.idSponsorshipAgreement = ?;";
+		
+	    Object amount = db.executeQueryArray(sql, idAgreement).get(0)[0];
+		if (amount == null) { return 0.0; }
+	    
+	    sql = "SELECT taxRate FROM Invoices WHERE idSponsorshipAgreement = ? AND status != 'rectified'";
+	    Object taxRate = db.executeQueryArray(sql, idAgreement).get(0)[0];
+		
+		return (double) amount / (1 + ((double) taxRate) /100);
 	}
 	
 	public double getActualSponshorships(String idActivity) {
