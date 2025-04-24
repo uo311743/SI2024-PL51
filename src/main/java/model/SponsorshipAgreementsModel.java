@@ -1,6 +1,5 @@
 package model;
 
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 import DTOs.LevelsDTO;
@@ -108,10 +107,10 @@ public class SponsorshipAgreementsModel {
 		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName, editionName);
 	}
     
-    public String getFeeMaxByLevelFee(String feeLevelSelected) {
+    public String getFeeMaxByLevelFee(String feeLevelSelected, String idActivity) {
 		SemanticValidations.validatePositiveNumber(feeLevelSelected, "Not valid fee");
-		String sql = "SELECT * FROM Levels WHERE fee > ? ORDER BY fee ASC;";
-		List<LevelsDTO> max = db.executeQueryPojo(LevelsDTO.class, sql, feeLevelSelected);
+		String sql = "SELECT * FROM Levels WHERE idActivity = ? AND fee > ? ORDER BY fee ASC;";
+		List<LevelsDTO> max = db.executeQueryPojo(LevelsDTO.class, sql, idActivity, feeLevelSelected);
 		if (max.size() == 0) {
 			return "isTheMax";
 		}

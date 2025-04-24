@@ -200,7 +200,7 @@ public class RegisterSponsorshipController {
 			String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
 			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
 			
-			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
 			String amountMin = levelSelected.getFee();
 			
 			if (amountMax == "isTheMax") {
@@ -271,7 +271,7 @@ public class RegisterSponsorshipController {
 		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
 		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
 		
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
 		String amountMin = levelSelected.getFee();
 		
 		if (amountMax == "isTheMax") {
@@ -310,7 +310,7 @@ public class RegisterSponsorshipController {
 		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
 		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
 		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
 		
 		if (amountMax == "isTheMax") {
 			this.view.getAmountLabel().setText("Amount (euro): (" + levelSelected.getFee() + "-" + "Limitless)");
