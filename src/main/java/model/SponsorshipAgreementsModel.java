@@ -149,6 +149,7 @@ public class SponsorshipAgreementsModel {
     
     public String getFeeMaxByLevelFee(String feeLevelSelected, String idActivity) {
 		SemanticValidations.validatePositiveNumber(feeLevelSelected, "Not valid fee");
+		SemanticValidations.validateIdForTable(idActivity, "Activities", "Not valid ID");
 		String sql = "SELECT * FROM Levels WHERE idActivity = ? AND fee > ? ORDER BY fee ASC;";
 		List<LevelsDTO> max = db.executeQueryPojo(LevelsDTO.class, sql, idActivity, feeLevelSelected);
 		if (max.size() == 0) {

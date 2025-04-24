@@ -29,6 +29,7 @@ public class SponsorContactsModel {
     }
     
     public SponsorContactsDTO getContactByFilters(String idSponsorOrganization, String name, String email, String phone) {
+    	SemanticValidations.validateIdForTable(idSponsorOrganization, "SponsorOrganizations", "Not valid ID");
     	String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ? AND name = ? AND email = ? AND phone = ?;";
 	    List<SponsorContactsDTO> sol = db.executeQueryPojo(SponsorContactsDTO.class, sql, idSponsorOrganization, name, email, phone);
 	    return sol.get(0);
@@ -40,11 +41,13 @@ public class SponsorContactsModel {
     }
     
     public List<SponsorContactsDTO> getValidContactsBySponsorId(String sponsor) {
+    	SemanticValidations.validateIdForTable(sponsor, "SponsorOrganizations", "Not valid ID");
 		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ? AND name != '<<Removed data>>' AND email != '<<Removed data>>' AND phone != '<<Removed data>>';";
 	    return db.executeQueryPojo(SponsorContactsDTO.class, sql, sponsor);
     }
   
     public List<SponsorContactsDTO> getContactsBySponsorId(String sponsor) {
+    	SemanticValidations.validateIdForTable(sponsor, "SponsorOrganizations", "Not valid ID");
 		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ?;";
 		return db.executeQueryPojo(SponsorContactsDTO.class, sql, sponsor);
 	}
