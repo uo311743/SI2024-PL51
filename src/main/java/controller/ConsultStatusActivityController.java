@@ -129,8 +129,8 @@ public class ConsultStatusActivityController {
 			tmodel.addRow(new Object[] {
 					sponsor.getName(),
 					this.saModel.calculateLevelFromSponsorshipAgreementId(item.getId()).getName(),
-					estimatedAmount,
-					paidAmount
+					String.format("%.2f", estimatedAmount),
+					String.format("%.2f", paidAmount)
 
 			});
 			
@@ -146,7 +146,7 @@ public class ConsultStatusActivityController {
 
 	}
 	
-	private void getIncome(String idActivity) //FIXME
+	private void getIncome(String idActivity)
 	{
 		this.estimatedIncome = 0.0;
 		this.actualIncome = 0.0;
@@ -160,7 +160,9 @@ public class ConsultStatusActivityController {
 			double estimatedAmount = Double.parseDouble(item.getAmountEstimated());
 			
 			tmodel.addRow(new Object[] {
-					item.getConcept(), estimatedAmount, paidAmount
+					item.getConcept(),
+					String.format("%.2f", estimatedAmount),
+					String.format("%.2f", paidAmount)
 			});
 			
 			this.estimatedIncome += estimatedAmount;
@@ -174,7 +176,7 @@ public class ConsultStatusActivityController {
 		this.view.getSubTotalIncomeActualField().setText(String.valueOf(this.actualIncome));
 	}
 	
-	private void getExpenses(String idActivity) //FIXME
+	private void getExpenses(String idActivity)
 	{
 		this.estimatedExpenses = 0.0;
 		this.actualExpenses = 0.0;
@@ -188,7 +190,9 @@ public class ConsultStatusActivityController {
 			double estimatedAmount = Double.parseDouble(item.getAmountEstimated());
 			
 			tmodel.addRow(new Object[] {
-					item.getConcept(), estimatedAmount, paidAmount
+					item.getConcept(),
+					String.format("%.2f", estimatedAmount),
+					String.format("%.2f", paidAmount)
 			});
 			
 			this.estimatedExpenses += estimatedAmount;
