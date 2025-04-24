@@ -1,0 +1,3 @@
+@echo off
+setx COIIPA_SMTP_AUTH_username my_smtp_username
+setx COIIPA_SMTP_AUTH_passd my_smtp_password

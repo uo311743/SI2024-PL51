@@ -67,12 +67,12 @@ public class ModifySponsorContactView extends AbstractView {
         return contactsTable;
     }
     
-    public JComboBox<Object> getSponsorComboBox() {
-        return sponsorComboBox;
+    public JTextField getNameTextField() {
+        return nameTextField; 
     }
 
-    public JTextField getNameTextField() { 
-        return nameTextField; 
+    public JComboBox<Object> getSponsorComboBox() {
+        return sponsorComboBox;
     }
 
     public JTextField getEmailTextField() {
