@@ -113,7 +113,7 @@ public class SwingMain {
         inputPanel.add(textField);
         inputPanel.add(button);
         
-        topPanel.add(inputPanel, BorderLayout.CENTER);
+        if(ACTIVE_DEBUG) topPanel.add(inputPanel, BorderLayout.CENTER);
         mainPanel.add(topPanel, BorderLayout.NORTH);
 
 	    // Button panel with vertical BoxLayout
@@ -137,7 +137,7 @@ public class SwingMain {
 	    	// US 29254
 	    	menu.addButton("Register Long-Term Sponshorship", () -> {
 		    	new RegisterLongTermAgreementController(new RegisterLongTermAgreementView());
-		    });
+		    }, false);
 	    	
 	    	// US 29125
 	    	menu.addButton("Generate Invoices", () -> {
@@ -201,24 +201,26 @@ public class SwingMain {
 	    	menu.setVisible();
 	    });
 	    
-	    buttonPanel.add(Box.createVerticalStrut(10));
-	    buttonPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
-	    buttonPanel.add(Box.createVerticalStrut(20));
-	    
-	    
-	    addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
-	        db.createDatabase(false);
-	    });
-	    
-	    addButtonToMain(buttonPanel, "Load data for testing", () -> {
-			db.createDatabase(false);
-			db.loadDatabase();
-	    });
 	    
 	    if(ACTIVE_DEBUG)
+	    {
+	    	buttonPanel.add(Box.createVerticalStrut(10));
+		    buttonPanel.add(new JSeparator(SwingConstants.HORIZONTAL));
+		    buttonPanel.add(Box.createVerticalStrut(20));
+		    
+	    	addButtonToMain(buttonPanel, "Initialize Empty Database", () -> {
+		        db.createDatabase(false);
+		    });
+		    
+		    addButtonToMain(buttonPanel, "Load data for testing", () -> {
+				db.createDatabase(false);
+				db.loadDatabase();
+		    });
+		    
 		    addButtonToMain(buttonPanel, "Debugger", () -> {
 				new Debugger();
 		    });
+	    }
 
 	    
 	    /* 
