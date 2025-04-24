@@ -306,6 +306,7 @@ public class RegisterLongTermAgreementController {
 	private void activitySelection() {
 		this.lastSelectedActivity = this.activitiesId.get(this.view.getActivitiesTable().getSelectedRow());
 		this.setActivityInputsEnabled(true);
+		this.setInputsEnabled(true);
 		this.setRemoveActivityButtonVisibility(false);
 		this.updateLevels();
 		this.updateDetail();
