@@ -141,8 +141,8 @@ public class ConsultStatusActivityController {
 		this.view.getSponsorshipTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getSponsorshipTable());
 		
-		this.view.getSubTotalSponsorshipEstimatedField().setText(String.valueOf(this.estimatedSponsorship));
-		this.view.getSubTotalSponsorshipActualField().setText(String.valueOf(this.actualSponsorship));
+		this.view.getSubTotalSponsorshipEstimatedField().setText(String.format("%.2f", this.estimatedSponsorship));
+		this.view.getSubTotalSponsorshipActualField().setText(String.format("%.2f", this.actualSponsorship));
 
 	}
 	
@@ -172,8 +172,8 @@ public class ConsultStatusActivityController {
 		this.view.getIncomeTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getIncomeTable());
 		
-		this.view.getSubTotalIncomeEstimatedField().setText(String.valueOf(this.estimatedIncome));
-		this.view.getSubTotalIncomeActualField().setText(String.valueOf(this.actualIncome));
+		this.view.getSubTotalIncomeEstimatedField().setText(String.format("%.2f", this.estimatedIncome));
+		this.view.getSubTotalIncomeActualField().setText(String.format("%.2f", this.actualIncome));
 	}
 	
 	private void getExpenses(String idActivity)
@@ -202,34 +202,34 @@ public class ConsultStatusActivityController {
 		this.view.getExpensesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getExpensesTable());
 		
-		this.view.getSubTotalExpensesEstimatedField().setText(String.valueOf(this.estimatedExpenses));
-		this.view.getSubTotalExpensesActualField().setText(String.valueOf(this.actualExpenses));
+		this.view.getSubTotalExpensesEstimatedField().setText(String.format("%.2f", this.estimatedExpenses));
+		this.view.getSubTotalExpensesActualField().setText(String.format("%.2f", this.actualExpenses));
 	}
 	
 	private void calculateTotals()
 	{
 		this.view.getTotalEstimatedIncomeField().setText(
-				String.valueOf(this.estimatedSponsorship + this.estimatedIncome)
+				String.format("%.2f", this.estimatedSponsorship + this.estimatedIncome)
 		);
 		
 		this.view.getTotalEstimatedExpensesField().setText(
-				String.valueOf(this.estimatedExpenses)
+				String.format("%.2f", this.estimatedExpenses)
 		);
 		
 		this.view.getTotalEstimatedBalanceField().setText(
-				String.valueOf(this.estimatedSponsorship + this.estimatedIncome + this.estimatedExpenses)
+				String.format("%.2f", this.estimatedSponsorship + this.estimatedIncome + this.estimatedExpenses)
 		);
 		
 		this.view.getTotalActualIncomeField().setText(
-				String.valueOf(this.actualSponsorship + this.actualIncome)
+				String.format("%.2f", this.actualSponsorship + this.actualIncome)
 		);
 		
 		this.view.getTotalActualExpensesField().setText(
-				String.valueOf(this.actualExpenses)
+				String.format("%.2f", this.actualExpenses)
 		);
 		
 		this.view.getTotalActualBalanceField().setText(
-				String.valueOf(this.actualSponsorship + this.actualIncome + this.actualExpenses)
+				String.format("%.2f", this.actualSponsorship + this.actualIncome + this.actualExpenses)
 		);
 	}
 }

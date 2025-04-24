@@ -6,6 +6,7 @@ import DTOs.LevelsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
 import util.Database;
+import util.Params;
 import util.SemanticValidations;
 import util.Util;
 
@@ -62,16 +63,11 @@ public class SponsorshipAgreementsModel {
     public double getEstimatedSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getEstimatedSponshorships does not exist.");
 		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
-	    String sql_la = "SELECT SUM(sa.amount) "
-	    		+ "FROM SponsorshipAgreements sa "
-	    		+ "JOIN LongTermAgreementActivities lta ON sa.id = lta.idSponsorshipAgreement "
-	    		+ "WHERE sa.status IN ('signed', 'closed') AND lta.idActivity = ?;";
+	    
 		Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		Object result_la = db.executeQueryArray(sql_la, idActivity).get(0)[0];
 		double amount_sa = result == null ? 0.0 : (double) result;
-		double amount_lsa = result_la == null ? 0.0 : (double) result_la;
 		
-		return (amount_sa + amount_lsa);
+		return amount_sa * (1 + new Params().getTaxVAT() / 100);
 	}
     
     public double getSponshorshipPaidAmountByAgreementId(String idAgreement) {

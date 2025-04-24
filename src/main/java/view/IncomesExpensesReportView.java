@@ -16,7 +16,7 @@ public class IncomesExpensesReportView extends AbstractView {
     private JButton filterButton;
     
     public IncomesExpensesReportView() {
-		super("Incomes and Expenses Report");
+		super("Incomes and Expenses Report", 1300, 600);
     }
     
     @Override
