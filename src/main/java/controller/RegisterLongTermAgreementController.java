@@ -255,6 +255,7 @@ public class RegisterLongTermAgreementController {
 		this.view.getLevelsComboBox().removeAllItems();
 		
     	this.view.getContactEmailTextField().setEditable(false);
+		this.view.getContactEmailTextField().setFocusable(false);
 
 		this.setInputsEnabled(false);
 		this.setActivityInputsEnabled(false);
@@ -509,7 +510,7 @@ public class RegisterLongTermAgreementController {
     private void getContactEmail(String contactId)
     {
     	SponsorContactsDTO contact = this.scModel.getContactById(contactId);
-    	this.view.getContactEmailTextField().setText(contact.getEmail());;
+    	this.view.getContactEmailTextField().setText(contact.getEmail());
     }
     
     private void getGBMembers()

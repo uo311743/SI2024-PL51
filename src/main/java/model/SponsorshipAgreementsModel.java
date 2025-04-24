@@ -40,17 +40,28 @@ public class SponsorshipAgreementsModel {
 	public List<SponsorshipAgreementsDTO> getApplicableSponsorshipAgreementsByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getSponsorshipAgreementsByActivity does not exist.");
 	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
-	    return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
+	    String sql_la = "SELECT * FROM SponsorshipAgreements sa JOIN LongTermAgreementActivities lta ON sa.id = lta.idSponsorshipAgreement WHERE sa.status IN ('signed', 'closed') AND lta.idActivity = ?;";
+	    List<SponsorshipAgreementsDTO> sa = db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
+	    List<SponsorshipAgreementsDTO> lsa = db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql_la, idActivity);
+	    for (SponsorshipAgreementsDTO s : lsa) {
+	    	sa.add(s);
+	    }
+	    return sa;
 	}
 
     public double getEstimatedSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getEstimatedSponshorships does not exist.");
 		String sql = "SELECT SUM(amount) FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
-	    Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
-		if (result == null) {
-			return 0.0;
-		}
-		return (double) result;
+	    String sql_la = "SELECT SUM(sa.amount) "
+	    		+ "FROM SponsorshipAgreements sa "
+	    		+ "JOIN LongTermAgreementActivities lta ON sa.id = lta.idSponsorshipAgreement "
+	    		+ "WHERE sa.status IN ('signed', 'closed') AND lta.idActivity = ?;";
+		Object result = db.executeQueryArray(sql, idActivity).get(0)[0];
+		Object result_la = db.executeQueryArray(sql_la, idActivity).get(0)[0];
+		double amount_sa = result == null ? 0.0 : (double) result;
+		double amount_lsa = result_la == null ? 0.0 : (double) result_la;
+		
+		return (amount_sa + amount_lsa);
 	}
 	
 	public double getActualSponshorships(String idActivity) {
@@ -147,8 +158,11 @@ public class SponsorshipAgreementsModel {
         SemanticValidations.validateDateInPast(date, true,
                 "ERROR. Tried to insert a Sponsorship agreement with a future date.");
         
-        SemanticValidations.validateDateInPast(endDate, true,
-                "ERROR. Tried to insert a Sponsorship agreement with a future date.");
+        SemanticValidations.validateDateAfterTo(endDate, date, false, 
+        		"ERROR. Tried to insert a Sponsorship agreement with a End Date previous to Start Date.");
+        
+        SemanticValidations.validateDatesAtLeastOneYearApart(endDate, date, false,
+        		"ERROR. Tried to insert a Sponsorship agreement with a term of less than a year.");
         
         SemanticValidations.validatePositiveNumber(amount,
 				"ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
