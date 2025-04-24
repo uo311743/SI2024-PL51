@@ -40,7 +40,8 @@ INSERT INTO Activities (name, edition, status, dateStart, dateEnd, place) VALUES
 -- Insert Levels
 INSERT INTO Levels (idActivity, name, fee) VALUES
 (1, 'Basic', 50.00),
-(2, 'Basic', 100.00);
+(2, 'Basic', 100.00),
+(3, 'Basic', 120.00);
 
 -- Insert sample data into IncomesExpenses (ensuring all have at least one movement)
 INSERT INTO IncomesExpenses (idActivity, type, status, amountEstimated, dateEstimated, concept) 
