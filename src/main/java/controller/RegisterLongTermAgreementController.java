@@ -446,6 +446,8 @@ public class RegisterLongTermAgreementController {
 
 			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), this.activitiesId.get(this.view.getActivitiesTable().getSelectedRow()));
 			String amountMin = levelSelected.getFee();
+			
+			this.updateRange();
 
 			if (amountMax == "isTheMax") {
 				if(!SyntacticValidations.isDecimal(amount) || Double.valueOf(amount) < Double.valueOf(amountMin))
