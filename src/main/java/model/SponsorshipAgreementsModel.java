@@ -146,7 +146,7 @@ public class SponsorshipAgreementsModel {
 	}
     
     public void insertNewLongTermSponsorshipAgreement(String idSponsorContact, String idGBMember, 
-            List<String> activityIds, String amount, String date, String endDate) {
+            List<String> activityIds, List<String> amounts, String date, String endDate) {
         // Validate main agreement inputs
         SemanticValidations.validateIdForTable(idSponsorContact, "SponsorContacts",
                 "ERROR. Tried to insert a Sponsorship agreement with an unexisting idSponsorContact.");
@@ -163,8 +163,10 @@ public class SponsorshipAgreementsModel {
         SemanticValidations.validateDatesAtLeastOneYearApart(endDate, date, false,
         		"ERROR. Tried to insert a Sponsorship agreement with a term of less than a year.");
         
-        SemanticValidations.validatePositiveNumber(amount,
-				"ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
+        for (int i = 0; i < amounts.size(); i++) {
+        	SemanticValidations.validatePositiveNumber(amounts.get(i),
+    				"ERROR. Tried to insert a Sponsorship agreement with a non-positive amount.");
+        }
 
         for (int i = 0; i < activityIds.size(); i++) {
             String idActivity = activityIds.get(i);
@@ -183,15 +185,14 @@ public class SponsorshipAgreementsModel {
         String sqlAgreement = "INSERT INTO SponsorshipAgreements " +
                 "(idSponsorContact, idGBMember, amount, date, endDate, status) VALUES " +
                 "(?, ?, ?, ?, ?, 'signed')";
-        String agreementId = db.executeInsertion(sqlAgreement, idSponsorContact, idGBMember, 
-                amount, date, endDate);
+        String agreementId = db.executeInsertion(sqlAgreement, idSponsorContact, idGBMember, (double)0.0, date, endDate);
 
         // Insert into LongTermAgreementActivities
         String sqlActivity = "INSERT INTO LongTermAgreementActivities " +
-                "(idSponsorshipAgreement, idActivity) VALUES (?, ?)";
+                "(idSponsorshipAgreement, idActivity, amount) VALUES (?, ?, ?)";
         for (int i = 0; i < activityIds.size(); i++) {
             db.executeUpdate(sqlActivity, agreementId, 
-                    activityIds.get(i));
+                    activityIds.get(i), amounts.get(i));
         }
     }
 
