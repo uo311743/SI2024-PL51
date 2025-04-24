@@ -22,7 +22,7 @@ public class IncomesExpensesReportView extends AbstractView {
     @Override
     protected void initialize() {
         this.reportTable = new JTable();
-        this.statusComboBox = new JComboBox<>(new String[] {"all", "registered", "planned", "cancelled", "done", "closed"});
+        this.statusComboBox = new JComboBox<>(new String[] {"all", "planned", "cancelled", "closed"});
         this.startDateField = new JTextField(10); 
         this.endDateField = new JTextField(10);  
         this.totalEstimatedIncomeLabel = new JLabel("Estimated Income: 0");
@@ -51,6 +51,7 @@ public class IncomesExpensesReportView extends AbstractView {
 
         // Report Table
         reportTable.setName("reportTable");
+        reportTable.setDefaultEditor(Object.class, null);
         reportTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tablePanel = new JScrollPane(reportTable);
         getMainPanel().add(tablePanel, "cell 0 1, grow");

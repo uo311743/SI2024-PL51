@@ -119,6 +119,7 @@ public class ConsultStatusActivityController {
 		List<SponsorshipAgreementsDTO> sponsorships = saModel.getApplicableSponsorshipAgreementsByActivity(idActivity);
 		
 		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"Sponsor", "Level", "Estimated", "Paid"}, 0);
+
 		for(SponsorshipAgreementsDTO item : sponsorships)
 		{
 			SponsorOrganizationsDTO sponsor = this.soModel.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
@@ -130,6 +131,7 @@ public class ConsultStatusActivityController {
 					this.saModel.calculateLevelFromSponsorshipAgreementId(item.getId()).getName(),
 					estimatedAmount,
 					paidAmount
+
 			});
 			
 			this.estimatedSponsorship += estimatedAmount;

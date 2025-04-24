@@ -9,30 +9,45 @@ import util.SyntacticValidations;
 import view.RegisterMovementsView;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.UIManager;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableModel;
 
 import DTOs.ActivitiesDTO;
 import DTOs.IncomesExpensesDTO;
 import DTOs.MovementsDTO;
 
 public class RegisterMovementsController {
-	private static Object DEFAULT_VALUE_COMBOBOX = "--------";
+	private static Object DEFAULT_VALUE_COMBOBOX = "Select...";
 	
 	protected ActivitiesModel activitiesModel;
 	protected MovementsModel movementsModel;
 	private RegisterMovementsView view;
 	
     private String lastSelectedActivity;
+    private String lastSelectedIncomeExpense;
+    
+    private List<String> activitiesId;
+    private List<String> incomeExpenseId;
+    
+    private boolean submit;
 	
 	public RegisterMovementsController(RegisterMovementsView view) {
 		this.activitiesModel = ModelManager.getInstance().getActivitiesModel();
@@ -40,23 +55,16 @@ public class RegisterMovementsController {
 		
 		this.view = view;
 		
+		activitiesId = new ArrayList<String>();
+		incomeExpenseId = new ArrayList<String>();
+		
+		this.submit = false;
+		
 		this.initController();
 		this.initView();
 	}
 	
 	public void initController() {
-		this.view.getType().addItemListener(e -> {
-		    if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-		        SwingUtil.exceptionWrapper(() -> typeSelection());
-		    }
-		});
-		
-		this.view.getStatus().addItemListener(e -> {
-		    if (e.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
-		        SwingUtil.exceptionWrapper(() -> restartView());
-		    }
-		});
-		
 		this.view.getActivitiesTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -74,7 +82,7 @@ public class RegisterMovementsController {
 		this.view.getMovementsTable().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
 			}
 		});
 		
@@ -85,25 +93,32 @@ public class RegisterMovementsController {
 		
 		this.view.getButtonLowMiddle().addMouseListener(new MouseAdapter() {
 			@Override
-	        public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper( () -> {clear();});}
+	        public void mouseReleased(MouseEvent e) { SwingUtil.exceptionWrapper( () -> {restartView();});}
 		});
 		
-		this.view.getButtonLowRight().addMouseListener(new MouseAdapter() {
+		this.view.getBtnIncomesExpenses().addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseReleased(MouseEvent e) {
-				SwingUtil.exceptionWrapper(() -> showSubmitDialog());
+				SwingUtil.exceptionWrapper(() -> submitIncomeExpense());
 			}
 		});
 		
-		this.view.getAmountTextField().getDocument().addDocumentListener(new DocumentListener() {
+		this.view.getBtnMovements().addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				SwingUtil.exceptionWrapper(() -> submitMovement());
+			}
+		});
+		
+		this.view.getAmountTextField1().getDocument().addDocumentListener(new DocumentListener() {
     		@Override
 			public void insertUpdate(DocumentEvent e) {
-    			SwingUtil.exceptionWrapper(() -> updateDetail());
+    			SwingUtil.exceptionWrapper(() -> updateDetail1());
     		}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail1());
 			}
 
 			@Override
@@ -111,30 +126,75 @@ public class RegisterMovementsController {
     	});
     	
     	
-    	this.view.getDateTextField().getDocument().addDocumentListener(new DocumentListener() {
+    	this.view.getDateTextField1().getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail1());
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail1());
 			}
 
 			@Override
 			public void changedUpdate(DocumentEvent e) {}
     	});
     	
-    	this.view.getConceptTextField().getDocument().addDocumentListener(new DocumentListener() {
+    	this.view.getConceptTextField1().getDocument().addDocumentListener(new DocumentListener() {
 			@Override
 			public void insertUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail1());
 			}
 
 			@Override
 			public void removeUpdate(DocumentEvent e) {
-				SwingUtil.exceptionWrapper(() -> updateDetail());
+				SwingUtil.exceptionWrapper(() -> updateDetail1());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	this.view.getAmountTextField2().getDocument().addDocumentListener(new DocumentListener() {
+    		@Override
+			public void insertUpdate(DocumentEvent e) {
+    			SwingUtil.exceptionWrapper(() -> updateDetail2());
+    		}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	
+    	this.view.getDateTextField2().getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
+			}
+
+			@Override
+			public void changedUpdate(DocumentEvent e) {}
+    	});
+    	
+    	this.view.getConceptTextField2().getDocument().addDocumentListener(new DocumentListener() {
+			@Override
+			public void insertUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
+			}
+
+			@Override
+			public void removeUpdate(DocumentEvent e) {
+				SwingUtil.exceptionWrapper(() -> updateDetail2());
 			}
 
 			@Override
@@ -143,19 +203,34 @@ public class RegisterMovementsController {
 	}
 	
 	public void initView() {
-		this.restartView();
-		
 		this.loadTypes();
 		this.view.getType().insertItemAt(DEFAULT_VALUE_COMBOBOX, 0);
 		this.view.getType().setSelectedIndex(0);
 		this.view.getStatus().insertItemAt(DEFAULT_VALUE_COMBOBOX, 0);
 		this.view.getStatus().setSelectedIndex(0);
 		
+		this.restartView();
 		view.setVisible();
+	}
+	
+	public void clearFields() {
+		// Reset amount field with placeholder effect
+    	this.view.getDateTextField1().setText("");
+    	this.view.getAmountTextField1().setText("");
+    	this.view.getConceptTextField1().setText("");
+    	this.view.getDateTextField2().setText("");
+    	this.view.getAmountTextField2().setText("");
+    	this.view.getConceptTextField2().setText("");
+    	
+    	this.view.getCompensationCheckBox().setSelected(false);
+		this.view.getType().setSelectedIndex(0);
+		this.view.getStatus().setSelectedIndex(0);
 	}
 	
 	public void restartView()
     {
+		this.lastSelectedActivity = "";
+		this.lastSelectedIncomeExpense = "";
 		this.getActivities();
 		
 		this.view.getActivitiesTable().clearSelection();
@@ -166,62 +241,48 @@ public class RegisterMovementsController {
 		DefaultTableModel imodel = (DefaultTableModel) this.view.getIncomesExpensesTable().getModel();
 		imodel.setRowCount(0); // Clears the table
     	
-    	// Reset amount field with placeholder effect
-    	this.view.getDateTextField().setText("");
-    	this.view.getAmountTextField().setText("");
-    	this.view.getConceptTextField().setText("");
+    	this.clearFields();
     	
     	// Reset summary panel
-    	this.view.getEstimatedLabel().setText("0.0");
-    	this.view.getPaidLabel().setText("0.0");
+    	this.view.getEstimatedIncomesLabel().setText("0.0");
+    	this.view.getPaidIncomesLabel().setText("0.0");
+    	this.view.getEstimatedExpensesLabel().setText("0.0");
+    	this.view.getPaidExpensesLabel().setText("0.0");
+    	this.view.getRemainingBalanceLabel().setText("0.0");
     	
-    	this.setInputsEnabled(false);
+    	this.setInputsEnabled1(false);
+    	this.setInputsEnabled2(false);
     }
 	
-	public void clear() {
-		restartView();
-		
-		this.view.getCompensationCheckBox().setSelected(false);
-		this.view.getType().setSelectedIndex(0);
-		this.view.getStatus().setSelectedIndex(0);
-	}
-	
-	private void typeSelection()
-	{
-		String type = this.view.getType().getSelectedItem().toString();
-		if (!type.equals(DEFAULT_VALUE_COMBOBOX)) {
-			this.view.getIncomesExpensesLabel().setText("Select " + type + " to see the movements");
-			this.view.getMovementLabel().setText("Movements registered for the " + type);
-		}
-		restartView();
-		updateDetail();
+	public void updateView() {
+		this.setInputsEnabled1(false);
+    	this.setInputsEnabled2(false);
+		this.getIncomesExpenses();
+		getMovements();
+		calculateTotals();
 	}
 	
 	private void getActivities()
     {
     	List<ActivitiesDTO> activities = this.activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
-    	
     	activities.sort(Comparator.comparing(ActivitiesDTO::getDateStart));
-		
-		String[] columnNames = {"id", "dateStart", "dateEnd", "name", "status"};
-		
-		// Create table model
-	    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-		
-	    for (ActivitiesDTO activity : activities) {
-	        Object[] rowData = {
-	        	activity.getId(),
-	        	activity.getDateStart(),
-	        	activity.getDateEnd(),
-	        	activity.getName(),
-	        	activity.getStatus()
-	        };
-	        model.addRow(rowData);
+    	
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"dateStart", "dateEnd", "name", "status"});
+		activitiesId.clear();
+		for (ActivitiesDTO activity : activities) {
+	    	activitiesId.add(activity.getId());
 	    }
+		
+		// Create larger font
+		Font largerFont = new Font("Arial", Font.PLAIN, 14); // Adjust size as needed
+		
+		// Set the model in the JTable
+	    this.view.getActivitiesTable().setModel(tmodel);
+	    JTableHeader header = this.view.getActivitiesTable().getTableHeader();
+	    header.setFont(largerFont);
+	    this.view.adjustColumns();
 	    
-	    // Set the model in the JTable
-	    this.view.getActivitiesTable().setModel(model);
-	    SwingUtil.autoAdjustColumns(this.view.getActivitiesTable());
+	    calculateTotals();
     }
 	
 	public void loadTypes() {
@@ -232,44 +293,30 @@ public class RegisterMovementsController {
 	
 	private void getIncomesExpenses()
 	{
-		int row = this.view.getActivitiesTable().getSelectedRow(); 
-        
-        String idActivity = "";
-        
-        if (row >= 0)
-        {
-        	idActivity = (String) this.view.getActivitiesTable().getModel().getValueAt(row, 0);
-        }
-        
-    	List<IncomesExpensesDTO> incomesExpenses;
-    	
-    	if (this.view.getType().getSelectedItem().toString().equals("income")) {
-    		incomesExpenses = this.movementsModel.getIncomeByActivity(idActivity);
-    	} else {
-    		incomesExpenses = this.movementsModel.getExpensesByActivity(idActivity);
-    	}
+    	List<IncomesExpensesDTO> incomesExpenses = this.movementsModel.getIncomeExpenseByActivity(lastSelectedActivity);
     	
     	incomesExpenses.sort(Comparator.comparing(IncomesExpensesDTO::getDateEstimated, Comparator.nullsLast(Comparator.naturalOrder())));
 		
-		String[] columnNames = {"id", "dateEstimated", "concept", "status", "amountEstimated"};
-		
-		// Create table model
-	    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-		
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(incomesExpenses, new String[] {"dateEstimated", "type", "concept", "status", "amountEstimated"});
+	    
+	    incomeExpenseId.clear();
 	    for (IncomesExpensesDTO incomeExpense : incomesExpenses) {
-	        Object[] rowData = {
-	        	incomeExpense.getId(),
-	        	incomeExpense.getDateEstimated(),
-	        	incomeExpense.getConcept(),
-	        	incomeExpense.getStatus(),
-	       		incomeExpense.getAmountEstimated()
-	        };
-	        model.addRow(rowData);
+	    	incomeExpenseId.add(incomeExpense.getId());
+	    	if (incomeExpense.getId() == this.lastSelectedIncomeExpense) {
+	    		this.view.getIncomesExpensesTable().setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+	    		this.view.getIncomesExpensesTable().setRowSelectionInterval(incomeExpenseId.size()-1, incomeExpenseId.size()-1);
+	    		this.view.getIncomesExpensesTable().scrollRectToVisible(this.view.getIncomesExpensesTable().getCellRect(incomeExpenseId.size()-1, 0, true));
+	    	}
 	    }
 	    
 	    // Set the model in the JTable
-	    this.view.getIncomesExpensesTable().setModel(model);
-	    SwingUtil.autoAdjustColumns(this.view.getIncomesExpensesTable());
+	    this.view.getIncomesExpensesTable().setModel(tmodel);
+	    this.view.adjustColumns();
+	    // Create larger font
+	 	Font largerFont = new Font("Arial", Font.PLAIN, 14); // Adjust size as needed
+ 	    JTableHeader header = this.view.getIncomesExpensesTable().getTableHeader();
+ 	    header.setFont(largerFont); 
+ 	    
 	    this.view.getMovementsTable().clearSelection();
 		DefaultTableModel movModel = (DefaultTableModel) this.view.getMovementsTable().getModel();
 		movModel.setRowCount(0); // Clears the table
@@ -277,126 +324,78 @@ public class RegisterMovementsController {
 	
 	private void getMovements()
 	{
-		int row = this.view.getIncomesExpensesTable().getSelectedRow(); 
-        
-        String idType = "";
-        
-        if (row >= 0)
-        {
-        	idType = String.valueOf(this.view.getIncomesExpensesTable().getModel().getValueAt(row, 0));
-        }
-        
-    	List<MovementsDTO> movements = this.movementsModel.getMovementsByIncomeExpense(idType);
+    	List<MovementsDTO> movements = this.movementsModel.getMovementsByIncomeExpense(lastSelectedIncomeExpense);
     	
     	movements.sort(Comparator.comparing(MovementsDTO::getDate));
 		
-		String[] columnNames = {"date", "concept", "amount"};
-		
 		// Create table model
-	    DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-		
-	    for (MovementsDTO movement : movements) {
-	        Object[] rowData = {
-	        	movement.getDate(),
-	            movement.getConcept(),
-	            movement.getAmount()
-	        };
-	        model.addRow(rowData);
-	    }
+		TableModel tmodel = SwingUtil.getTableModelFromPojos(movements, new String[] {"date", "concept", "amount"});
 	    
 	    // Set the model in the JTable
-	    this.view.getMovementsTable().setModel(model);
-	    SwingUtil.autoAdjustColumns(this.view.getMovementsTable());
+	    this.view.getMovementsTable().setModel(tmodel);
+	    Font largerFont = new Font("Arial", Font.PLAIN, 14); // Adjust size as needed
+ 	    JTableHeader header = this.view.getMovementsTable().getTableHeader();
+ 	    header.setFont(largerFont); 
 	}
 	
 	private void activitySelection()
 	{
-		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivitiesTable());
 		int row = this.view.getActivitiesTable().getSelectedRow();
+		if (row >= 0) {
+			this.lastSelectedActivity = activitiesId.get(row);
+			this.lastSelectedIncomeExpense = "";
+		}
 		
-		String idActivity = (String) this.view.getActivitiesTable().getValueAt(row, 0);
-		String type = this.view.getType().getSelectedItem().toString();
+		updateView();
+		updateDetail1();
+	}
+	
+	private void calculateTotals()
+	{
+		double income = this.movementsModel.getActualIncome(lastSelectedActivity);
+		double expense = this.movementsModel.getActualExpenses(lastSelectedActivity);
+		this.view.getEstimatedIncomesLabel().setText(String.valueOf(this.movementsModel.getEstimatedIncome(lastSelectedActivity)));
+		this.view.getPaidIncomesLabel().setText(String.valueOf(String.valueOf(income)));
+		this.view.getEstimatedExpensesLabel().setText(String.valueOf(this.movementsModel.getEstimatedExpenses(lastSelectedActivity)));
+		this.view.getPaidExpensesLabel().setText(String.valueOf(expense));
 		
-		// Update Labels in the UI
-		Double actualAmount = calculateActualAmount(idActivity, type);
-		Double estimatedAmount = 0.0;
-		this.view.getPaidLabel().setText(String.valueOf(actualAmount));
-	    if (type.equals("income")) {
-	    	estimatedAmount = calculateEstimatedIncome(idActivity);
-	    } else if (type.equals("expense")) {
-	    	estimatedAmount = calculateEstimatedExpense(idActivity);
-	    }
-	    this.view.getEstimatedLabel().setText(String.valueOf(estimatedAmount));
-	    
-	    if (this.view.getStatus().getSelectedItem().toString().equals("paid")) { 
-	    	getIncomesExpenses(); 
-	    } else {
-	    	restartView();
-	    }
-		updateDetail();
-	}
-	
-	private Double calculateEstimatedIncome(String idActivity)
-	{
-		List<IncomesExpensesDTO> incomes = this.movementsModel.getIncomeByActivity(idActivity);
-	    
-	    double totalEstimated = 0.0;
-	    for (IncomesExpensesDTO income : incomes) {
-	        totalEstimated += Double.parseDouble(income.getAmountEstimated()); // Accumulate payment total
-	    }
-	    
-	    return totalEstimated;
-	}
-	
-	private Double calculateActualAmount(String idActivity, String type)
-	{
-		List<MovementsDTO> movements = this.movementsModel.getMovementsByTypeAndActivity(type, idActivity);
-	    
-	    double totalPaid = 0.0;
-	    for (MovementsDTO movement : movements) {
-	    	totalPaid += movement.getAmount(); // Accumulate payment total
-	    }
-	    
-	    return totalPaid;
-	}
-	
-	private Double calculateEstimatedExpense(String idActivity)
-	{
-		List<IncomesExpensesDTO> expenses = this.movementsModel.getExpensesByActivity(idActivity);
-	    
-	    double totalEstimated = 0.0;
-	    for (IncomesExpensesDTO expense : expenses) {
-	        totalEstimated += Double.parseDouble(expense.getAmountEstimated()); // Accumulate payment total
-	    }
-	    
-	    return totalEstimated;
+		this.view.getRemainingBalanceLabel().setText(
+				String.valueOf(income + expense)
+		);
 	}
 	
 	private void incomeExpenseSelection()
 	{
-		int row = this.view.getIncomesExpensesTable().getSelectedRow();
+		this.clearFields();
 		
-		// Fill Default values in the UI
-		this.view.getAmountTextField().setText(String.valueOf(this.view.getIncomesExpensesTable().getValueAt(row, 4)));
-		this.view.getConceptTextField().setText((String) this.view.getIncomesExpensesTable().getValueAt(row, 2));
-	    
+		int row = this.view.getIncomesExpensesTable().getSelectedRow();
+		if (row >= 0) {this.lastSelectedIncomeExpense = incomeExpenseId.get(row);}
+		
 		getMovements(); 
-		updateDetail();
+		updateDetail2();
 	}
 	
-	private void setInputsEnabled(boolean enabled)
+	private void setInputsEnabled1(boolean enabled)
     {
-    	this.view.getDateTextField().setEnabled(enabled);
-    	this.view.getAmountTextField().setEnabled(enabled);
-    	this.view.getConceptTextField().setEnabled(enabled);
+    	this.view.getDateTextField1().setEnabled(enabled);
+    	this.view.getAmountTextField1().setEnabled(enabled);
+    	this.view.getConceptTextField1().setEnabled(enabled);
     }
 	
-	public void updateDetail()
+	private void setInputsEnabled2(boolean enabled)
+    {
+    	this.view.getDateTextField2().setEnabled(enabled);
+    	this.view.getAmountTextField2().setEnabled(enabled);
+    	this.view.getConceptTextField2().setEnabled(enabled);
+    }
+	
+	public void updateDetail1()
 	{	
 		// ------------------------------------------------------------
-		// If a movement is selected in the table do:
-		
-		this.lastSelectedActivity = SwingUtil.getSelectedKey(this.view.getActivitiesTable());
+		// If an Activity is selected in the table do:
+		if (this.view.getIncomesExpensesTable().getSelectedRow() >= 0) {
+			return;
+		}
 		
 		if("".equals(this.lastSelectedActivity))
 		{
@@ -404,113 +403,165 @@ public class RegisterMovementsController {
 		}
 		else
 		{
-			this.setInputsEnabled(true);
+			this.setInputsEnabled1(true);
 		}
 				
 		// ------------------------------------------------------------
 		// Check JTextField inputs:
-		boolean valid = true;
+		this.submit = true;
 		
 		// Validate amount
-		String amount = this.view.getAmountTextField().getText();
-		if(!SyntacticValidations.isDecimal(amount) && !SyntacticValidations.isNotEmpty(amount))
+		String amount = this.view.getAmountTextField1().getText();
+		if(!SyntacticValidations.isDecimal(amount) || !SyntacticValidations.isNotEmpty(amount) || !SyntacticValidations.isPositiveNumber(amount, true))
 		{
-			this.view.getAmountTextField().setForeground(Color.RED);
-			valid = false;
-		} else { this.view.getAmountTextField().setForeground(Color.BLACK); }
+			this.view.getAmountTextField1().setForeground(Color.RED);
+			this.submit = false;
+		} else { this.view.getAmountTextField1().setForeground(Color.BLACK); }
 		
 		// Validate date
-		String paymentDate = this.view.getDateTextField().getText();
+		String paymentDate = this.view.getDateTextField1().getText();
 		String status = this.view.getStatus().getSelectedItem().toString();
 		if(!SyntacticValidations.isDate(paymentDate) || (status.equals("paid") && !SyntacticValidations.isNotEmpty(paymentDate)))
 		{
-			this.view.getDateTextField().setForeground(Color.RED);
-			valid = false;
-		} else { this.view.getDateTextField().setForeground(Color.BLACK); }
+			this.view.getDateTextField1().setForeground(Color.RED);
+			this.submit = false;
+		} else { this.view.getDateTextField1().setForeground(Color.BLACK); }
 		
 		// Validate concept
-		String concept = this.view.getConceptTextField().getText();
+		String concept = this.view.getConceptTextField1().getText();
 		if (!SyntacticValidations.isNotEmpty(concept)) { 
-			valid = false; 
+			this.submit = false; 
+		}
+	}
+	
+	public void updateDetail2()
+	{	
+		// ------------------------------------------------------------
+		// If a Income/Expense is selected in the table do:
+		if("".equals(this.lastSelectedIncomeExpense))
+		{
+			updateView(); 
+		}
+		else
+		{
+			this.setInputsEnabled2(true);
+		}
+				
+		// ------------------------------------------------------------
+		// Check JTextField inputs:
+		this.submit = true;
+		
+		// Validate amount
+		String amount = this.view.getAmountTextField2().getText();
+		
+		if(!SyntacticValidations.isDecimal(amount) || !SyntacticValidations.isNotEmpty(amount) || !SyntacticValidations.isPositiveNumber(amount, true))
+		{
+			this.view.getAmountTextField2().setForeground(Color.RED);
+			this.submit = false;
+		} else { this.view.getAmountTextField2().setForeground(Color.BLACK); }
+		
+		// Validate date
+		String paymentDate = this.view.getDateTextField2().getText();
+		String status = this.view.getStatus().getSelectedItem().toString();
+		if(!SyntacticValidations.isDate(paymentDate) || !SyntacticValidations.isNotEmpty(paymentDate))
+		{
+			this.view.getDateTextField2().setForeground(Color.RED);
+			this.submit = false;
+		} else { this.view.getDateTextField2().setForeground(Color.BLACK); }
+		
+		// Validate concept
+		String concept = this.view.getConceptTextField2().getText();
+		if (!SyntacticValidations.isNotEmpty(concept)) { 
+			this.submit = false; 
 		}
 	}
 	
 	// ================================================================================
-
-    private void showSubmitDialog()
-    {
-    	// Force UI messages to be in English
-        Locale.setDefault(Locale.ENGLISH);
-        
-        int activityRow = this.view.getActivitiesTable().getSelectedRow();
-        int incomeExpenseRow = this.view.getIncomesExpensesTable().getSelectedRow();
-        
-        String activity = "";
-        String idActivity = "";
-        
-        if (activityRow >= 0)
-        {
-        	idActivity = String.valueOf(this.view.getActivitiesTable().getModel().getValueAt(activityRow, 0));
-        	activity = (String) this.view.getActivitiesTable().getModel().getValueAt(activityRow, 3);
-        }
-        
-        String idType = "";
-        
-        if (incomeExpenseRow >= 0)
-        {
-        	idType = String.valueOf(this.view.getIncomesExpensesTable().getModel().getValueAt(incomeExpenseRow, 0));
-        }
-        
-        String amount = this.view.getAmountTextField().getText();
-        String type = this.view.getType().getSelectedItem().toString();
-        String date = this.view.getDateTextField().getText();
-        String concept = this.view.getConceptTextField().getText();
-        String status = this.view.getStatus().getSelectedItem().toString();
-        
-        boolean compensationMovement = this.view.getCompensationCheckBox().isSelected() ? true : false;
-        Double estimated = Double.parseDouble(this.view.getEstimatedLabel().getText());
-        Double paid = Double.parseDouble(this.view.getPaidLabel().getText());
-        
-        try {
-        	if ("expense".equals(type))
-    		{
-            	if (compensationMovement) {
-            		SemanticValidations.validatePositiveNumber(amount, "Compensation Movements for Expenses must be of positive amounts");
-    			} else {
-    				SemanticValidations.validateNegativeNumber(amount, "Expenses must be of negative amounts");
-    			}
-    		} else if ("income".equals(type))
-    		{
-            	if (compensationMovement) {
-            		SemanticValidations.validateNegativeNumber(amount, "Compensation Movements for Incomes must be of negative amounts");
-    			} else {
-    				SemanticValidations.validatePositiveNumber(amount, "Incomes must be of positive amounts");
-    			}
-    		}
-        	if (paid >= estimated) { 
-        		this.movementsModel.setIncomeExpenseStatus(idType, "paid"); 
-        	} else {
-        		this.movementsModel.setIncomeExpenseStatus(idType, "estimated"); 
-        	}
-        } catch (Exception e) {
-        	e.printStackTrace();
-        	// Show an error dialog
+	private void submitIncomeExpense()
+	{
+		if (!submit) {
+			// Show an error dialog
         	JOptionPane.showOptionDialog(
         		null, 
-        		"An error occurred: " + e.getMessage(), // Error message
-        		"Movement Registration Error", // Dialog title
+        		"Some of the fields have an incorrect format", // Error message
+        		"Income/Expense Registration Error", // Dialog title
         		JOptionPane.DEFAULT_OPTION, 
         		JOptionPane.ERROR_MESSAGE, 
         		null, 
         		new Object[]{"OK"}, // Force "OK" button in English
         		"OK" // Default selected option
         	);
-        	
-        	this.clear();
+        	updateView();
+        	return;
+		}
+		
+		// Force UI messages to be in English
+        Locale.setDefault(Locale.ENGLISH);
+        
+        int activityRow = this.view.getActivitiesTable().getSelectedRow();
+        String activity = "";
+        String idActivity = "";
+        
+        if (activityRow >= 0)
+        {
+        	idActivity = activitiesId.get(activityRow);
+        	activity = (String) this.view.getActivitiesTable().getModel().getValueAt(activityRow, 2);
+        }
+        
+        String amount = this.view.getAmountTextField1().getText();
+        String type = this.view.getType().getSelectedItem().toString();
+        String date = this.view.getDateTextField1().getText();
+        String concept = this.view.getConceptTextField1().getText();
+        String status = this.view.getStatus().getSelectedItem().toString();
+        
+        String message = "";
+        boolean validated = true;
+        
+        if (!SyntacticValidations.isNotEmpty(amount)) {
+        	message = "<html><body>"
+                    + "<p>Amount must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(concept)) {
+        	message = "<html><body>"
+                    + "<p>Concept must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (DEFAULT_VALUE_COMBOBOX.equals(type) || DEFAULT_VALUE_COMBOBOX.equals(status)) {
+        	message = "<html><body>"
+                    + "<p>Type and Status must be selected</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if ("paid".equals(status) && !SyntacticValidations.isNotEmpty(date)) {
+        	message = "<html><body>"
+                    + "<p>Date must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        }
+        
+        if (!validated) {
+        	// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An error occurred: " + message, // Error message
+        		"Income/Expense Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
         	return;
         }
-
-        String message = "<html><body>"
+        
+        if ("expense".equals(type))
+		{
+    		Double aux = Double.parseDouble(amount);
+			aux = (-1)*aux;
+			amount = String.valueOf(aux);
+		}
+        
+        message = "<html><body>"
                 + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
                 + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
                 + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
@@ -523,11 +574,169 @@ public class RegisterMovementsController {
         
         Object[] options = {"Yes", "No"};
         
-        if (DEFAULT_VALUE_COMBOBOX.equals(type) || DEFAULT_VALUE_COMBOBOX.equals(status)) {
+        int response = JOptionPane.showOptionDialog(null,
+                message, 		// The message
+                "Confirmation of Income/Expense Registration",    // The title
+                JOptionPane.DEFAULT_OPTION,          		// The option type
+                JOptionPane.QUESTION_MESSAGE,        		// The message type
+                null,                               		// Icon (null means default question icon)
+                options,                            		// Custom buttons
+                options[0]); 
+        
+        if (response == 1) return;
+        
+        String idLastIncomeExpense = "";
+        
+        try {
+        	if (status.equals("paid")) {
+        		idLastIncomeExpense = this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
+        		this.movementsModel.registerMovement(idLastIncomeExpense, amount, date, concept);
+        	} else if (status.equals("estimated")) {
+        		this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
+        	}
+        	this.updateView();
+        } catch (Exception e) {
+        	e.printStackTrace();
+        	// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An error occurred: " + e.getMessage(), // Error message
+        		"Income/Expense Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        }
+        
+        updateView();
+	}
+	
+	private void submitMovement()
+	{
+		if ("".equals(lastSelectedIncomeExpense)) {
+			// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An Income/Expense must be selected to register a Movement", // Error message
+        		"Movement Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	updateView();
+        	return;
+		}
+		
+		if (!submit) {
+			// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"Some of the fields have an incorrect format", // Error message
+        		"Movement Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	updateView();
+        	return;
+		}
+		
+		// Force UI messages to be in English
+        Locale.setDefault(Locale.ENGLISH);
+        
+        int activityRow = this.view.getActivitiesTable().getSelectedRow();
+        int incomeExpenseRow = this.view.getIncomesExpensesTable().getSelectedRow();
+        
+        String activity = "";
+        String idActivity = "";
+        
+        if (activityRow >= 0)
+        {
+        	idActivity = activitiesId.get(activityRow);
+        	activity = (String) this.view.getActivitiesTable().getModel().getValueAt(activityRow, 2);
+        }
+        
+        String idType = "";
+        String type = "";
+        
+        if (incomeExpenseRow >= 0)
+        {
+        	idType = incomeExpenseId.get(incomeExpenseRow);
+        	type = (String) this.view.getIncomesExpensesTable().getModel().getValueAt(incomeExpenseRow, 1);
+        	
+        }
+        
+        String amount = this.view.getAmountTextField2().getText();
+        String date = this.view.getDateTextField2().getText();
+        String concept = this.view.getConceptTextField2().getText();
+        
+        boolean compensationMovement = this.view.getCompensationCheckBox().isSelected() ? true : false;
+        
+        String message = "";
+        boolean validated = true;
+        
+        if (!SyntacticValidations.isNotEmpty(amount)) {
         	message = "<html><body>"
-                    + "<p>Type and Status must be selected</p>"
+                    + "<p>Amount must be provided</p>"
                     + "</body></html>";
-        } 
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(concept)) {
+        	message = "<html><body>"
+                    + "<p>Concept must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        } else if (!SyntacticValidations.isNotEmpty(date)) {
+        	message = "<html><body>"
+                    + "<p>Date must be provided</p>"
+                    + "</body></html>";
+        	validated = false;
+        }
+        
+        if (!validated) {
+        	// Show an error dialog
+        	JOptionPane.showOptionDialog(
+        		null, 
+        		"An error occurred: " + message, // Error message
+        		"Movement Registration Error", // Dialog title
+        		JOptionPane.DEFAULT_OPTION, 
+        		JOptionPane.ERROR_MESSAGE, 
+        		null, 
+        		new Object[]{"OK"}, // Force "OK" button in English
+        		"OK" // Default selected option
+        	);
+        	return;
+        }
+        
+        if ("expense".equals(type) && !compensationMovement)
+		{
+    		Double aux = Double.parseDouble(amount);
+			aux = (-1)*aux;
+			amount = String.valueOf(aux);
+		} else if ("income".equals(type) && compensationMovement)
+		{
+			Double aux = Double.parseDouble(amount);
+			aux = (-1)*aux;
+			amount = String.valueOf(aux);
+		}
+        
+        message = "<html><body>"
+                + "<p>You are about to add a Movement for the Activity: <b>" + activity + "</b>.</p>"
+                + "<table style='margin: 10px auto; font-size: 8px; border-collapse: collapse;'>"
+                + "<tr><td style='padding: 2px 5px;'><b>Type:</b></td><td style='padding: 2px 5px;'>" + type + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Amount:</b></td><td style='padding: 2px 5px;'>" + amount + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Date:</b></td><td style='padding: 2px 5px;'>" + date + "</td></tr>"
+                + "<tr><td style='padding: 2px 5px;'><b>Concept:</b></td><td style='padding: 2px 5px;'>" + concept + "</td></tr>"
+                + "</table>"
+                + "<p><i>Do you want to proceed with adding this Movement?</i></p>"
+                + "</body></html>";
+        
+        Object[] options = {"Yes", "No"};
         
         int response = JOptionPane.showOptionDialog(null,
                 message, 		// The message
@@ -540,25 +749,8 @@ public class RegisterMovementsController {
         
         if (response == 1) return;
         
-        String idLastIncomeExpense = "";
-        
-        if ("".equals(concept)) { concept = null; }
-        
         try {
-        	if ("".equals(idType) && status.equals("paid")) { 
-        		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future");
-        		idLastIncomeExpense = this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
-        		this.movementsModel.registerMovement(idLastIncomeExpense, amount, date, concept);
-        	} else if ("".equals(idType) && status.equals("estimated")) {
-        		this.movementsModel.registerIncomeExpense(idActivity, type, status, amount, date, concept);
-        	} else if (status.equals("paid")) { 
-        		SemanticValidations.validateDateInPast(date, true, "Payment cannot be made in the future"); 
-        		String incomeExpenseDate = this.movementsModel.getIncomeExpenseById(idType).getDateEstimated();
-        		if (SyntacticValidations.isNotNull(incomeExpenseDate)) {
-        			SemanticValidations.validateDateAfterTo(date, incomeExpenseDate, true, "Movement cannot be made before Income/Expense registration");
-        		}
-        		this.movementsModel.registerMovement(idType, amount, date, concept); 
-        	}
+        	this.movementsModel.registerMovement(idType, amount, date, concept);
         } catch (Exception e) {
         	e.printStackTrace();
         	// Show an error dialog
@@ -573,7 +765,6 @@ public class RegisterMovementsController {
         		"OK" // Default selected option
         	);
         }
-        
-        this.clear();
-    }
+        this.updateView();
+	}
 }

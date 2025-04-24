@@ -34,6 +34,22 @@ public class SyntacticValidations {
             return false;
         }
     }
+    
+    /**
+     * Validates if the given object is a positive integer.
+     * 
+     * @param number  the object to validate (can be String, Number, etc.)
+     * @param includeZero  if true, considers 0 as positive
+     * @return true if the object is a positive integer, false otherwise
+     */
+    public static boolean isPositiveNumber(Object number, boolean includeZero) {
+        try {
+            int value = Integer.parseInt(number.toString());
+            return includeZero ? value >= 0 : value > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
 
     /**
      * Validates if the given object is a decimal number.

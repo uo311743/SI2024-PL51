@@ -134,6 +134,11 @@ public class SwingMain {
 		    	new RegisterSponsorshipController(new RegisterSponsorshipView());
 		    });
 	    	
+	    	// US 29254
+	    	menu.addButton("Register Long-Term Sponshorship", () -> {
+		    	new RegisterLongTermAgreementController(new RegisterLongTermAgreementView());
+		    });
+	    	
 	    	// US 29125
 	    	menu.addButton("Generate Invoices", () -> {
 	    		new GenerateInvoicesController(new GenerateInvoicesView());
@@ -180,6 +185,12 @@ public class SwingMain {
 	    	// US 29332
 	    	menu.addButton("Register Activity", () -> {
 	    		new RegisterActivityController(new RegisterActivityView());
+	    	});
+	    	
+
+	    	// US 29330
+	    	menu.addButton("Modify Activity", () -> {
+	    		new ModifyActivityController(new ModifyActivityView());
 	    	});
 	    	
 	    	// US 29331

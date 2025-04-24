@@ -20,6 +20,7 @@ public class ActivitiesModel {
 
 	// GETTERS
     public ActivitiesDTO getActivityByInvoice(String idInvoice) {
+    	SemanticValidations.validateIdForTable(idInvoice, "Activities", "ERROR. Provided idInvoice for getActivityByInvoice does not exist.");
     	String sql = "SELECT a.* FROM Invoices i "
     			+ "JOIN SponsorshipAgreements sa ON i.idSponsorshipAgreement = sa.id "
     			+ "JOIN Activities a ON a.id = sa.idActivity "
@@ -69,12 +70,26 @@ public class ActivitiesModel {
 		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}
+    
+    public ActivitiesDTO getActivityById(String idActivity) {
+    	SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActivityById does not exist.");
+		String sql = "SELECT * FROM Activities WHERE id == ?;";
+		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, idActivity);
+		return activities.get(0);
+	}
 
     public List<ActivitiesDTO> getActivitiesbyStatus(String... status) {
 	    String placeholders = String.join(",", Collections.nCopies(status.length, "?"));
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
+    
+    public List<ActivitiesDTO> getClosableActivities() {
+	    String sql = "SELECT * FROM Activities"
+	    		+ " WHERE status IN ('registered', 'planned', 'done')"
+	    		+ " AND dateStart != '' AND dateEnd != '' AND place != ''";
+	    return db.executeQueryPojo(ActivitiesDTO.class, sql);
+    }
   
     public ActivitiesDTO getActivityByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);
@@ -82,6 +97,20 @@ public class ActivitiesModel {
     	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition);
 		return sol.get(0);
 	}
+    
+    public List<ActivitiesDTO> getActivitiesInDateRange(String startDate, String endDate) {
+        // Validate date range
+        SemanticValidations.validateDateAfterTo(endDate, startDate, false, "End Date must be after Start Date");
+
+        String sql = "SELECT * FROM Activities " +
+                     "WHERE ((dateStart BETWEEN ? AND ?) " +  // Starts in range
+                     "OR (dateEnd BETWEEN ? AND ?) " +        // Ends in range
+                     "OR (dateStart <= ? AND dateEnd >= ?)) " + // Spans entire range
+                     "AND lower(status) = 'planned' " +       // Only planned activities
+                     "ORDER BY dateStart";
+
+        return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, startDate, endDate, startDate, startDate);
+    }
     
     public int getNumberActivitiesByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);
@@ -135,5 +164,22 @@ public class ActivitiesModel {
 				+ "    WHERE idActivity = ?"
 				+ ") AND status = 'signed';";
 		db.executeUpdate(sql, idActivity);
+	}
+    
+    public void updateActivity(String id, String name, String edition, String status, String dateStart, String dateEnd, String place) {
+    	SemanticValidations.validateName(name);
+		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
+		if (!dateStart.isBlank()) {
+			SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
+		}
+		if (!dateEnd.isBlank()) {
+			SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
+		}
+		if (!place.isBlank()) {
+			SemanticValidations.validateName(place);
+		}
+				
+		String sql = "UPDATE Activities SET name = ?, edition = ?, status = ?, dateStart = ?, dateEnd = ?, place = ? WHERE id = ?;";
+		db.executeUpdate(sql, name, edition, status, dateStart, dateEnd, place, id);
 	}
 }

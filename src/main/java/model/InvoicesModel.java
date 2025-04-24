@@ -75,6 +75,13 @@ public class InvoicesModel {
         return db.executeQueryPojo(InvoicesDTO.class, SQL_FILTERED_INVOICES_BY_SPONSOR, sponsorId);
     }
     
+    public double getTotalAmount(String idInvoice) {
+    	SemanticValidations.validateIdForTable(idInvoice, "Invoices", "ERROR. Provided idInvoice for getTotalAmount does not exist.");
+		String sql = "SELECT totalAmount FROM Invoices WHERE id = ?;";
+	    Object result = db.executeQueryArray(sql, idInvoice).get(0)[0];
+		return (result == null) ? 0.0 : (double) result;
+    }
+    
     public int getNumberInvoices(String id) {
 		List<Object[]> result = db.executeQueryArray(SQL_NUMBER_INVOICES, id);
 		if (result == null || result.isEmpty()) {
@@ -120,9 +127,7 @@ public class InvoicesModel {
 		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
-		
-		this.validateDateForUpdateInvoices(dateIssued, idSponsorshipAgreement);
-		
+				
 		String sql = "UPDATE Invoices "
 				+ "SET status = 'rectified' "
 				+ "WHERE idSponsorshipAgreement = ?;";
@@ -143,9 +148,9 @@ public class InvoicesModel {
             if (result.isEmpty()) {
             	throw new ApplicationException("No Invoice Found");
             } else {
-            	Date invoiceIssuedDate = Date.valueOf(result.get(0)[0].toString());
-            	Date paymentDate = Date.valueOf(date);
-            	validateCondition(invoiceIssuedDate.before(paymentDate), "Payment cannot be made before Invoice generation");
+            	String invoiceIssuedDate = result.get(0)[0].toString();
+            	String paymentDate = date;
+            	SemanticValidations.validateDateAfterTo(paymentDate, invoiceIssuedDate, true, "Payment cannot be made before Invoice generation");
             }
         } catch (Exception e) {
         	e.printStackTrace();
