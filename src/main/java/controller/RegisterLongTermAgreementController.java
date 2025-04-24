@@ -10,7 +10,6 @@ import util.ModelManager;
 import util.SwingUtil;
 import util.SyntacticValidations;
 import view.RegisterLongTermAgreementView;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -21,7 +20,6 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
@@ -29,7 +27,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableModel;
-
 import DTOs.ActivitiesDTO;
 import DTOs.LevelsDTO;
 import DTOs.SponsorContactsDTO;
@@ -447,7 +444,7 @@ public class RegisterLongTermAgreementController {
 			String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
 			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(lastSelectedActivity, levelName);
 
-			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), this.activitiesId.get(this.view.getActivitiesTable().getSelectedRow()));
 			String amountMin = levelSelected.getFee();
 
 			if (amountMax == "isTheMax") {
@@ -476,7 +473,7 @@ public class RegisterLongTermAgreementController {
 		String activityId = this.lastSelectedActivity;
 		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
 		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee());
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), this.activitiesId.get(this.view.getActivitiesTable().getSelectedRow()));
 		
 		if (amountMax == "isTheMax") {
 			this.view.getAmountLabel().setText("Amount (€): (" + levelSelected.getFee() + "-" + "Limitless)");
