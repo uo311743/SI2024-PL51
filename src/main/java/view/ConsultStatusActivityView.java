@@ -4,7 +4,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.BorderLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -27,7 +27,7 @@ public class ConsultStatusActivityView extends AbstractView {
     private JTextField subTotalExpensesEstimatedField, subTotalExpensesActualField;
 
     public ConsultStatusActivityView() {
-        super("Consult Status Activity");
+        super("Consult Activity Status", 1000, 600);
     }
 
     @Override
@@ -73,29 +73,21 @@ public class ConsultStatusActivityView extends AbstractView {
     protected void configMainPanel() {
         JPanel topPanel = createTopPanel();
         JPanel centralPanel = createCentralPanel();
-        JPanel incomePanel = createIncomePanel();
-        JPanel expensesPanel = createExpensesPanel();
 
-        // Main layout: Top, Central, Income, and Expenses panels stacked vertically
+        // Main layout: Top and Central panels stacked vertically
         JPanel mainPanel = super.getMainPanel();
         mainPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.weighty = 1.0;
+        gbc.weighty = 0.3;
         gbc.fill = GridBagConstraints.BOTH;
-        gbc.insets = new Insets(0, 0, 0, 0);
         mainPanel.add(topPanel, gbc);
 
         gbc.gridy = 1;
+        gbc.weighty = 0.7;
         mainPanel.add(centralPanel, gbc);
-
-        gbc.gridy = 2;
-        mainPanel.add(incomePanel, gbc);
-
-        gbc.gridy = 3;
-        mainPanel.add(expensesPanel, gbc);
     }
 
     private JPanel createTopPanel() {
@@ -158,116 +150,58 @@ public class ConsultStatusActivityView extends AbstractView {
     }
 
     private JPanel createCentralPanel() {
-        // Sponsorship panel
-        sponsorshipTable.setDefaultEditor(Object.class, null);
-        JScrollPane sponsorshipScroll = new JScrollPane(sponsorshipTable);
-        sponsorshipScroll.setBorder(BorderFactory.createTitledBorder("Sponsorships"));
+        // Sponsorships panel
+        JPanel sponsorshipPanel = createTablePanel(
+            "Sponsorships", sponsorshipTable, subTotalSponsorshipEstimatedField, subTotalSponsorshipActualField
+        );
 
-        // Sub-total panel for sponsorships
-        JPanel sponsorshipSubTotalPanel = createSponsorshipSubTotalPanel();
+        // Other Income panel
+        JPanel incomePanel = createTablePanel(
+            "Other Income", incomeTable, subTotalIncomeEstimatedField, subTotalIncomeActualField
+        );
 
-        // Central panel: Sponsorships and their sub-totals
-        JPanel centralPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.7;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        centralPanel.add(sponsorshipScroll, gbc);
+        // Expenses panel
+        JPanel expensesPanel = createTablePanel(
+            "Expenses", expensesTable, subTotalExpensesEstimatedField, subTotalExpensesActualField
+        );
 
-        gbc.gridx = 1;
-        gbc.weightx = 0.3;
-        centralPanel.add(sponsorshipSubTotalPanel, gbc);
+        // Central panel: Three panels horizontally aligned
+        JPanel centralPanel = new JPanel(new GridLayout(1, 3));
+        centralPanel.add(sponsorshipPanel);
+        centralPanel.add(incomePanel);
+        centralPanel.add(expensesPanel);
 
         return centralPanel;
     }
 
-    private JPanel createIncomePanel() {
-        // Income panel
-        incomeTable.setDefaultEditor(Object.class, null);
-        JScrollPane incomeScroll = new JScrollPane(incomeTable);
-        incomeScroll.setBorder(BorderFactory.createTitledBorder("Income"));
+    private JPanel createTablePanel(String title, JTable table, JTextField estimatedField, JTextField actualField) {
+        // Table with title
+        table.setDefaultEditor(Object.class, null);
+        JScrollPane tableScroll = new JScrollPane(table);
+        tableScroll.setBorder(BorderFactory.createTitledBorder(title));
 
-        // Sub-total panel for income
-        JPanel incomeSubTotalPanel = createIncomeSubTotalPanel();
-
-        // Income panel: Income and its sub-totals
-        JPanel incomePanel = new JPanel(new GridBagLayout());
+        // Subtotals panel
+        JPanel subtotalsPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.weightx = 0.7;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        incomePanel.add(incomeScroll, gbc);
+        gbc.anchor = GridBagConstraints.WEST;
+        subtotalsPanel.add(new JLabel("Subtotals: "), gbc);
 
         gbc.gridx = 1;
-        gbc.weightx = 0.3;
-        incomePanel.add(incomeSubTotalPanel, gbc);
+        gbc.weightx = 1.0; // Allow horizontal expansion
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        subtotalsPanel.add(estimatedField, gbc);
 
-        return incomePanel;
-    }
+        gbc.gridx = 2;
+        gbc.weightx = 1.0; // Allow horizontal expansion
+        subtotalsPanel.add(actualField, gbc);
 
-    private JPanel createExpensesPanel() {
-        // Expenses panel
-        expensesTable.setDefaultEditor(Object.class, null);
-        JScrollPane expensesScroll = new JScrollPane(expensesTable);
-        expensesScroll.setBorder(BorderFactory.createTitledBorder("Expenses"));
+        // Combine table and subtotals
+        JPanel panel = new JPanel(new BorderLayout());
+        panel.add(tableScroll, BorderLayout.CENTER);
+        panel.add(subtotalsPanel, BorderLayout.SOUTH);
 
-        // Sub-total panel for expenses
-        JPanel expensesSubTotalPanel = createExpensesSubTotalPanel();
-
-        // Expenses panel: Expenses and their sub-totals
-        JPanel expensesPanel = new JPanel(new GridBagLayout());
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.weightx = 0.7;
-        gbc.weighty = 1.0;
-        gbc.fill = GridBagConstraints.BOTH;
-        expensesPanel.add(expensesScroll, gbc);
-
-        gbc.gridx = 1;
-        gbc.weightx = 0.3;
-        expensesPanel.add(expensesSubTotalPanel, gbc);
-
-        return expensesPanel;
-    }
-
-    private JPanel createSponsorshipSubTotalPanel() {
-        JPanel panel = new JPanel(new GridLayout(2, 2));
-        panel.setBorder(BorderFactory.createTitledBorder("Sponsorship Sub-Total"));
-        JLabel subTotalSponsorshipIncomeEstimated = new JLabel("Estimated:");
-        JLabel subTotalSponsorshipIncomeActual = new JLabel("Actual:");
-        panel.add(subTotalSponsorshipIncomeEstimated);
-        panel.add(subTotalSponsorshipEstimatedField);
-        panel.add(subTotalSponsorshipIncomeActual);
-        panel.add(subTotalSponsorshipActualField);
-        return panel;
-    }
-
-    private JPanel createIncomeSubTotalPanel() {
-        JPanel panel = new JPanel(new GridLayout(2, 2));
-        panel.setBorder(BorderFactory.createTitledBorder("Income Sub-Total"));
-        JLabel subTotalIncomeEstimated = new JLabel("Estimated:");
-        JLabel subTotalIncomeActual = new JLabel("Actual:");
-        panel.add(subTotalIncomeEstimated);
-        panel.add(subTotalIncomeEstimatedField);
-        panel.add(subTotalIncomeActual);
-        panel.add(subTotalIncomeActualField);
-        return panel;
-    }
-
-    private JPanel createExpensesSubTotalPanel() {
-        JPanel panel = new JPanel(new GridLayout(2, 2));
-        panel.setBorder(BorderFactory.createTitledBorder("Expenses Sub-Total"));
-        JLabel subTotalExpensesEstimated = new JLabel("Estimated:");
-        JLabel subTotalExpensesActual = new JLabel("Actual:");
-        panel.add(subTotalExpensesEstimated);
-        panel.add(subTotalExpensesEstimatedField);
-        panel.add(subTotalExpensesActual);
-        panel.add(subTotalExpensesActualField);
         return panel;
     }
 
