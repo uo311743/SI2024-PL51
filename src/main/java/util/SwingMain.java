@@ -187,6 +187,7 @@ public class SwingMain {
 	    		new RegisterActivityController(new RegisterActivityView());
 	    	});
 	    	
+
 	    	// US 29330
 	    	menu.addButton("Modify Activity", () -> {
 	    		new ModifyActivityController(new ModifyActivityView());

@@ -34,8 +34,21 @@ public class SponsorshipAgreementsModel {
 
 	// GETTERS
 	
+	public LevelsDTO calculateLevelFromSponsorshipAgreementId(String idSponsorship) {
+		SemanticValidations.validateIdForTable(idSponsorship, "SponsorshipAgreements", "ERROR. Provided idSponsorship for calculateLevelFromSponsorshipAgreementId does not exist.");
+
+		String sql = "SELECT l.* FROM SponsorshipAgreements sa "
+				+ "	JOIN Activities a ON a.id = sa.idActivity"
+				+ "	JOIN Levels l ON l.idActivity = a.id"
+				+ "	WHERE sa.id = ? AND sa.amount >= l.fee"
+				+ "	ORDER BY l.fee DESC LIMIT 1;";
+		
+	    return db.executeQueryPojo(LevelsDTO.class, sql, idSponsorship).get(0);
+	}
+	
 	public List<SponsorshipAgreementsDTO> getApplicableSponsorshipAgreementsByActivity(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getSponsorshipAgreementsByActivity does not exist.");
+
 	    String sql = "SELECT * FROM SponsorshipAgreements WHERE status IN ('signed', 'closed') AND idActivity = ?;";
 	    String sql_la = "SELECT * FROM SponsorshipAgreements sa JOIN LongTermAgreementActivities lta ON sa.id = lta.idSponsorshipAgreement WHERE sa.status IN ('signed', 'closed') AND lta.idActivity = ?;";
 	    List<SponsorshipAgreementsDTO> sa = db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, idActivity);
@@ -60,6 +73,33 @@ public class SponsorshipAgreementsModel {
 		
 		return (amount_sa + amount_lsa);
 	}
+    
+    public double getSponshorshipPaidAmountByAgreementId(String idAgreement) {
+		SemanticValidations.validateIdForTable(idAgreement, "SponsorshipAgreements", "ERROR. Provided idAgreement for getEstimatedSponshorshipsByAgreementId does not exist.");
+		
+		String sql = "SELECT SUM(sp.amount) "
+				+ "FROM SponsorshipPayments sp "
+				+ "JOIN Invoices i ON sp.idInvoice = i.id "
+				+ "WHERE i.idSponsorshipAgreement = ?;";
+		
+	    Object amount = db.executeQueryArray(sql, idAgreement).get(0)[0];
+		if (amount == null) { return 0.0; }
+		return (double) amount;
+	}
+    
+    public double getTaxRateByAgreementId(String idAgreement) {
+		SemanticValidations.validateIdForTable(idAgreement, "SponsorshipAgreements", "ERROR. Provided idAgreement for getTaxRateByAgreementId does not exist.");
+
+    	String sql = "SELECT taxRate FROM Invoices WHERE idSponsorshipAgreement = ? AND status != 'rectified'";
+    	
+    	Object taxRate;
+    	try {
+    		taxRate = db.executeQueryArray(sql, idAgreement).get(0)[0];
+    	} catch(IndexOutOfBoundsException e) {
+    		return 0.0;
+    	}
+		return (double) taxRate;
+    }
 	
 	public double getActualSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActualSponshorships does not exist.");
