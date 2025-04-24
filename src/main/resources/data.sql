@@ -10,9 +10,9 @@ INSERT INTO GBMembers (name, role) VALUES
 
 -- Insert SponsorContacts
 INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
-(1, 'John Doe', 'john@techcorp.com', '+34911234567'),
-(2, 'Mary White', 'mary@citycouncil.gov', '+34912345678'),
-(2, 'Robert Smith', 'robert@citycouncil.gov', '+34913456789');
+(1, 'John Doe', 'uo294319@uniovi.es', '+34911234567'),
+(2, 'Mary White', 'uo294319@uniovi.es', '+34912345678'),
+(2, 'Robert Smith', 'uo294319@uniovi.es', '+34913456789');
 
 -- Insert SponsorshipAgreements
 INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES
@@ -22,10 +22,10 @@ INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amo
 (1, 1, 1, 3000.00, '2024-03-01', 'closed');
 
 -- Insert Invoices
-INSERT INTO Invoices (id, idSponsorshipAgreement, dateIssued, dateExpiration, totalAmount, taxRate, status) VALUES
-('INV-001', 1, '2024-02-05', '2024-04-05', 5000.00, 10, 'issued'),
-('INV-002', 2, '2024-01-20', '2024-03-20', 2000.00, 10, 'issued'),
-('INV-003', 3, '2024-03-05', '2024-05-04', 3000.00, 10, 'paid');
+INSERT INTO Invoices (id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES
+('INV-001', 1, '2024-02-05', 5000.00, 10, 'issued'),
+('INV-002', 2, '2024-01-20', 2000.00, 10, 'issued'),
+('INV-003', 3, '2024-03-05', 3000.00, 10, 'paid');
 
 -- Insert SponsorshipPayments
 INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES

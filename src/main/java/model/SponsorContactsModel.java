@@ -1,7 +1,6 @@
 package model;
 
 import java.util.List;
-
 import DTOs.SponsorContactsDTO;
 import util.Database;
 import util.SemanticValidations;
@@ -39,6 +38,11 @@ public class SponsorContactsModel {
     	String sql = "SELECT * FROM SponsorContacts WHERE name != '<<Removed data>>' AND email != '<<Removed data>>' AND phone != '<<Removed data>>';";
 	    return db.executeQueryPojo(SponsorContactsDTO.class, sql);
     }
+  
+    public List<SponsorContactsDTO> getContactsBySponsorId(String sponsor) {
+		String sql = "SELECT * FROM SponsorContacts WHERE idSponsorOrganization = ?;";
+		return db.executeQueryPojo(SponsorContactsDTO.class, sql, sponsor);
+	}
 
 	// INSERTIONS
     
@@ -47,7 +51,16 @@ public class SponsorContactsModel {
         		+ "(?, ?, ?, ?)";
 		db.executeUpdate(query, idSponsorOrganization, name, email, phone);
     }
-    
+
+	public SponsorContactsDTO getContactByInvoiceId(String id) {
+		SemanticValidations.validateIdForTable(id, "Invoices", "ERROR. Provided id for getContactByInvoiceId does not exist.");
+		String sql = "SELECT SC.* FROM Invoices I"
+				+ " JOIN SponsorshipAgreements SA ON I.idSponsorshipAgreement = SA.id"
+				+ " JOIN SponsorContacts SC ON SA.idSponsorContact = SC.id"
+				+ " WHERE I.id = ?";
+	    return db.executeQueryPojo(SponsorContactsDTO.class, sql, id).get(0);
+	}
+	
     public void updateContact(String id, String name, String email, String phone) {
     	SemanticValidations.validateIdForTable(id, "SponsorContacts", "Not valid ID");
 		SemanticValidations.validateName(name);

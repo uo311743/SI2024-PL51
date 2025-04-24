@@ -220,7 +220,7 @@ public class RegisterSponsorshipController {
 			
 			// Validate agreement date
 			String agreementDate = this.view.getAgreementDateTextField().getText();
-			if(!SyntacticValidations.isDate(agreementDate))
+			if(!SyntacticValidations.isDateInPast(agreementDate, true)) 
 			{
 				this.view.getAgreementDateTextField().setForeground(Color.RED);
 				valid = false;
@@ -291,7 +291,7 @@ public class RegisterSponsorshipController {
 		
 		// Validate agreement date
 		String agreementDate = this.view.getAgreementDateTextField().getText();
-		if(!SyntacticValidations.isDate(agreementDate))
+		if(!SyntacticValidations.isDateInPast(agreementDate, true)) 
 		{
 			this.view.getAgreementDateTextField().setForeground(Color.RED);
 			valid = false;
@@ -469,7 +469,7 @@ public class RegisterSponsorshipController {
         }
     	else
     	{
-    		message = "This action will modify " + numOldSponshorshipAgreements + " sponsorship agreements for that activity and sponsor.";
+    		message = "This action will overwrite " + numOldSponshorshipAgreements + " previous registered sponsorship agreements for that activity and sponsor.";
     		response = JOptionPane.showConfirmDialog(
     	            this.view.getFrame(), message,
     	            "Confirm modification of old Sponsorship Agreements",
