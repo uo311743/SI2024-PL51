@@ -68,12 +68,22 @@ public class SponsorshipAgreementsModel {
 		
 	    Object amount = db.executeQueryArray(sql, idAgreement).get(0)[0];
 		if (amount == null) { return 0.0; }
-	    
-	    sql = "SELECT taxRate FROM Invoices WHERE idSponsorshipAgreement = ? AND status != 'rectified'";
-	    Object taxRate = db.executeQueryArray(sql, idAgreement).get(0)[0];
-		
-		return (double) amount / (1 + ((double) taxRate) /100);
+		return (double) amount;
 	}
+    
+    public double getTaxRateByAgreementId(String idAgreement) {
+		SemanticValidations.validateIdForTable(idAgreement, "SponsorshipAgreements", "ERROR. Provided idAgreement for getTaxRateByAgreementId does not exist.");
+
+    	String sql = "SELECT taxRate FROM Invoices WHERE idSponsorshipAgreement = ? AND status != 'rectified'";
+    	
+    	Object taxRate;
+    	try {
+    		taxRate = db.executeQueryArray(sql, idAgreement).get(0)[0];
+    	} catch(IndexOutOfBoundsException e) {
+    		return 0.0;
+    	}
+		return (double) taxRate;
+    }
 	
 	public double getActualSponshorships(String idActivity) {
 		SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActualSponshorships does not exist.");

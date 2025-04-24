@@ -9,7 +9,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import DTOs.ActivitiesDTO;
 import DTOs.IncomesExpensesDTO;
-import DTOs.MovementsDTO;
 import DTOs.SponsorOrganizationsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import model.ActivitiesModel;
@@ -36,6 +35,8 @@ public class ConsultStatusActivityController {
     private double estimatedExpenses, actualExpenses;
     
     List<ActivitiesDTO> activities;
+    List<IncomesExpensesDTO> income;
+    List<IncomesExpensesDTO> expenses;
 
     // ================================================================================
 
@@ -122,14 +123,16 @@ public class ConsultStatusActivityController {
 		{
 			SponsorOrganizationsDTO sponsor = this.soModel.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
 			double paidAmount = this.saModel.getSponshorshipPaidAmountByAgreementId(item.getId());
+			double estimatedAmount = Double.parseDouble(item.getAmount()) * (1 + this.saModel.getTaxRateByAgreementId(item.getId()) / 100);
+			
 			tmodel.addRow(new Object[] {
 					sponsor.getName(),
 					this.saModel.calculateLevelFromSponsorshipAgreementId(item.getId()).getName(),
-					item.getAmount(),
+					estimatedAmount,
 					paidAmount
 			});
 			
-			this.estimatedSponsorship += Double.parseDouble(item.getAmount());
+			this.estimatedSponsorship += estimatedAmount;
 			this.actualSponsorship += paidAmount;
 		}
 
@@ -143,27 +146,57 @@ public class ConsultStatusActivityController {
 	
 	private void getIncome(String idActivity) //FIXME
 	{
-		List<IncomesExpensesDTO> income = movementsModel.getIncomeByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(income, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
+		this.estimatedIncome = 0.0;
+		this.actualIncome = 0.0;
+		
+		this.income = movementsModel.getIncomeByActivity(idActivity);
+		
+		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"Concept", "Estimated", "Paid"}, 0);
+		for(IncomesExpensesDTO item : income)
+		{
+			double paidAmount = this.movementsModel.getTotalAmountPaid(item.getId());
+			double estimatedAmount = Double.parseDouble(item.getAmountEstimated());
+			
+			tmodel.addRow(new Object[] {
+					item.getConcept(), estimatedAmount, paidAmount
+			});
+			
+			this.estimatedIncome += estimatedAmount;
+			this.actualIncome += paidAmount;
+		}
+		
 		this.view.getIncomeTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getIncomeTable());
 		
-		this.estimatedIncome = this.movementsModel.getEstimatedIncome(idActivity);
 		this.view.getSubTotalIncomeEstimatedField().setText(String.valueOf(this.estimatedIncome));
-		this.actualIncome = this.movementsModel.getActualIncome(idActivity);
 		this.view.getSubTotalIncomeActualField().setText(String.valueOf(this.actualIncome));
 	}
 	
 	private void getExpenses(String idActivity) //FIXME
 	{
-		List<IncomesExpensesDTO> expenses = movementsModel.getExpensesByActivity(idActivity);
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(expenses, new String[] {"id", "idActivity", "type", "status", "amountEstimated", "dateEstimated", "concept"});
+		this.estimatedExpenses = 0.0;
+		this.actualExpenses = 0.0;
+		
+		expenses = movementsModel.getExpensesByActivity(idActivity);
+		
+		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"Concept", "Estimated", "Paid"}, 0);
+		for(IncomesExpensesDTO item : expenses)
+		{
+			double paidAmount = this.movementsModel.getTotalAmountPaid(item.getId());
+			double estimatedAmount = Double.parseDouble(item.getAmountEstimated());
+			
+			tmodel.addRow(new Object[] {
+					item.getConcept(), estimatedAmount, paidAmount
+			});
+			
+			this.estimatedExpenses += estimatedAmount;
+			this.actualExpenses += paidAmount;
+		}
+		
 		this.view.getExpensesTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getExpensesTable());
 		
-		this.estimatedExpenses = this.movementsModel.getEstimatedExpenses(idActivity);
 		this.view.getSubTotalExpensesEstimatedField().setText(String.valueOf(this.estimatedExpenses));
-		this.actualExpenses = this.movementsModel.getActualExpenses(idActivity);
 		this.view.getSubTotalExpensesActualField().setText(String.valueOf(this.actualExpenses));
 	}
 	
