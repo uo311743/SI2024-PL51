@@ -427,8 +427,7 @@ public class RegisterSponsorshipController {
         
         if (row >= 0)
         {
-        	idActivity = (String) this.view.getActivityTable().getModel().getValueAt(row, 0);
-        	activity = (String) this.view.getActivityTable().getModel().getValueAt(row, 1);
+        	activity = (String) this.view.getActivityTable().getModel().getValueAt(row, 0);
         }
 
         String sponsor = (String) view.getSponsorComboBox().getSelectedItem();
