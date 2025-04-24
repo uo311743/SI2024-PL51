@@ -423,7 +423,6 @@ public class RegisterSponsorshipController {
         int row = this.view.getActivityTable().getSelectedRow(); 
         
         String activity = "";
-        String idActivity = "";
         
         if (row >= 0)
         {
@@ -462,11 +461,11 @@ public class RegisterSponsorshipController {
         
         if (response != JOptionPane.YES_OPTION) return;
         
-        int numOldSponshorshipAgreements = this.saModel.getNumberOldSponsorshipAgreements(idContact, idActivity);
+        int numOldSponshorshipAgreements = this.saModel.getNumberOldSponsorshipAgreements(idContact, ids.get(view.getActivityTable().getSelectedRow()));
     	
         if(numOldSponshorshipAgreements == 0)
         {
-        	this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+        	this.saModel.insertNewSponsorshipAgreement(idContact, idGBmember, ids.get(view.getActivityTable().getSelectedRow()), amount, agreementDate);
 			
 	        JOptionPane.showMessageDialog(
 	    			this.view.getFrame(), "Sponshorship agreement added successfully.",
@@ -486,7 +485,7 @@ public class RegisterSponsorshipController {
 	        
 	        if (response == JOptionPane.YES_OPTION)
 	        {
-	        	this.saModel.insertUpdateSponsorshipAgreement(idContact, idGBmember, idActivity, amount, agreementDate);
+	        	this.saModel.insertUpdateSponsorshipAgreement(idContact, idGBmember, ids.get(view.getActivityTable().getSelectedRow()), amount, agreementDate);
 		        JOptionPane.showMessageDialog(
 		    			this.view.getFrame(),
 		    			"Sponsorship agreement added successfully. The old ones have been marked as 'modified'.",
