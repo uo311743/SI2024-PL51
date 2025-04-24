@@ -35,8 +35,6 @@ import DTOs.LevelsDTO;
 import DTOs.SponsorContactsDTO;
 
 public class RegisterLongTermAgreementController {
-	private static Object DEFAULT_VALUE_COMBOBOX = "Select...";
-
 	protected SponsorOrganizationsModel soModel;
 	protected SponsorshipAgreementsModel saModel;
 	protected SponsorContactsModel scModel;
@@ -238,10 +236,6 @@ public class RegisterLongTermAgreementController {
 		this.getActivities();
 		this.getSponsors();
 		this.getGBMembers();
-						
-		this.view.getContactComboBox().removeAllItems();
-		this.view.getContactComboBox().addItem(DEFAULT_VALUE_COMBOBOX);
-		this.view.getContactComboBox().setSelectedItem(DEFAULT_VALUE_COMBOBOX);
 		
 		this.view.getActivitiesTable().clearSelection();
 		DefaultTableModel model = (DefaultTableModel) this.view.getActivitiesTable().getModel();
@@ -501,7 +495,7 @@ public class RegisterLongTermAgreementController {
     
     private void getContacts(String sponshorId)
     {
-    	List<Object[]> contacts = scModel.getContactsBySponshorArray(sponshorId);
+    	List<Object[]> contacts = scModel.getValidContactsBySponsorOrganizationArray(sponshorId);
 		ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(contacts);
 		view.getContactComboBox().setModel(lmodel);
 		view.getContactComboBox().setEnabled(true);

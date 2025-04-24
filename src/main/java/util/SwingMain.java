@@ -29,6 +29,8 @@ import javax.swing.JButton;
  */
 public class SwingMain {
 	
+	private static final boolean ACTIVE_DEBUG = true;
+	
 	private static Date today;
 
 	private JFrame frame;
@@ -157,6 +159,11 @@ public class SwingMain {
 	    		new RegisterSponsorController(new RegisterSponsorView());
 		    });
 	    	
+	    	// US 29325
+	    	menu.addButton("Modify Sponsor Contact", () -> {
+	    		new ModifySponsorContactController(new ModifySponsorContactView());
+		    });
+	    	
 	    	menu.setVisible();
 	    });
 	    
@@ -185,6 +192,11 @@ public class SwingMain {
 	    		new RegisterActivityController(new RegisterActivityView());
 	    	});
 	    	
+	    	// US 29330
+	    	menu.addButton("Modify Activity", () -> {
+	    		new ModifyActivityController(new ModifyActivityView());
+	    	});
+	    	
 	    	menu.setVisible();
 	    });
 	    
@@ -201,6 +213,11 @@ public class SwingMain {
 			db.createDatabase(false);
 			db.loadDatabase();
 	    });
+	    
+	    if(ACTIVE_DEBUG)
+		    addButtonToMain(buttonPanel, "Debugger", () -> {
+				new Debugger();
+		    });
 
 	    
 	    /* 

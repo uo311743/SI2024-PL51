@@ -158,4 +158,21 @@ public class ActivitiesModel {
 				+ ") AND status = 'signed';";
 		db.executeUpdate(sql, idActivity);
 	}
+    
+    public void updateActivity(String id, String name, String edition, String status, String dateStart, String dateEnd, String place) {
+    	SemanticValidations.validateName(name);
+		SemanticValidations.validatePositiveNumberOrZero(edition, "It is not a valid number");
+		if (!dateStart.isBlank()) {
+			SemanticValidations.validateDateBeforeTo(dateStart, dateEnd, true, "Incompatible dates");
+		}
+		if (!dateEnd.isBlank()) {
+			SemanticValidations.validateDateAfterTo(dateEnd, dateStart, true, "Incompatible dates");
+		}
+		if (!place.isBlank()) {
+			SemanticValidations.validateName(place);
+		}
+				
+		String sql = "UPDATE Activities SET name = ?, edition = ?, status = ?, dateStart = ?, dateEnd = ?, place = ? WHERE id = ?;";
+		db.executeUpdate(sql, name, edition, status, dateStart, dateEnd, place, id);
+	}
 }

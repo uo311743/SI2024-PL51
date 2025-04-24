@@ -1,8 +1,11 @@
 package util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.Date;
 
 /**
  * Contains validations pertaining to the nature of the data. Used in controller.
@@ -79,6 +82,16 @@ public class SyntacticValidations {
         } catch (DateTimeParseException e) {
             return false;
         }
+    }
+    
+    public static boolean isDateInPast(String date, boolean includeToday)
+    {
+        Date tmp_today = SwingMain.getTodayDate();
+        Date tmp_date = null;
+        try {tmp_date = new SimpleDateFormat("yyyy-MM-dd").parse(date);}
+        catch (ParseException e) { return false; }
+        
+        return tmp_date.before(tmp_today) || (includeToday && tmp_date.equals(tmp_today));
     }
 
     /**

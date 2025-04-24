@@ -3,8 +3,6 @@ package model;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
-
-import DTOs.SponsorOrganizationsDTO;
 import DTOs.LevelsDTO;
 import DTOs.SponsorshipAgreementsDTO;
 import util.ApplicationException;
@@ -103,10 +101,11 @@ public class SponsorshipAgreementsModel {
 	    }
 	}
     
-    public List<SponsorshipAgreementsDTO> getSignedAgreementsByActivityName(String activityName) {
+    public List<SponsorshipAgreementsDTO> getSignedAgreementsByActivityName(String activityName, String editionName) {
 		SemanticValidations.validateName(activityName);
-		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ?;";
-		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName);
+		SemanticValidations.validatePositiveNumberOrZero(editionName, "Not valid edition");
+		String sql = "SELECT SA.* FROM SponsorshipAgreements SA JOIN Activities A ON SA.idActivity == A.id WHERE SA.status == 'signed' AND A.name == ? AND A.edition == ?;";
+		return db.executeQueryPojo(SponsorshipAgreementsDTO.class, sql, activityName, editionName);
 	}
     
     public String getFeeMaxByLevelFee(String feeLevelSelected) {
