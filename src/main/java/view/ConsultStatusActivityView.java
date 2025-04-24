@@ -27,7 +27,7 @@ public class ConsultStatusActivityView extends AbstractView {
     private JTextField subTotalExpensesEstimatedField, subTotalExpensesActualField;
 
     public ConsultStatusActivityView() {
-        super("Consult Activity Status");
+        super("Consult Activity Status", 1000, 600);
     }
 
     @Override
