@@ -8,7 +8,6 @@ import java.awt.Dimension;
 public class ModifySponsorContactView extends AbstractView {
 
     private JTable contactsTable;
-    private JLabel idSOLabel;
     private JTextField nameTextField;
     private JTextField emailTextField;
     private JTextField phoneTextField;
@@ -21,7 +20,6 @@ public class ModifySponsorContactView extends AbstractView {
     @Override
     protected void initialize() {
         this.contactsTable = new JTable(new DefaultTableModel());
-        this.idSOLabel = new JLabel("Sponsor Organization ID: ");
         this.nameTextField = new JTextField(20);
         this.emailTextField = new JTextField(20);
         this.phoneTextField = new JTextField(20);
@@ -34,6 +32,7 @@ public class ModifySponsorContactView extends AbstractView {
         sponsorComboBox.setPreferredSize(textFieldSize);
 
         super.createButtonLowLeft("Cancel");
+        super.createButtonLowMiddle("Remove Contact");
         super.createButtonLowRight("Modify Sponsor Contact");
     }
 
@@ -53,7 +52,6 @@ public class ModifySponsorContactView extends AbstractView {
         // Right Panel - Contact Details
         JPanel rightPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
         rightPanel.setBorder(BorderFactory.createTitledBorder("Sponsor Contact Details"));
-        rightPanel.add(idSOLabel, "wrap");
         rightPanel.add(new JLabel("Name:"));
         rightPanel.add(nameTextField, "wrap");
         rightPanel.add(new JLabel("Email:"));
@@ -68,16 +66,15 @@ public class ModifySponsorContactView extends AbstractView {
         return contactsTable;
     }
     
+    public JTextField getNameTextField() { 
+        return nameTextField; 
+
     public JComboBox<Object> getSponsorComboBox() {
         return sponsorComboBox;
     }
 
     public JLabel getIdSOLabel() {
         return idSOLabel;
-    }
-
-    public JTextField getNameTextField() {
-        return nameTextField;
     }
 
     public JTextField getEmailTextField() {
