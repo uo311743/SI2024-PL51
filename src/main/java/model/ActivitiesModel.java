@@ -83,6 +83,13 @@ public class ActivitiesModel {
 	    String sql = "SELECT * FROM Activities WHERE status IN (" + placeholders + ")";
 	    return db.executeQueryPojo(ActivitiesDTO.class, sql, (Object[]) status);
 	}
+    
+    public List<ActivitiesDTO> getClosableActivities() {
+	    String sql = "SELECT * FROM Activities"
+	    		+ " WHERE status IN ('registered', 'planned', 'done')"
+	    		+ " AND dateStart != '' AND dateEnd != '' AND place != ''";
+	    return db.executeQueryPojo(ActivitiesDTO.class, sql);
+    }
   
     public ActivitiesDTO getActivityByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);

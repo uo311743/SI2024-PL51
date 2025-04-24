@@ -140,7 +140,7 @@ public class CloseActivityController {
     
     private void getActivities()
     {
-    	activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
+    	activities = activitiesModel.getClosableActivities();
 		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"name", "edition", "status", "dateStart", "dateEnd"});
 		this.view.getActivityTable().setModel(tmodel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
