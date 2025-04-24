@@ -4,8 +4,6 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import java.awt.*;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
 
 public class RegisterPaymentView extends AbstractView {
 	private JTable invoicesTable;
@@ -17,7 +15,7 @@ public class RegisterPaymentView extends AbstractView {
     private JLabel remainingBalanceLabel;
     private JCheckBox compensationCheckBox;
     
-    public RegisterPaymentView() { super("Register Payment"); }
+    public RegisterPaymentView() { super("Register Payment", 1500, 800); }
     
     @Override
     protected void initialize()

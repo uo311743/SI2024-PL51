@@ -45,13 +45,15 @@ public abstract class AbstractView {
 	 *  ability to change todays date.
 	 */
 	public AbstractView() { this(DEFAULT_TITLE); }
+	
+	public AbstractView(String viewName) { this(viewName, DEFAULT_WIDTH, DEFAULT_HEIGHT); }
 
 	/**
 	 * Creates and displays a view.
 	 * @param viewName is the text displayed at the frame and window title.
 	 * @param showChangeDate indicates if the changeDate option should be displayed.
 	 */
-	public AbstractView(String viewName)
+	public AbstractView(String viewName, int width, int height)
 	{
 		// Some variables require initialization
 		this.btnLowLeft = null;
@@ -65,7 +67,7 @@ public abstract class AbstractView {
 		// On close, the frame is disposed (Other frames still running).
 		this.frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		
-		this.frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT); // Sets the frame dimensions.
+		this.frame.setSize(width, height); // Sets the frame dimensions.
 		
 		this.initialize(); // Inicializes other possible required attributes.
 		

@@ -21,7 +21,7 @@ public class RegisterLongTermAgreementView extends AbstractView {
 	private JButton removeActivity;
 	private JLabel amountLabel;
     
-    public RegisterLongTermAgreementView() { super("Register Long-Term Agreement"); }
+    public RegisterLongTermAgreementView() { super("Register Long-Term Agreement", 1500, 800); }
     
     @Override
     protected void initialize()

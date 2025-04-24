@@ -26,7 +26,7 @@ public class RegisterMovementsView extends AbstractView {
     private JButton btnIncomesExpenses;
     private JButton btnMovements;
     
-    public RegisterMovementsView() { super("Register Movement"); }
+    public RegisterMovementsView() { super("Register Movement", 1500, 800); }
     
     @Override
     protected void initialize()
