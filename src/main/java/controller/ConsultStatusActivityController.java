@@ -113,7 +113,7 @@ public class ConsultStatusActivityController {
 	{
 		List<SponsorshipAgreementsDTO> sponsorships = saModel.getApplicableSponsorshipAgreementsByActivity(idActivity);
 		
-		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"amount", "sponsor", "status", "date"}, 0);
+		DefaultTableModel tmodel = new DefaultTableModel(new String[] {"amount", "sponsor", "status", "date", "endDate"}, 0);
 		for(SponsorshipAgreementsDTO item : sponsorships)
 		{
 			SponsorOrganizationsDTO sponsor = this.soModel.getSponsorOrganizationByIdSponsorContact(item.getIdSponsorContact());
@@ -121,7 +121,8 @@ public class ConsultStatusActivityController {
 					item.getAmount(),
 					sponsor.getName(),
 					item.getStatus(),
-					item.getDate()
+					item.getDate(),
+					item.getEndDate()
 			});
 		}
 

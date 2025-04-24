@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Contains validations pertaining to the business logic of the data. Used in the model.
@@ -189,5 +190,25 @@ public class SemanticValidations
     		if (tmp_date.before(tmp_past) || tmp_date.equals(tmp_past))
         		throw new ApplicationException(message);
     	}
+    }
+    
+    public static void validateDatesAtLeastOneYearApart(String date1, String date2, boolean includeOneYear, String message) {
+        Date tmp_date1 = Util.isoStringToDate(date1);
+        Date tmp_date2 = Util.isoStringToDate(date2);
+
+        // Calculate the absolute difference in days
+        long diffInMillies = Math.abs(tmp_date1.getTime() - tmp_date2.getTime());
+        long diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+        // Check if the difference is less than 365 days (or 365 days if includeOneYear is false)
+        if (includeOneYear) {
+            if (diffInDays < 365) {
+                throw new ApplicationException(message);
+            }
+        } else {
+            if (diffInDays <= 365) {
+                throw new ApplicationException(message);
+            }
+        }
     }
 }

@@ -7,6 +7,7 @@ public class SponsorshipAgreementsDTO {
     private String idActivity;
     private String amount;
     private String date;
+    private String endDate;
     private String status;
     
 	public String getId() {
@@ -44,6 +45,12 @@ public class SponsorshipAgreementsDTO {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public String getEndDate() {
+		return endDate;
 	}
 	public String getStatus() {
 		return status;

@@ -20,6 +20,7 @@ public class ActivitiesModel {
 
 	// GETTERS
     public ActivitiesDTO getActivityByInvoice(String idInvoice) {
+    	SemanticValidations.validateIdForTable(idInvoice, "Activities", "ERROR. Provided idInvoice for getActivityByInvoice does not exist.");
     	String sql = "SELECT a.* FROM Invoices i "
     			+ "JOIN SponsorshipAgreements sa ON i.idSponsorshipAgreement = sa.id "
     			+ "JOIN Activities a ON a.id = sa.idActivity "
@@ -69,6 +70,13 @@ public class ActivitiesModel {
 		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, nameActivity);
 		return activities.get(0);
 	}
+    
+    public ActivitiesDTO getActivityById(String idActivity) {
+    	SemanticValidations.validateIdForTable(idActivity, "Activities", "ERROR. Provided idActivity for getActivityById does not exist.");
+		String sql = "SELECT * FROM Activities WHERE id == ?;";
+		List<ActivitiesDTO> activities = db.executeQueryPojo(ActivitiesDTO.class, sql, idActivity);
+		return activities.get(0);
+	}
 
     public List<ActivitiesDTO> getActivitiesbyStatus(String... status) {
 	    String placeholders = String.join(",", Collections.nCopies(status.length, "?"));
@@ -82,6 +90,20 @@ public class ActivitiesModel {
     	List<ActivitiesDTO> sol = db.executeQueryPojo(ActivitiesDTO.class, SQL_ACTIVITIES_FILTERED, name, edition);
 		return sol.get(0);
 	}
+    
+    public List<ActivitiesDTO> getActivitiesInDateRange(String startDate, String endDate) {
+        // Validate date range
+        SemanticValidations.validateDateAfterTo(endDate, startDate, false, "End Date must be after Start Date");
+
+        String sql = "SELECT * FROM Activities " +
+                     "WHERE ((dateStart BETWEEN ? AND ?) " +  // Starts in range
+                     "OR (dateEnd BETWEEN ? AND ?) " +        // Ends in range
+                     "OR (dateStart <= ? AND dateEnd >= ?)) " + // Spans entire range
+                     "AND lower(status) = 'planned' " +       // Only planned activities
+                     "ORDER BY dateStart";
+
+        return db.executeQueryPojo(ActivitiesDTO.class, sql, startDate, endDate, startDate, endDate, startDate, startDate);
+    }
     
     public int getNumberActivitiesByFilters(String name, String edition) {
     	SemanticValidations.validateName(name);
