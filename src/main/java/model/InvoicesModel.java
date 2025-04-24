@@ -127,9 +127,7 @@ public class InvoicesModel {
 		SemanticValidations.validateDateInFuture(dateIssued, false, "Not valid date");
 		SemanticValidations.validatePositiveNumberOrZero(totalAmount, "Not valid number");
 		SemanticValidations.validateNumberInRange(taxRate, "0.0", "100.0", "Not valid number (0-100)");
-		
-		this.validateDateForUpdateInvoices(dateIssued, idSponsorshipAgreement);
-		
+				
 		String sql = "UPDATE Invoices "
 				+ "SET status = 'rectified' "
 				+ "WHERE idSponsorshipAgreement = ?;";
