@@ -28,10 +28,10 @@ public class RegisterActivityController {
 	protected LevelsModel levelsModel;
 	protected ActivitiesModel activitiesModel;
 		
-	protected RegisterActivityView view;
-	
 	protected LinkedList<LevelsDTO> levels;
-	
+
+	protected RegisterActivityView view;
+		
     public RegisterActivityController(RegisterActivityView v) {
 		this.atModel = ModelManager.getInstance().getActivityTemplatesModel();
 		this.levelsModel = ModelManager.getInstance().getLevelsModel();

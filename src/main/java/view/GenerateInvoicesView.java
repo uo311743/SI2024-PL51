@@ -47,6 +47,7 @@ public class GenerateInvoicesView extends AbstractView {
 
         // Agreements Table
         agreementsTable.setName("agreementsTable");
+        agreementsTable.setDefaultEditor(Object.class, null);
         agreementsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane agreementsTablePanel = new JScrollPane(agreementsTable);
         getMainPanel().add(agreementsTablePanel, "cell 0 1, grow");

@@ -41,6 +41,7 @@ public class ModifySponsorContactView extends AbstractView {
         getMainPanel().setLayout(new MigLayout("", "[grow 30][grow 70]", "[grow]"));
 
         // Left Panel - Contacts Table and ComboBox
+        contactsTable.setDefaultEditor(Object.class, null);
         JPanel leftPanel = new JPanel(new MigLayout("wrap", "[grow]", "[][][grow]"));
         JScrollPane contactsTableScrollPane = new JScrollPane(contactsTable);
         leftPanel.setBorder(BorderFactory.createTitledBorder("Contacts"));
@@ -66,15 +67,12 @@ public class ModifySponsorContactView extends AbstractView {
         return contactsTable;
     }
     
-    public JTextField getNameTextField() { 
+    public JTextField getNameTextField() {
         return nameTextField; 
+    }
 
     public JComboBox<Object> getSponsorComboBox() {
         return sponsorComboBox;
-    }
-
-    public JLabel getIdSOLabel() {
-        return idSOLabel;
     }
 
     public JTextField getEmailTextField() {

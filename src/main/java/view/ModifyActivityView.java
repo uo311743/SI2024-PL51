@@ -63,6 +63,7 @@ public class ModifyActivityView extends AbstractView {
         getMainPanel().setLayout(new MigLayout("", "[grow 30][grow 70]", "[grow]"));
 
         // Activity Panel
+        activitiesTable.setDefaultEditor(Object.class, null);
         JPanel activityPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
         JScrollPane activitiesTablePanel = new JScrollPane(activitiesTable);
         activityPanel.setBorder(BorderFactory.createTitledBorder("Activity Details"));
@@ -83,6 +84,7 @@ public class ModifyActivityView extends AbstractView {
         getMainPanel().add(activityPanel, "cell 0 0, grow");
         
         // Level Panel
+        levelTable.setDefaultEditor(Object.class, null);
         JPanel rightPanel = new JPanel(new MigLayout("wrap", "[grow]", "[grow 40][grow 60][]"));
         JPanel levelPanel = new JPanel(new MigLayout("wrap 2", "[][grow]", ""));
         levelPanel.setBorder(BorderFactory.createTitledBorder("Sponsorship Level"));

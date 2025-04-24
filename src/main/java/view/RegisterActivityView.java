@@ -96,6 +96,7 @@ public class RegisterActivityView extends AbstractView {
         rightPanel.add(levelPanel, "grow");
         
         // Level Table
+        levelTable.setDefaultEditor(Object.class, null);
         JScrollPane levelTablePanel = new JScrollPane(levelTable);
         rightPanel.add(levelTablePanel, "grow");
         getMainPanel().add(rightPanel, "cell 1 0, grow");

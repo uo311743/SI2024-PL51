@@ -11,7 +11,6 @@ import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-
 import DTOs.ActivitiesDTO;
 import DTOs.InvoicesDTO;
 import DTOs.SponsorContactsDTO;
