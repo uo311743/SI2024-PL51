@@ -6,12 +6,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.ComboBoxModel;
 import javax.swing.JOptionPane;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.TableModel;
+import javax.swing.table.DefaultTableModel;
 import DTOs.ActivitiesDTO;
 import DTOs.LevelsDTO;
 import DTOs.SponsorContactsDTO;
@@ -42,6 +43,7 @@ public class RegisterSponsorshipController {
     private String lastSelectedActivity;
     private String lastSelectedSponsor;
     private String lastSelectedContact;
+    protected List<String> ids;
     
 
     // ================================================================================
@@ -196,11 +198,10 @@ public class RegisterSponsorshipController {
 			// Validate amount
 			String amount = this.view.getAmountTextField().getText();	
 			
-			String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
 			String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
-			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+			LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(ids.get(view.getActivityTable().getSelectedRow()), levelName);
 			
-			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
+			String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), ids.get(view.getActivityTable().getSelectedRow()));
 			String amountMin = levelSelected.getFee();
 			
 			if (amountMax == "isTheMax") {
@@ -267,11 +268,10 @@ public class RegisterSponsorshipController {
 		// Validate amount
 		String amount = this.view.getAmountTextField().getText();	
 		
-		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
 		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
-		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
+		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(ids.get(view.getActivityTable().getSelectedRow()), levelName);
 		
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), ids.get(view.getActivityTable().getSelectedRow()));
 		String amountMin = levelSelected.getFee();
 		
 		if (amountMax == "isTheMax") {
@@ -307,10 +307,9 @@ public class RegisterSponsorshipController {
 	}
 	
 	public void updateRange() {
-		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);
 		String levelName = String.valueOf(this.view.getLevelsComboBox().getSelectedItem());
-		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(activityId, levelName);
-		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), activityId);
+		LevelsDTO levelSelected = levelsModel.getLevelsByActivityIdAndLevelName(ids.get(view.getActivityTable().getSelectedRow()), levelName);
+		String amountMax = saModel.getFeeMaxByLevelFee(levelSelected.getFee(), ids.get(view.getActivityTable().getSelectedRow()));
 		
 		if (amountMax == "isTheMax") {
 			this.view.getAmountLabel().setText("Amount (euro): (" + levelSelected.getFee() + "-" + "Limitless)");
@@ -354,9 +353,20 @@ public class RegisterSponsorshipController {
     
     private void getActivities()
     {
+    	ids = new LinkedList<>();
     	List<ActivitiesDTO> activities = activitiesModel.getActivitiesbyStatus("registered", "planned", "done");
-		TableModel tmodel = SwingUtil.getTableModelFromPojos(activities, new String[] {"id", "name", "edition", "status", "dateStart", "dateEnd"});
-		this.view.getActivityTable().setModel(tmodel);
+		DefaultTableModel tableModel = new DefaultTableModel(new String[]{"name", "edition", "status", "dateStart", "dateEnd"}, 0);
+        for (ActivitiesDTO activity : activities) {
+        	ids.add(activity.getId());
+        	tableModel.addRow(new Object[] {
+        			activity.getName(),
+        			activity.getEdition(),
+        			activity.getStatus(),
+        			activity.getDateStart(),
+        			activity.getDateEnd()
+        	});
+        }
+		this.view.getActivityTable().setModel(tableModel);
 		SwingUtil.autoAdjustColumns(this.view.getActivityTable());
     }
     
@@ -391,8 +401,7 @@ public class RegisterSponsorshipController {
     }
     
     private void getLevels() {
-		String activityId = (String) this.view.getActivityTable().getModel().getValueAt(this.view.getActivityTable().getSelectedRow(), 0);    	
-    	List<Object[]> levelsList = levelsModel.getLevelsListArray(activityId);
+    	List<Object[]> levelsList = levelsModel.getLevelsListArray(ids.get(view.getActivityTable().getSelectedRow()));
         ComboBoxModel<Object> lmodel = SwingUtil.getComboModelFromList(levelsList);
         view.getLevelsComboBox().setModel(lmodel);
     }
