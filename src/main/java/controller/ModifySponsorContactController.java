@@ -223,6 +223,7 @@ public class ModifySponsorContactController {
 		this.view.getEmailTextField().setText("");;
 		this.view.getPhoneTextField().setText("");
 				
+		this.view.getButtonLowMiddle().setEnabled(false);
 		this.view.getButtonLowRight().setEnabled(false);
 	}
 	
@@ -230,6 +231,8 @@ public class ModifySponsorContactController {
 		this.view.getNameTextField().setEnabled(valid);
 		this.view.getEmailTextField().setEnabled(valid);
 		this.view.getPhoneTextField().setEnabled(valid);
+		
+		this.view.getButtonLowMiddle().setEnabled(valid);
 	}
 	
 	// OTHER METHODS
