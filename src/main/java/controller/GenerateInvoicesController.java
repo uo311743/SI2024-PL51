@@ -249,7 +249,7 @@ public class GenerateInvoicesController {
     	
     	if (this.invoicesModel.getNumberInvoices(id) == 0) {
     		if(numInvoices == 0) {
-            	this.invoicesModel.insertNewInvoice(id, ids.get(view.getAgreementsTable().getSelectedRow()), dateIssued, totalAmount, String.valueOf(taxRate), dateAgreement);
+            	this.invoicesModel.insertNewInvoice(id, ids.get(view.getAgreementsTable().getSelectedRow()), dateIssued, amount, String.valueOf(taxRate), dateAgreement);
     	        
     			JOptionPane.showMessageDialog(
     	    			this.view.getFrame(), "Invoice added correctly",
