@@ -7,11 +7,11 @@ import util.SemanticValidations;
 
 public class SponsorshipPaymentsModel {
     
-    private Database db = new Database();
+    private static Database db = new Database();
     
     // GETTERS
     
-    public List<SponsorshipPaymentsDTO> getSponsorshipPayment(String idInvoice) {
+    public static List<SponsorshipPaymentsDTO> getSponsorshipPayment(String idInvoice) {
     	String query = "SELECT * FROM SponsorshipPayments sp WHERE sp.idInvoice = ?;";
     	
     	return db.executeQueryPojo(SponsorshipPaymentsDTO.class, query, idInvoice);

@@ -81,7 +81,7 @@ CREATE TABLE Invoices (
 
 CREATE TABLE SponsorshipPayments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    idInvoice INTEGER NOT NULL,
+    idInvoice TEXT NOT NULL,
     
     date TEXT NOT NULL,
     amount REAL NOT NULL,

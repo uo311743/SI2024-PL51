@@ -22,7 +22,7 @@ public class SponsorOrganizationsModel {
 			+ "JOIN SponsorshipAgreements SA ON SA.idSponsorContact == SC.id "
 			+ "WHERE SA.id ==?;";
 
-    private Database db = new Database();
+    private static Database db = new Database();
 
 	// GETTERS
 
@@ -36,7 +36,7 @@ public class SponsorOrganizationsModel {
 		return db.executeQueryArray(sql);
 	}
 	
-	public List<SponsorOrganizationsDTO> getSponsorOrganizations() {
+	public static List<SponsorOrganizationsDTO> getSponsorOrganizations() {
 		String sql = "SELECT * FROM SponsorOrganizations;";
 		return db.executeQueryPojo(SponsorOrganizationsDTO.class, sql);
 	}
