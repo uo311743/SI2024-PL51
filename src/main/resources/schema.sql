@@ -61,6 +61,7 @@ CREATE TABLE LongTermAgreementActivities (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	idSponsorshipAgreement INTEGER NOT NULL,
 	idActivity TEXT NOT NULL,
+	amount REAL NOT NULL,
 	
 	FOREIGN KEY (idSponsorshipAgreement) REFERENCES SponsorshipAgreements(id) ON DELETE CASCADE,
     FOREIGN KEY (idActivity) REFERENCES Activities(id) ON DELETE CASCADE
@@ -80,7 +81,7 @@ CREATE TABLE Invoices (
 
 CREATE TABLE SponsorshipPayments (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    idInvoice INTEGER NOT NULL,
+    idInvoice TEXT NOT NULL,
     
     date TEXT NOT NULL,
     amount REAL NOT NULL,

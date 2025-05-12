@@ -1,7 +1,9 @@
 -- Insert SponsorOrganizations
 INSERT INTO SponsorOrganizations (name, address, nif, vat) VALUES
 ('Tech Corp', '123 Tech Street', 'A12345678', 'VAT123'),
-('City Council', '456 Main Square', 'B87654321', 'VAT456');
+('City Council', '456 Main Square', 'B87654321', 'VAT456'),
+('Caja Rural de Asturias', '123 Tech Street', 'C92345678', 'VAT999'),
+('Leyenda SL', '123 Tech Street', 'D82345678', 'VAT899');
 
 -- Insert GBMembers
 INSERT INTO GBMembers (name, role) VALUES
@@ -12,14 +14,21 @@ INSERT INTO GBMembers (name, role) VALUES
 INSERT INTO SponsorContacts (idSponsorOrganization, name, email, phone) VALUES
 (1, 'John Doe', 'uo294319@uniovi.es', '+34911234567'),
 (2, 'Mary White', 'uo294319@uniovi.es', '+34912345678'),
-(2, 'Robert Smith', 'uo294319@uniovi.es', '+34913456789');
+(4, 'Robert Smith', 'uo294319@uniovi.es', '+34913456789'),
+(3, 'Charles Smith', 'uo294319@uniovi.es', '+34913456789');
 
 -- Insert SponsorshipAgreements
-INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, status) VALUES
-(1, 1, 1, 5000.00, '2024-01-15', 'signed'),
-(2, 2, 2, 2000.00, '2024-02-01', 'signed'),
-(1, 1, 1, 2000.00, '2024-03-01', 'modified'),
-(1, 1, 1, 3000.00, '2024-03-01', 'closed');
+INSERT INTO SponsorshipAgreements (idSponsorContact, idGBMember, idActivity, amount, date, endDate, status) VALUES
+(1, 1, 1, 5000.00, '2024-01-15', NULL, 'signed'),
+(2, 2, 2, 2000.00, '2024-02-01', NULL, 'signed'),
+(1, 1, 1, 2000.00, '2024-03-01', NULL, 'modified'),
+(1, 1, 1, 3000.00, '2024-03-01', NULL, 'closed'),
+(4, 1, 1, 750, '2025-10-01', NULL, 'signed'),
+(3, 1, 1, 14000, '2025-01-01', '2026-12-31', 'signed');
+
+/*INSERT INTO LongTermAgreementActivities (idSponsorshipAgreement, idActivity, amount) VALUES
+(6, 5, 7000),
+(6, 1, 7000);*/
 
 -- Insert Invoices
 INSERT INTO Invoices (id, idSponsorshipAgreement, dateIssued, totalAmount, taxRate, status) VALUES
@@ -33,23 +42,24 @@ INSERT INTO SponsorshipPayments (idInvoice, date, amount) VALUES
 
 -- Insert Activities
 INSERT INTO Activities (name, edition, status, dateStart, dateEnd, place) VALUES
-('Informatics Olimpics 2024', 13, 'planned', '2024-03-10', '2024-03-12', 'Convention Center'),
-('ImpulsoTIC Week 2024', 12, 'planned', '2024-02-15', '2024-02-15', 'Central Park'),
-('ImpulsoTIC Week 2023', 11, 'closed', '2023-02-15', '2024-02-15', 'Central Park');
+('Hour of Code 2025', 13, 'planned', '2025-12-08', '2025-12-15', 'Convention Center'),
+('ImpulsoTIC Week 2024', 12, 'closed', '2024-11-15', '2024-11-15', 'Central Park'),
+('ImpulsoTIC Week 2025', 11, 'planned', '2025-11-10', '2025-11-14', 'Central Park'),
+('Hour of Code 2026', 13, 'planned', '2026-12-08', '2026-12-15', 'Convention Center');
 
 -- Insert Levels
 INSERT INTO Levels (idActivity, name, fee) VALUES
-(1, 'Basic', 50.00),
-(2, 'Basic', 100.00),
-(3, 'Basic', 120.00);
+(3, 'Gold', 4000.00),
+(3, 'Silver', 2000.00),
+(1, 'Basic', 120.00);
 
 -- Insert sample data into IncomesExpenses (ensuring all have at least one movement)
 INSERT INTO IncomesExpenses (idActivity, type, status, amountEstimated, dateEstimated, concept) 
 VALUES 
 (1, 'income', 'estimated', 5000.00, '2024-03-01', 'Sponsorship from Company A'),
 (1, 'income', 'estimated', 2000.00, '2024-03-05', 'Ticket Sales'),
-(2, 'income', 'estimated', 3500.00, NULL, 'Donations'),
-(1, 'expense', 'estimated', -1500.00, '2024-03-02', 'Venue Rental'),
+(2, 'income', 'paid', 1000.00, '2024-10-02', 'CCII Grant'),
+(2, 'expense', 'paid', -6000.00, '2024-10-02', 'Communication services'),
 (1, 'expense', 'estimated', -800.00, '2024-03-06', 'Catering'),
 (2, 'expense', 'estimated', -1200.00, '2024-03-12', 'Equipment Rental');
 

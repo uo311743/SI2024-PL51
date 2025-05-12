@@ -2,7 +2,7 @@ package DTOs;
 
 public class SponsorshipPaymentsDTO {
 	private String id;
-	private String invoiceId;
+	private String idInvoice;
 	private String date;
 	private String amount;
 	
@@ -13,10 +13,10 @@ public class SponsorshipPaymentsDTO {
 		this.id = id;
 	}
 	public String getInvoiceId() {
-		return invoiceId;
+		return idInvoice;
 	}
 	public void setInvoiceId(String invoiceId) {
-		this.invoiceId = invoiceId;
+		this.idInvoice = invoiceId;
 	}
 	public String getDate() {
 		return date;

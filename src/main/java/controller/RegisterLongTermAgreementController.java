@@ -638,7 +638,7 @@ public class RegisterLongTermAgreementController {
 			return;
 
 		try {
-			this.saModel.insertNewLongTermSponsorshipAgreement(idContact, idGBmember, activitiesSelected, String.valueOf(totalAmount), agreementStartDate, agreementEndDate);
+			this.saModel.insertNewLongTermSponsorshipAgreement(idContact, idGBmember, activitiesSelected, amounts, agreementStartDate, agreementEndDate);
 		} catch (Exception e) {
 			e.printStackTrace();
         	// Show an error dialog
